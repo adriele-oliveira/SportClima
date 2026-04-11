@@ -175,3 +175,13 @@ input.form-input:focus {
     border: 1px solid #f27f0d;
     background-color: white;
 }
+/* --------------------------- */
+/* PAINEL DE NOTIFICAÇÕES      */
+/* --------------------------- */
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}

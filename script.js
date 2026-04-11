@@ -230,3 +230,153 @@ searchInput.addEventListener("keypress", (e) => {
         }
     }
 });
+// ----------------------------
+// CONTROLE DE NOTIFICAÇÕES (VERSÃO CORRIGIDA)
+// ----------------------------
+
+const openBtn = document.getElementById('notificationBtn');
+const closeBtn = document.getElementById('closeNotifications');
+const drawer = document.getElementById('notificationDrawer');
+const overlay = document.getElementById('notificationOverlay');
+
+function openNav() {
+    overlay.classList.remove('hidden');
+    // Pequeno delay para a animação do Tailwind funcionar
+    setTimeout(() => {
+        drawer.classList.remove('translate-x-full');
+    }, 10);
+}
+
+function closeNav() {
+    drawer.classList.add('translate-x-full');
+    setTimeout(() => {
+        overlay.classList.add('hidden');
+    }, 300); // Tempo da transição do CSS
+}
+
+// Eventos de clique
+if (openBtn) {
+    openBtn.onclick = openNav;
+}
+
+if (closeBtn) {
+    closeBtn.onclick = closeNav;
+}
+
+if (overlay) {
+    overlay.onclick = closeNav;
+}
+// ---------------------------------------------------------
+// SISTEMA DE NOTIFICAÇÕES PERSISTENTE - SPORTCLIMA
+// ---------------------------------------------------------
+(function initPersistentNotifications() {
+    const bellBtn = Array.from(document.querySelectorAll('.material-symbols-outlined'))
+                         .find(el => el.textContent.trim() === 'notifications');
+    const drawer = document.getElementById('notificationDrawer');
+    const overlay = document.getElementById('notificationOverlay');
+    const closeBtn = document.getElementById('closeNotifications');
+    const container = document.querySelector('#notificationDrawer .flex-1.overflow-y-auto');
+
+    // Seleção dos botões de ação
+    const clearBtn = Array.from(document.querySelectorAll('button, span')).find(el => el.textContent.trim() === 'Limpar');
+    const markReadBtn = Array.from(document.querySelectorAll('button, span')).find(el => el.textContent.trim() === 'Marcar todas como lidas');
+
+    if (!bellBtn || !drawer || !overlay || !container) return;
+
+    // --- 1. FUNÇÕES DE ESTADO (UI) ---
+
+    const removeBellBadge = () => {
+        const badge = bellBtn.querySelector('.notification-badge');
+        if (badge) badge.remove();
+    };
+
+    const applyReadStyle = () => {
+        // Encontra todos os cards de notificação dentro do container
+        const cards = container.querySelectorAll('.bg-white, .bg-orange-50');
+        
+        cards.forEach(card => {
+            // Aplica o fundo verde claro e remove o destaque de "não lido"
+            card.classList.remove('bg-orange-50', 'bg-white');
+            card.classList.add('bg-green-50', 'border-l-4', 'border-green-400');
+
+            // Adiciona o ícone de Check se não existir
+            if (!card.querySelector('.check-done')) {
+                const check = document.createElement('span');
+                check.className = 'material-symbols-outlined check-done text-green-500 text-sm ml-auto';
+                check.textContent = 'done_all';
+                // Tenta inserir ao lado do título ou no topo do card
+                const header = card.querySelector('.flex') || card;
+                header.appendChild(check);
+            }
+
+            // Remove o pontinho laranja/vermelho de notificação nova
+            const dot = card.querySelector('.bg-orange-500, .rounded-full');
+            if (dot) dot.remove();
+        });
+
+        removeBellBadge();
+        localStorage.setItem('sportclima_notifs_status', 'read');
+    };
+
+    const applyClearState = () => {
+        container.innerHTML = `
+            <div class="flex flex-col items-center justify-center h-full text-center p-8">
+                <span class="material-symbols-outlined text-5xl text-gray-300 mb-2">notifications_off</span>
+                <p class="text-gray-500 font-medium text-sm">Nenhuma notificação por aqui</p>
+                <p class="text-gray-400 text-xs mt-1">Tudo limpo no seu dashboard!</p>
+            </div>
+        `;
+        removeBellBadge();
+        localStorage.setItem('sportclima_notifs_status', 'cleared');
+    };
+
+    // --- 2. CARREGAMENTO INICIAL (PERSISTÊNCIA) ---
+
+    const savedStatus = localStorage.getItem('sportclima_notifs_status');
+    
+    // Adiciona o badge apenas se nunca foi lido ou limpo
+    if (!savedStatus && !bellBtn.querySelector('.notification-badge')) {
+        bellBtn.style.position = 'relative';
+        const badge = document.createElement('span');
+        badge.className = 'notification-badge absolute -top-1 -right-1 flex h-2.5 w-2.5 rounded-full bg-red-500 border-2 border-white';
+        bellBtn.appendChild(badge);
+    }
+
+    // Aplica o estado salvo ao carregar a página
+    if (savedStatus === 'cleared') applyClearState();
+    else if (savedStatus === 'read') applyReadStyle();
+
+    // --- 3. EVENTOS DE CLIQUE ---
+
+    if (markReadBtn) {
+        markReadBtn.onclick = (e) => {
+            e.preventDefault();
+            applyReadStyle();
+        };
+    }
+
+    if (clearBtn) {
+        clearBtn.onclick = (e) => {
+            e.preventDefault();
+            applyClearState();
+        };
+    }
+
+    // Lógica de abrir/fechar a aba (reutilizada do anterior)
+    bellBtn.onclick = () => {
+        overlay.classList.remove('hidden');
+        setTimeout(() => {
+            overlay.classList.add('opacity-100');
+            drawer.classList.remove('translate-x-[120%]');
+        }, 10);
+    };
+
+    const closeNav = () => {
+        drawer.classList.add('translate-x-[120%]');
+        overlay.classList.remove('opacity-100');
+        setTimeout(() => { if (drawer.classList.contains('translate-x-[120%]')) overlay.classList.add('hidden'); }, 300);
+    };
+
+    if (closeBtn) closeBtn.onclick = closeNav;
+    overlay.onclick = (e) => { if (e.target === overlay) closeNav(); };
+})();
