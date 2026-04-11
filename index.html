@@ -4,17 +4,10 @@
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>Dashboard SportClima</title>
-
-    <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-
-    <!-- CSS externo -->
     <link rel="stylesheet" href="styles.css">
-
-    <!-- Fontes -->
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-
     <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
@@ -24,13 +17,14 @@
                         "primary": "#f27f0d",
                         "background-light": "#f8f7f5",
                         "background-dark": "#221910",
+                        "error": "#ba1a1a",
+                        "on-surface": "#241912",
                     },
                     fontFamily: { "display": ["Lexend"] },
                 },
             },
         }
     </script>
-
 </head>
 
 <body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
@@ -47,7 +41,6 @@
             </div>
         </div>
 
-        <!-- PARTE DIREITA DO HEADER -->
         <div class="flex flex-1 justify-end gap-4 md:gap-8 items-center">
             <label class="hidden sm:flex flex-col min-w-40 !h-10 max-w-64">
                 <div class="flex w-full flex-1 items-stretch rounded-xl h-full">
@@ -59,8 +52,13 @@
             </label>
 
             <div class="flex items-center gap-3">
-                <span class="material-symbols-outlined text-slate-500 cursor-pointer">notifications</span>
-                <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border-2 border-primary/20" 
+                <!-- Botão de notificações com badge -->
+                <button id="notificationBtn" class="relative p-2 rounded-full hover:bg-orange-50 transition-colors active:scale-95 duration-200 text-primary">
+                    <span class="material-symbols-outlined" style="pointer-events:none">notifications</span>
+                    <span id="notifBadge" class="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-error text-[10px] text-white font-bold">3</span>
+                </button>
+
+                <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border-2 border-primary/20"
                      style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDu10AVADf3jxf9qIsTkMffIB00rDsowymux5Z1I8DtpmmBEyHmvwHERPcCGapsoq6rx1qEq-R5FA9Hd8UDEAmLVfH5JwpzEmlyDk7IWtLY4IZACVIoSWKYtmMm5RbSUwoseKe1RuKqzVTImhtlEqZH71GJEJ_SU3ttzyfN8xgrEOtoL537Jtmr6dElNHAC488zGvCSuUk5FzduZwGBQbH72pVj8nALdKKJgSXZco5Eo6gamtL09u1YwB1KzE4b8t1JSoK98kEiGhU");'>
                 </div>
             </div>
@@ -70,35 +68,27 @@
     <!-- LAYOUT PRINCIPAL -->
     <main class="flex flex-1 flex-col lg:flex-row gap-6 p-4 md:p-8 max-w-[1440px] mx-auto w-full">
 
-        <!-- SIDEBAR ESQUERDO ORIGINAL (fixo) -->
+        <!-- SIDEBAR ESQUERDO -->
         <aside class="w-full lg:w-64 flex flex-col gap-6">
             <div class="flex flex-col gap-2">
-            <div class="sport-btn-sidebar flex items-center gap-3 px-3 py-2.5 rounded-xl bg-primary text-white shadow-lg shadow-primary/20 cursor-pointer"
-                data-sport="home">
-                <span class="material-symbols-outlined filled">dashboard</span>
-                <p class="text-sm font-semibold">Visão geral</p>
-            </div>
-
-                <!-- Os botões da sidebar podem acionar a SPA também -->
-    
+                <div class="sport-btn-sidebar flex items-center gap-3 px-3 py-2.5 rounded-xl bg-primary text-white shadow-lg shadow-primary/20 cursor-pointer" data-sport="home">
+                    <span class="material-symbols-outlined filled">dashboard</span>
+                    <p class="text-sm font-semibold">Visão geral</p>
+                </div>
                 <div class="sport-btn-sidebar flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-primary/10 cursor-pointer group" data-sport="corrida">
                     <span class="material-symbols-outlined text-slate-500 group-hover:text-primary">directions_run</span>
                     <p class="text-sm font-medium">Corrida</p>
                 </div>
-
                 <div class="sport-btn-sidebar flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-primary/10 cursor-pointer group" data-sport="surf">
                     <span class="material-symbols-outlined text-slate-500 group-hover:text-primary">surfing</span>
                     <p class="text-sm font-medium">Surfe</p>
                 </div>
-
                 <div class="sport-btn-sidebar flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-primary/10 cursor-pointer group" data-sport="ciclismo">
                     <span class="material-symbols-outlined text-slate-500 group-hover:text-primary">mountain_flag</span>
                     <p class="text-sm font-medium">Ciclismo</p>
                 </div>
-
             </div>
 
-            <!-- ALERTA FIXO -->
             <div class="rounded-xl p-5 bg-orange-50 border border-primary/20">
                 <div class="flex items-center gap-2 mb-3 text-primary">
                     <span class="material-symbols-outlined filled text-[20px]">warning</span>
@@ -111,22 +101,134 @@
             </div>
         </aside>
 
-        <!-- ÁREA CENTRAL DINÂMICA SPA -->
         <div id="spaContent" class="flex-1 flex flex-col gap-6"></div>
-
-        <!-- SIDEBAR DIREITA DINÂMICA SPA -->
         <aside id="spaSidebarRight" class="w-full lg:w-80 flex flex-col gap-6"></aside>
-
     </main>
 
-    <!-- FOOTER ORIGINAL -->
     <footer class="border-t border-primary/10 p-6 text-center text-slate-500 text-xs">
         <p>© 2026 SportClima. Projetado para os obcecados em esportes.</p>
     </footer>
 </div>
 
-<!-- SCRIPT SPA -->
 <script src="script.js"></script>
+
+<!-- ═══════════════════════════════════════════════════════
+     DRAWER DE NOTIFICAÇÕES — extraído do código da IA
+     ═══════════════════════════════════════════════════════ -->
+
+<!-- Overlay (fundo escurecido) — começa oculto -->
+<div id="notificationOverlay"
+     class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[60] transition-opacity duration-300"></div>
+
+<!-- Drawer lateral — começa fora da tela (translate-x-full) -->
+<aside id="notificationDrawer"
+       class="fixed top-0 right-0 h-full w-full md:w-[420px] bg-white dark:bg-slate-900 z-[70] shadow-2xl flex flex-col
+              transform translate-x-full transition-transform duration-300 font-['Lexend']">
+
+    <!-- Header -->
+    <div class="p-6 border-b border-slate-100 dark:border-slate-800">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl font-black text-on-surface tracking-tight">Notificações</h2>
+            <button id="closeNotifications" class="p-2 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-full transition-colors">
+                <span class="material-symbols-outlined text-slate-400">close</span>
+            </button>
+        </div>
+        <div class="flex gap-2">
+            <button id="markAllRead" class="flex-1 py-2 px-4 bg-orange-50 dark:bg-slate-800 text-primary text-xs font-bold rounded-xl hover:bg-orange-100 dark:hover:bg-slate-700 transition-colors">
+                Marcar todas como lidas
+            </button>
+            <button id="clearAllNotif" class="py-2 px-4 text-slate-400 text-xs font-bold rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors border border-slate-200">
+                Limpar
+            </button>
+        </div>
+    </div>
+
+    <!-- Lista de notificações -->
+    <div id="notificationList" class="flex-1 overflow-y-auto hide-scrollbar p-6 space-y-8">
+
+        <!-- AGORA -->
+        <section>
+            <div class="flex items-center gap-2 mb-4">
+                <span class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Agora</span>
+                <div class="h-px flex-1 bg-slate-100 dark:bg-slate-800"></div>
+            </div>
+            <div class="notif-item notif-unread bg-orange-50 dark:bg-orange-900/10 p-4 rounded-xl border border-orange-100 dark:border-orange-800/30 relative cursor-pointer hover:bg-orange-100/60 transition-colors" data-id="1">
+                <div class="notif-dot absolute top-4 right-4 w-2 h-2 bg-primary rounded-full"></div>
+                <div class="flex gap-4">
+                    <div class="bg-red-100 p-2 rounded-lg h-fit flex-shrink-0">
+                        <span class="material-symbols-outlined text-error text-xl">air</span>
+                    </div>
+                    <div>
+                        <p class="text-sm font-bold text-on-surface leading-snug">Alerta de Vento Forte - Rajadas de 40km/h previstas para as 16:00</p>
+                        <p class="text-xs text-slate-500 mt-1">Acabou de chegar • Estação Base A</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- HOJE -->
+        <section>
+            <div class="flex items-center gap-2 mb-4">
+                <span class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Hoje</span>
+                <div class="h-px flex-1 bg-slate-100 dark:bg-slate-800"></div>
+            </div>
+            <div class="space-y-4">
+                <div class="notif-item notif-unread flex gap-4 p-2 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl transition-colors group relative cursor-pointer" data-id="2">
+                    <div class="notif-dot absolute top-3 right-2 w-2 h-2 bg-primary rounded-full"></div>
+                    <div class="bg-emerald-100 dark:bg-emerald-900/30 p-2 rounded-lg h-fit flex-shrink-0">
+                        <span class="material-symbols-outlined text-emerald-600 text-xl">directions_run</span>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-on-surface leading-snug group-hover:text-primary transition-colors">Condições Ideais para Corrida - Temperatura de 22°C em Malibu</p>
+                        <p class="text-xs text-slate-500 mt-1">há 2 horas • Requisito de performance atingido</p>
+                    </div>
+                </div>
+                <div class="notif-item notif-unread flex gap-4 p-2 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl transition-colors group relative cursor-pointer" data-id="3">
+                    <div class="notif-dot absolute top-3 right-2 w-2 h-2 bg-primary rounded-full"></div>
+                    <div class="bg-blue-100 dark:bg-blue-900/30 p-2 rounded-lg h-fit flex-shrink-0">
+                        <span class="material-symbols-outlined text-blue-600 text-xl">surfing</span>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-on-surface leading-snug group-hover:text-primary transition-colors">Relatório de Surf Atualizado - Ondas de 4-6ft em North Shore</p>
+                        <p class="text-xs text-slate-500 mt-1">há 5 horas • Update oceânico</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ONTEM -->
+        <section>
+            <div class="flex items-center gap-2 mb-4">
+                <span class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Ontem</span>
+                <div class="h-px flex-1 bg-slate-100 dark:bg-slate-800"></div>
+            </div>
+            <div class="notif-item flex gap-4 p-2 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl transition-colors group opacity-70 cursor-pointer" data-id="4">
+                <div class="bg-slate-100 dark:bg-slate-800 p-2 rounded-lg h-fit flex-shrink-0">
+                    <span class="material-symbols-outlined text-slate-500 text-xl">history</span>
+                </div>
+                <div>
+                    <p class="text-sm font-medium text-on-surface leading-snug">Histórico de ontem disponível para consulta</p>
+                    <p class="text-xs text-slate-500 mt-1">Ontem às 20:00 • Logs de sistema</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Estado vazio (oculto por padrão) -->
+        <div id="notifEmpty" class="hidden flex-col items-center justify-center py-20 text-center">
+            <span class="material-symbols-outlined text-5xl text-slate-200 mb-3">notifications_off</span>
+            <p class="text-sm font-semibold text-slate-400">Você não possui notificações no momento</p>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="p-6 bg-slate-50 dark:bg-slate-950/50 border-t border-slate-100">
+        <button class="w-full py-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl flex items-center justify-center gap-2 text-sm font-bold text-on-surface hover:shadow-lg hover:border-primary/30 hover:text-primary transition-all active:scale-95">
+            <span class="material-symbols-outlined">settings_suggest</span>
+            Preferências de Alerta
+        </button>
+    </div>
+</aside>
 
 </body>
 </html>
