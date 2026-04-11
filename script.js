@@ -197,3 +197,36 @@ sportSidebarButtons.forEach(btn =>
 // CARREGAR PÁGINA INICIAL PADRÃO
 // ----------------------------
 loadPage("home");
+
+// ----------------------------
+// LOGICA DE PESQUISA COM SINÔNIMOS
+// ----------------------------
+
+const searchInput = document.querySelector('input[placeholder="Buscar localização..."]');
+
+searchInput.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") {
+        let query = searchInput.value.toLowerCase().trim();
+
+      
+        const synonyms = {
+            "surfe": "surf",
+            "pedalar": "ciclismo",
+            "bike": "ciclismo",
+            "correr": "corrida",
+            "inicio": "home",
+            "dashboard": "home"
+        };
+
+        if (synonyms[query]) {
+            query = synonyms[query];
+        }
+
+        if (pages[query]) {
+            loadPage(query);
+            searchInput.value = ""; 
+        } else {
+            alert("Esporte não encontrado. Tente: corrida, surf ou ciclismo.");
+        }
+    }
+});

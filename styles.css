@@ -168,3 +168,10 @@ body {
     font-weight: 700;
     margin-bottom: 12px;
 }
+
+/* Estilo para o foco na busca */
+input.form-input:focus {
+    outline: none;
+    border: 1px solid #f27f0d;
+    background-color: white;
+}
