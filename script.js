@@ -380,3 +380,68 @@ if (overlay) {
     if (closeBtn) closeBtn.onclick = closeNav;
     overlay.onclick = (e) => { if (e.target === overlay) closeNav(); };
 })();
+
+// Procure por uma área de "Navegação" ou "Sidebar" no seu script.js
+(function finalSportClimaNavigation() {
+    const items = document.querySelectorAll('.sport-btn-sidebar');
+    const topSearch = document.querySelector('header input');
+    let currentActive = document.querySelector('[data-sport="home"]') || items[0];
+
+    function applyActiveStyle(element) {
+        if (!element) return;
+        items.forEach(item => {
+            item.style.backgroundColor = 'transparent';
+            item.style.color = '#64748b';
+            item.classList.remove('shadow-lg');
+            const icon = item.querySelector('.material-symbols-outlined');
+            const text = item.querySelector('p');
+            if (icon) {
+                icon.style.setProperty('color', '#64748b', 'important');
+                icon.classList.remove('filled');
+            }
+            if (text) text.style.setProperty('color', '#64748b', 'important');
+        });
+
+        element.style.backgroundColor = '#f97316';
+        element.style.color = 'white';
+        element.classList.add('shadow-lg');
+        const activeIcon = element.querySelector('.material-symbols-outlined');
+        const activeText = element.querySelector('p');
+        if (activeIcon) {
+            activeIcon.style.setProperty('color', 'white', 'important');
+            activeIcon.classList.add('filled');
+        }
+        if (activeText) activeText.style.setProperty('color', 'white', 'important');
+        currentActive = element;
+    }
+
+    items.forEach(item => {
+        item.addEventListener('click', () => applyActiveStyle(item));
+    });
+
+    if (topSearch) {
+        topSearch.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const query = topSearch.value.toLowerCase().trim();
+                if (query.length === 0) return;
+
+                const match = Array.from(items).find(i => 
+                    i.getAttribute('data-sport')?.toLowerCase().includes(query) || 
+                    i.textContent.toLowerCase().includes(query)
+                );
+
+                if (match) {
+                    applyActiveStyle(match);
+                    topSearch.value = ""; // Limpa para evitar repetição
+                    topSearch.blur(); 
+                } else {
+                    alert(`Nenhum esporte encontrado para: "${topSearch.value}"`);
+                    topSearch.value = ""; // Limpa para não dar alerta duplo
+                    topSearch.blur();
+                    applyActiveStyle(currentActive);
+                }
+            }
+        });
+    }
+    applyActiveStyle(currentActive);
+})();

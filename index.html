@@ -70,46 +70,40 @@
     <!-- LAYOUT PRINCIPAL -->
     <main class="flex flex-1 flex-col lg:flex-row gap-6 p-4 md:p-8 max-w-[1440px] mx-auto w-full">
 
-        <!-- SIDEBAR ESQUERDO ORIGINAL (fixo) -->
-        <aside class="w-full lg:w-64 flex flex-col gap-6">
-            <div class="flex flex-col gap-2">
-            <div class="sport-btn-sidebar flex items-center gap-3 px-3 py-2.5 rounded-xl bg-primary text-white shadow-lg shadow-primary/20 cursor-pointer"
-                data-sport="home">
-                <span class="material-symbols-outlined filled">dashboard</span>
-                <p class="text-sm font-semibold">Visão geral</p>
-            </div>
+       <aside class="w-full lg:w-64 flex flex-col gap-6">
+    <div id="sidebarMenu" class="flex flex-col gap-2">
+        <div data-sport="home" class="sport-btn-sidebar flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-all duration-300 bg-primary text-white shadow-lg shadow-primary/20">
+            <span class="material-symbols-outlined filled">dashboard</span>
+            <p class="text-sm font-semibold">Visão geral</p>
+        </div>
 
-                <!-- Os botões da sidebar podem acionar a SPA também -->
-    
-                <div class="sport-btn-sidebar flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-primary/10 cursor-pointer group" data-sport="corrida">
-                    <span class="material-symbols-outlined text-slate-500 group-hover:text-primary">directions_run</span>
-                    <p class="text-sm font-medium">Corrida</p>
-                </div>
+        <div data-sport="corrida" class="sport-btn-sidebar flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-all duration-300 text-slate-500 hover:bg-primary/10 group">
+            <span class="material-symbols-outlined group-hover:text-primary">directions_run</span>
+            <p class="text-sm font-medium">Corrida</p>
+        </div>
 
-                <div class="sport-btn-sidebar flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-primary/10 cursor-pointer group" data-sport="surf">
-                    <span class="material-symbols-outlined text-slate-500 group-hover:text-primary">surfing</span>
-                    <p class="text-sm font-medium">Surfe</p>
-                </div>
+        <div data-sport="surf" class="sport-btn-sidebar flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-all duration-300 text-slate-500 hover:bg-primary/10 group">
+            <span class="material-symbols-outlined group-hover:text-primary">surfing</span>
+            <p class="text-sm font-medium">Surfe</p>
+        </div>
 
-                <div class="sport-btn-sidebar flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-primary/10 cursor-pointer group" data-sport="ciclismo">
-                    <span class="material-symbols-outlined text-slate-500 group-hover:text-primary">mountain_flag</span>
-                    <p class="text-sm font-medium">Ciclismo</p>
-                </div>
+        <div data-sport="ciclismo" class="sport-btn-sidebar flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-all duration-300 text-slate-500 hover:bg-primary/10 group">
+            <span class="material-symbols-outlined group-hover:text-primary">mountain_flag</span>
+            <p class="text-sm font-medium">Ciclismo</p>
+        </div>
+    </div>
 
-            </div>
-
-            <!-- ALERTA FIXO -->
-            <div class="rounded-xl p-5 bg-orange-50 border border-primary/20">
-                <div class="flex items-center gap-2 mb-3 text-primary">
-                    <span class="material-symbols-outlined filled text-[20px]">warning</span>
-                    <h3 class="font-bold text-sm">Alertas de Segurança</h3>
-                </div>
-                <p class="text-xs text-slate-600 leading-relaxed">
-                    Alto índice de calor esperado entre 14h e 17h. Mantenha-se hidratado e evite trilhas expostas.
-                </p>
-                <button class="mt-4 text-xs font-bold text-primary hover:underline">Ver detalhes</button>
-            </div>
-        </aside>
+    <div class="rounded-xl p-5 bg-orange-50 border border-primary/20">
+        <div class="flex items-center gap-2 mb-3 text-primary">
+            <span class="material-symbols-outlined filled text-[20px]">warning</span>
+            <h3 class="font-bold text-sm">Alertas de Segurança</h3>
+        </div>
+        <p class="text-xs text-slate-600 leading-relaxed">
+            Alto índice de calor esperado entre 14h e 17h. Mantenha-se hidratado e evite trilhas expostas.
+        </p>
+        <button class="mt-4 text-xs font-bold text-primary hover:underline">Ver detalhes</button>
+    </div>
+</aside>
 
         <!-- ÁREA CENTRAL DINÂMICA SPA -->
         <div id="spaContent" class="flex-1 flex flex-col gap-6"></div>
