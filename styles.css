@@ -1,6 +1,6 @@
 /* ============================================================= */
 /* sportclima — styles.css                                        */
-/* estilos base + dark mode premium com fundo oled #0a0a0a       */
+/* estilos base + dark mode oled + aba "sobre o projeto"          */
 /* ============================================================= */
 
 
@@ -24,18 +24,18 @@
 
 
 /* ----------------------------------------------------------- */
-/* base global: fonte e transições suaves                      */
+/* base global: fonte e transições suaves de tema              */
 /* ----------------------------------------------------------- */
 body {
     font-family: 'Lexend', sans-serif;
 }
 
-/* transição suave global para mudanças de tema */
+/* transição global para mudanças de cor ao alternar o tema */
 *, *::before, *::after {
     transition: background-color 0.25s ease, color 0.2s ease, border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
-/* material symbols: variações padrão */
+/* material symbols: configuração padrão */
 .material-symbols-outlined {
     font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }
@@ -47,7 +47,7 @@ body {
 
 
 /* ----------------------------------------------------------- */
-/* botões da spa — sidebar e botões de esporte                 */
+/* botões da spa — sidebar de esportes                         */
 /* ----------------------------------------------------------- */
 .sport-btn,
 .sport-btn-sidebar {
@@ -76,7 +76,33 @@ body {
 
 
 /* ----------------------------------------------------------- */
-/* hero da spa: bloco com imagem de fundo e texto sobreposto   */
+/* botão "sobre o projeto" — estado ativo                      */
+/* ----------------------------------------------------------- */
+.sobre-btn {
+    transition: 0.25s all ease;
+    cursor: pointer;
+}
+
+/* destaque laranja quando a aba está aberta */
+.sobre-btn-active {
+    background-color: #f97316 !important;
+    color: white !important;
+    box-shadow: 0 4px 14px rgba(249, 115, 22, 0.3);
+}
+
+.sobre-btn-active .material-symbols-outlined {
+    color: white !important;
+    font-variation-settings: 'FILL' 1;
+}
+
+.sobre-btn-active p {
+    color: white !important;
+    font-weight: 600;
+}
+
+
+/* ----------------------------------------------------------- */
+/* hero da spa: imagem de fundo com texto sobreposto           */
 /* ----------------------------------------------------------- */
 .spa-hero {
     position: relative;
@@ -124,7 +150,6 @@ body {
     box-shadow: 0 4px 12px rgba(242, 127, 13, 0.15);
 }
 
-/* modo escuro: superfície elevada sobre o fundo oled */
 .dark .metric-card {
     background: var(--surface-2);
     border-color: rgba(242, 127, 13, 0.12);
@@ -159,7 +184,6 @@ body {
     margin: 0 6px;
 }
 
-/* barras no modo escuro com brilho laranja mais intenso */
 .dark .chart-bar {
     background: linear-gradient(to top, #f27f0d, #ffcc99);
     box-shadow: 0 0 8px rgba(242, 127, 13, 0.3);
@@ -270,10 +294,54 @@ input.form-input:focus {
 
 
 /* ----------------------------------------------------------- */
-/* dark mode — overrides globais para garantir o esquema oled  */
+/* aba "sobre o projeto" — card das criadoras                  */
 /* ----------------------------------------------------------- */
 
-/* fundo principal totalmente preto (oled) */
+/* animação de entrada suave dos cards */
+@keyframes cardFadeIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0);    }
+}
+
+.sobre-creator-card {
+    animation: cardFadeIn 0.4s ease both;
+}
+
+/* delay escalonado para os três cards */
+.sobre-creator-card:nth-child(1) { animation-delay: 0.05s; }
+.sobre-creator-card:nth-child(2) { animation-delay: 0.15s; }
+.sobre-creator-card:nth-child(3) { animation-delay: 0.25s; }
+
+/* placeholder da foto: anel laranja pulsante */
+.sobre-foto-placeholder {
+    position: relative;
+}
+
+.sobre-foto-placeholder::after {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: 9999px;
+    border: 2px dashed rgba(242, 127, 13, 0.3);
+    animation: rotateDash 12s linear infinite;
+}
+
+@keyframes rotateDash {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+/* remove a animação do anel quando há foto real */
+.sobre-foto-placeholder:has(img)::after {
+    display: none;
+}
+
+
+/* ----------------------------------------------------------- */
+/* dark mode — overrides globais para o esquema oled           */
+/* ----------------------------------------------------------- */
+
+/* fundo principal totalmente preto */
 .dark body {
     background-color: var(--bg-dark) !important;
     color: var(--text-dark) !important;
@@ -285,46 +353,23 @@ input.form-input:focus {
 }
 
 /* textos secundários com opacidade adequada no escuro */
-.dark .text-slate-600 {
-    color: #a1a1aa !important;
-}
-
-.dark .text-slate-500 {
-    color: #71717a !important;
-}
-
-.dark .text-slate-400 {
-    color: #52525b !important;
-}
+.dark .text-slate-600 { color: #a1a1aa !important; }
+.dark .text-slate-500 { color: #71717a !important; }
+.dark .text-slate-400 { color: #52525b !important; }
 
 /* bordas sutis no modo escuro */
-.dark .border-slate-100 {
-    border-color: var(--surface-3) !important;
-}
+.dark .border-slate-100 { border-color: var(--surface-3) !important; }
+.dark .border-stone-100 { border-color: var(--surface-3) !important; }
 
-.dark .border-stone-100 {
-    border-color: var(--surface-3) !important;
-}
+/* blocos com fundo stone ou orange no escuro */
+.dark .bg-stone-50\/50   { background-color: var(--surface-2) !important; }
+.dark .bg-orange-50\/30  { background-color: rgba(242, 127, 13, 0.04) !important; }
 
-/* blocos com fundo stone ou orange-50 no escuro */
-.dark .bg-stone-50\/50 {
-    background-color: var(--surface-2) !important;
-}
+/* hover em listas e menus no modo escuro */
+.dark .hover\:bg-slate-50:hover  { background-color: var(--surface-2) !important; }
+.dark .hover\:bg-orange-50:hover { background-color: rgba(242, 127, 13, 0.08) !important; }
 
-.dark .bg-orange-50\/30 {
-    background-color: rgba(242, 127, 13, 0.04) !important;
-}
-
-/* hover em itens de lista no drawer e menus */
-.dark .hover\:bg-slate-50:hover {
-    background-color: var(--surface-2) !important;
-}
-
-.dark .hover\:bg-orange-50:hover {
-    background-color: rgba(242, 127, 13, 0.08) !important;
-}
-
-/* badge de notificação no modo escuro */
+/* badge de notificação: animação de pop ao aparecer */
 #notifBadge {
     animation: badgePop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 }

@@ -1,6 +1,7 @@
 // =============================================================
 // sportclima — script.js
-// controla: spa, navegação, busca, notificações, perfil e tema
+// controla: spa, navegação, busca, notificações, perfil, tema
+// e a aba "sobre o projeto"
 // =============================================================
 
 
@@ -8,8 +9,7 @@
 // 1. aplicação imediata do tema (evita flash ao carregar)
 // -------------------------------------------------------------
 (function applyThemeOnLoad() {
-    const saved = localStorage.getItem('theme');
-    if (saved === 'dark') {
+    if (localStorage.getItem('theme') === 'dark') {
         document.documentElement.classList.add('dark');
     } else {
         document.documentElement.classList.remove('dark');
@@ -20,9 +20,9 @@
 // -------------------------------------------------------------
 // 2. seletores principais da spa
 // -------------------------------------------------------------
-const spaContent       = document.getElementById("spaContent");
-const spaSidebarRight  = document.getElementById("spaSidebarRight");
-const sportButtons     = document.querySelectorAll(".sport-btn");
+const spaContent          = document.getElementById("spaContent");
+const spaSidebarRight     = document.getElementById("spaSidebarRight");
+const sportButtons        = document.querySelectorAll(".sport-btn");
 const sportSidebarButtons = document.querySelectorAll(".sport-btn-sidebar");
 
 
@@ -101,10 +101,137 @@ const pages = {
 
 
 // -------------------------------------------------------------
-// 4. função principal da spa — renderiza conteúdo central e sidebar
+// 4. dados das criadoras do projeto
+// -------------------------------------------------------------
+const criadoras = [
+    {
+        nome: "Ana Beatriz Silva",
+        cargo: "Engenheira de Software",
+        descricao: "Especializada em análise de dados climáticos e sistemas de monitoramento em tempo real.",
+        github: "#",
+        linkedin: "#",
+        foto: ""
+    },
+    {
+        nome: "Mariana Costa",
+        cargo: "Designer de Interface",
+        descricao: "Focada em criar experiências intuitivas e acessíveis para atletas de alta performance.",
+        github: "#",
+        linkedin: "#",
+        foto: ""
+    },
+    {
+        nome: "Juliana Oliveira",
+        cargo: "Desenvolvedora Full-Stack",
+        descricao: "Com paixão por sistemas de alto desempenho e integrações de dados meteorológicos.",
+        github: "#",
+        linkedin: "#",
+        foto: ""
+    }
+];
+
+
+// -------------------------------------------------------------
+// 5. função que renderiza a aba "sobre o projeto" na área central
+// -------------------------------------------------------------
+function loadSobreProjeto() {
+    // limpa a sidebar direita (não é usada nesta aba) e expande o conteúdo central
+    spaSidebarRight.innerHTML = "";
+    spaSidebarRight.classList.add('hidden');
+    spaContent.classList.add('lg:col-span-full');
+
+    // constrói os cards das criadoras dinamicamente
+    const cardsHtml = criadoras.map(c => `
+        <div class="sobre-creator-card flex flex-col items-center text-center p-6 rounded-2xl
+                    bg-white dark:bg-surface-2
+                    border border-slate-100 dark:border-surface-3
+                    shadow-sm hover:shadow-md dark:hover:shadow-black/30
+                    transition-shadow duration-300">
+
+            <!-- espaço reservado para a foto da criadora -->
+            <div class="sobre-foto-placeholder w-24 h-24 rounded-full mb-5 overflow-hidden
+                        border-4 border-primary/20 dark:border-primary/30
+                        bg-slate-100 dark:bg-surface-3
+                        flex items-center justify-center shrink-0">
+                ${c.foto
+                    ? `<img src="${c.foto}" alt="Foto de ${c.nome}" class="w-full h-full object-cover" />`
+                    : `<span class="material-symbols-outlined text-4xl text-slate-300 dark:text-slate-600">account_circle</span>`
+                }
+            </div>
+
+            <!-- nome e cargo da criadora -->
+            <h3 class="text-base font-bold text-slate-900 dark:text-slate-100 mb-1">${c.nome}</h3>
+            <p class="text-xs font-semibold text-primary uppercase tracking-wider mb-3">${c.cargo}</p>
+
+            <!-- descrição breve -->
+            <p class="text-sm text-slate-500 dark:text-slate-400 leading-relaxed mb-6 flex-1">${c.descricao}</p>
+
+            <!-- botões de contato: github e linkedin -->
+            <div class="w-full flex flex-col gap-2 mt-auto">
+                <a href="${c.github}" target="_blank" rel="noopener noreferrer"
+                    class="flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl
+                           bg-primary hover:bg-orange-600 active:scale-95
+                           text-white text-sm font-bold
+                           shadow-sm shadow-primary/20
+                           transition-all duration-200">
+                    <span class="material-symbols-outlined text-[18px]">code</span>
+                    GitHub
+                </a>
+                <a href="${c.linkedin}" target="_blank" rel="noopener noreferrer"
+                    class="flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl
+                           bg-primary/15 hover:bg-primary/25 active:scale-95
+                           text-primary dark:text-orange-300 text-sm font-bold
+                           transition-all duration-200">
+                    <span class="material-symbols-outlined text-[18px]">person</span>
+                    LinkedIn
+                </a>
+            </div>
+        </div>
+    `).join('');
+
+    // injeta o conteúdo completo da aba na área central
+    spaContent.innerHTML = `
+        <div class="w-full max-w-4xl mx-auto">
+        <!-- cabeçalho da aba sobre o projeto -->
+        <div class="text-center py-8 px-4">
+            <h1 class="text-4xl font-black text-primary mb-2 tracking-tight">SportClima</h1>
+            <p class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em] mb-8">Sobre o Projeto</p>
+            <p class="text-base font-semibold text-slate-700 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed">
+                Este é um projeto acadêmico focado no monitoramento climático para atletas de alta performance,
+                unindo tecnologia e esporte para proporcionar insights precisos.
+            </p>
+        </div>
+
+        <!-- grade de cards das criadoras -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5 pb-6">
+            ${cardsHtml}
+        </div>
+
+        <!-- rodapé da aba com copyright -->
+        <div class="flex items-center justify-between pt-4 pb-2 border-t border-slate-100 dark:border-surface-3 px-1">
+            <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
+                © 2026 SportClima Academic
+            </p>
+            <div class="flex items-center gap-3 text-primary/50">
+                <span class="material-symbols-outlined text-[18px]">show_chart</span>
+                <span class="material-symbols-outlined text-[18px]">thunderstorm</span>
+                <span class="material-symbols-outlined text-[18px]">device_thermostat</span>
+            </div>
+        </div>
+        </div>
+    `;
+}
+
+
+// -------------------------------------------------------------
+// 6. função principal da spa — renderiza conteúdo e sidebar por esporte
 // -------------------------------------------------------------
 function loadPage(sport) {
     const data = pages[sport];
+
+    // restaura a sidebar direita caso estivesse oculta pela aba "sobre"
+    spaSidebarRight.classList.remove('hidden');
+    spaContent.classList.remove('lg:col-span-full');
 
     // conteúdo central: hero, métricas e gráfico
     spaContent.innerHTML = `
@@ -151,7 +278,7 @@ function loadPage(sport) {
         </div>
     `;
 
-    // sidebar direita: horários ideais
+    // sidebar direita: horários ideais para o esporte
     spaSidebarRight.innerHTML = `
         <div class="spa-sidebar-card">
             <h3 class="text-primary flex items-center gap-2">
@@ -168,15 +295,19 @@ function loadPage(sport) {
         </div>
     `;
 
-    // atualiza estado ativo dos botões de navegação
+    // atualiza estado ativo na sidebar
     sportButtons.forEach(btn => btn.classList.remove("active"));
     sportSidebarButtons.forEach(btn => btn.classList.remove("active"));
     document.querySelector(`[data-sport="${sport}"]`)?.classList.add("active");
+
+    // remove destaque do botão "sobre o projeto" ao navegar para um esporte
+    const sobreBtn = document.getElementById('sobreProjetoBtn');
+    if (sobreBtn) sobreBtn.classList.remove('sobre-btn-active');
 }
 
 
 // -------------------------------------------------------------
-// 5. eventos dos botões de esporte na sidebar e no conteúdo
+// 7. eventos dos botões de esporte na sidebar
 // -------------------------------------------------------------
 sportButtons.forEach(btn =>
     btn.addEventListener("click", () => loadPage(btn.dataset.sport))
@@ -188,13 +319,45 @@ sportSidebarButtons.forEach(btn =>
 
 
 // -------------------------------------------------------------
-// 6. carregamento da página inicial padrão
+// 8. carregamento da página inicial padrão
 // -------------------------------------------------------------
 loadPage("home");
 
 
 // -------------------------------------------------------------
-// 7. lógica de busca por localização com sinônimos
+// 9. evento do botão "sobre o projeto" na sidebar
+// -------------------------------------------------------------
+(function initSobreProjeto() {
+    const sobreBtn = document.getElementById('sobreProjetoBtn');
+    if (!sobreBtn) return;
+
+    sobreBtn.addEventListener('click', () => {
+        // remove o destaque de todos os itens de esporte
+        const sidebarItems = document.querySelectorAll('.sport-btn-sidebar');
+        sidebarItems.forEach(item => {
+            item.style.removeProperty('background-color');
+            item.style.removeProperty('color');
+            item.classList.remove('shadow-lg');
+            const icon = item.querySelector('.material-symbols-outlined');
+            const text = item.querySelector('p');
+            if (icon) {
+                icon.style.removeProperty('color');
+                icon.classList.remove('filled');
+            }
+            if (text) text.style.removeProperty('color');
+        });
+
+        // destaca o botão "sobre o projeto"
+        sobreBtn.classList.add('sobre-btn-active');
+
+        // renderiza o conteúdo da aba
+        loadSobreProjeto();
+    });
+})();
+
+
+// -------------------------------------------------------------
+// 10. lógica de busca por localização com sinônimos
 // -------------------------------------------------------------
 const searchInput = document.querySelector('input[placeholder="Buscar localização..."]');
 
@@ -226,22 +389,22 @@ if (searchInput) {
 
 
 // -------------------------------------------------------------
-// 8. controle do drawer de notificações
+// 11. controle do drawer de notificações
 // -------------------------------------------------------------
 (function initNotifications() {
-    const bellBtn      = document.getElementById('notificationBtn');
-    const drawer       = document.getElementById('notificationDrawer');
-    const overlay      = document.getElementById('notificationOverlay');
-    const closeBtn     = document.getElementById('closeNotifications');
-    const markReadBtn  = document.getElementById('markAllReadBtn');
-    const clearBtn     = document.getElementById('clearNotifsBtn');
-    const emptyState   = document.getElementById('emptyState');
-    const badge        = document.getElementById('notifBadge');
-    const listArea     = document.querySelector('#notificationDrawer .flex-1.overflow-y-auto');
+    const bellBtn     = document.getElementById('notificationBtn');
+    const drawer      = document.getElementById('notificationDrawer');
+    const overlay     = document.getElementById('notificationOverlay');
+    const closeBtn    = document.getElementById('closeNotifications');
+    const markReadBtn = document.getElementById('markAllReadBtn');
+    const clearBtn    = document.getElementById('clearNotifsBtn');
+    const emptyState  = document.getElementById('emptyState');
+    const badge       = document.getElementById('notifBadge');
+    const listArea    = document.querySelector('#notificationDrawer .flex-1.overflow-y-auto');
 
     if (!bellBtn || !drawer || !overlay) return;
 
-    // abre o drawer com animação
+    // abre o drawer com animação suave
     function openDrawer() {
         overlay.classList.remove('hidden');
         requestAnimationFrame(() => {
@@ -252,19 +415,19 @@ if (searchInput) {
         });
     }
 
-    // fecha o drawer com animação
+    // fecha o drawer com animação suave
     function closeDrawer() {
         drawer.classList.add('translate-x-[120%]');
         overlay.classList.remove('opacity-100');
         setTimeout(() => overlay.classList.add('hidden'), 300);
     }
 
-    // esconde o badge do sino
+    // esconde o badge numérico do sino
     function hideBadge() {
         if (badge) badge.classList.add('hidden');
     }
 
-    // aplica estado "lidas" às notificações com destaque
+    // marca todas as notificações como lidas visualmente
     function applyReadStyle() {
         if (!listArea) return;
         const highlighted = listArea.querySelectorAll('[class*="bg-orange"]');
@@ -281,29 +444,22 @@ if (searchInput) {
     // limpa todas as notificações e exibe estado vazio
     function applyClearState() {
         if (!listArea || !emptyState) return;
-        // remove todos os grupos de notificações
         const groups = listArea.querySelectorAll('div:not(#emptyState)');
         groups.forEach(g => g.remove());
-        // exibe mensagem de lista vazia
         emptyState.classList.remove('hidden');
         emptyState.classList.add('flex');
         hideBadge();
         localStorage.setItem('sportclima_notifs_status', 'cleared');
     }
 
-    // restaura o estado salvo no localstorage ao carregar
+    // restaura o estado salvo no localstorage
     const savedStatus = localStorage.getItem('sportclima_notifs_status');
-    if (savedStatus === 'cleared') {
-        // aguarda o dom estar pronto
-        setTimeout(applyClearState, 50);
-    } else if (savedStatus === 'read') {
-        setTimeout(applyReadStyle, 50);
-    }
+    if (savedStatus === 'cleared') setTimeout(applyClearState, 50);
+    else if (savedStatus === 'read') setTimeout(applyReadStyle, 50);
 
-    // esconde o badge se já lido ou limpo
     if (savedStatus && badge) badge.classList.add('hidden');
 
-    // eventos
+    // eventos do drawer
     bellBtn.addEventListener('click', openDrawer);
     if (closeBtn)    closeBtn.addEventListener('click', closeDrawer);
     if (markReadBtn) markReadBtn.addEventListener('click', applyReadStyle);
@@ -315,7 +471,7 @@ if (searchInput) {
 
 
 // -------------------------------------------------------------
-// 9. controle do menu de perfil (dropdown do avatar)
+// 12. controle do menu de perfil (dropdown do avatar)
 // -------------------------------------------------------------
 (function initProfileMenu() {
     const trigger = document.getElementById('profileTrigger');
@@ -331,7 +487,7 @@ if (searchInput) {
         }
     });
 
-    // fecha o menu ao clicar fora dele
+    // fecha o menu ao clicar fora
     document.addEventListener('click', (e) => {
         if (!menu.contains(e.target) && e.target !== trigger) {
             menu.classList.add('hidden');
@@ -341,7 +497,7 @@ if (searchInput) {
 
 
 // -------------------------------------------------------------
-// 10. alternância de tema claro/escuro com persistência
+// 13. alternância de tema claro/escuro com persistência
 // -------------------------------------------------------------
 (function initThemeToggle() {
     const toggleBtn = document.getElementById('dark-mode-toggle');
@@ -357,7 +513,6 @@ if (searchInput) {
 
     toggleBtn.addEventListener('click', () => {
         const isDark = html.classList.toggle('dark');
-
         if (isDark) {
             localStorage.setItem('theme', 'dark');
             if (darkIcon) darkIcon.textContent = 'light_mode';
@@ -370,38 +525,38 @@ if (searchInput) {
 
 
 // -------------------------------------------------------------
-// 11. navegação ativa na sidebar com estilos visuais
+// 14. navegação ativa na sidebar com estilos visuais consistentes
 // -------------------------------------------------------------
 (function initSidebarNav() {
-    const items = document.querySelectorAll('.sport-btn-sidebar');
+    const items     = document.querySelectorAll('.sport-btn-sidebar');
     const topSearch = document.querySelector('header input');
     let currentActive = document.querySelector('[data-sport="home"]') || items[0];
 
     function applyActiveStyle(element) {
         if (!element) return;
 
+        // reseta todos os itens de esporte
         items.forEach(item => {
-            item.style.backgroundColor = 'transparent';
-            item.style.color = '';
+            item.style.removeProperty('background-color');
+            item.style.removeProperty('color');
             item.classList.remove('shadow-lg');
             const icon = item.querySelector('.material-symbols-outlined');
             const text = item.querySelector('p');
-            if (icon) {
-                icon.style.removeProperty('color');
-                icon.classList.remove('filled');
-            }
+            if (icon) { icon.style.removeProperty('color'); icon.classList.remove('filled'); }
             if (text) text.style.removeProperty('color');
         });
 
+        // remove destaque do botão "sobre o projeto"
+        const sobreBtn = document.getElementById('sobreProjetoBtn');
+        if (sobreBtn) sobreBtn.classList.remove('sobre-btn-active');
+
+        // aplica destaque ao item clicado
         element.style.backgroundColor = '#f97316';
         element.style.color = 'white';
         element.classList.add('shadow-lg');
         const activeIcon = element.querySelector('.material-symbols-outlined');
         const activeText = element.querySelector('p');
-        if (activeIcon) {
-            activeIcon.style.setProperty('color', 'white', 'important');
-            activeIcon.classList.add('filled');
-        }
+        if (activeIcon) { activeIcon.style.setProperty('color', 'white', 'important'); activeIcon.classList.add('filled'); }
         if (activeText) activeText.style.setProperty('color', 'white', 'important');
         currentActive = element;
     }
@@ -410,7 +565,7 @@ if (searchInput) {
         item.addEventListener('click', () => applyActiveStyle(item));
     });
 
-    // busca no campo do header também ativa o item da sidebar
+    // busca no header também ativa o item correspondente da sidebar
     if (topSearch) {
         topSearch.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
