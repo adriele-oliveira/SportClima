@@ -10,12 +10,12 @@ const sportSidebarButtons = document.querySelectorAll(".sport-btn-sidebar");
 // ----------------------------
 
 const pages = {
-        home: {
-            heroImg: "https://images.unsplash.com/photo-1607962837359-5e7e89f86776?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-            titulo: "Condições Ideais em Boulder",
-            desc: "Céu limpo, brisa leve e temperaturas moderadas.",
-            sidebar: "06h–09h",
-            metrics: {
+    home: {
+        heroImg: "https://images.unsplash.com/photo-1607962837359-5e7e89f86776?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        titulo: "Condições Ideais em Boulder",
+        desc: "Céu limpo, brisa leve e temperaturas moderadas.",
+        sidebar: "06h–09h",
+        metrics: {
             temp: "18°C",
             vento: "5 km/h",
             umidade: "45%",
@@ -28,9 +28,9 @@ const pages = {
             evitar: "13:00 - 16:00"
         }
 
-        },
+    },
 
-        corrida: {
+    corrida: {
         heroImg: "https://images.unsplash.com/photo-1571008887538-b36bb32f4571?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
         titulo: "Condições perfeitas para corrida de trilha",
         desc: "Clima seco, boa visibilidade e temperatura ideal para longas distâncias.",
@@ -40,7 +40,7 @@ const pages = {
             umidade: "45%",
             uv: "2"
         },
-      //  mapImg: "https://images.unsplash.com/photo-1526336024174-e58f5cdd8e13?q=80&w=1000",
+        //  mapImg: "https://images.unsplash.com/photo-1526336024174-e58f5cdd8e13?q=80&w=1000",
         sidebar: {
             melhorHorario: "06:00 - 09:00",
             descricao: "Ar fresco, pouca umidade e ventos fracos.",
@@ -58,7 +58,7 @@ const pages = {
             umidade: "38%",
             uv: "4"
         },
-       // mapImg: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1000",
+        // mapImg: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1000",
         sidebar: {
             melhorHorario: "07:00 - 10:00",
             descricao: "Baixa intensidade UV e temperatura amena.",
@@ -76,7 +76,7 @@ const pages = {
             umidade: "60%",
             uv: "8"
         },
-      //  mapImg: "https://images.unsplash.com/photo-1483683804023-6ccdb62f86ef?q=80&w=1000",
+        //  mapImg: "https://images.unsplash.com/photo-1483683804023-6ccdb62f86ef?q=80&w=1000",
         sidebar: {
             melhorHorario: "05:40 - 08:20",
             descricao: "Ondas longas e vento ideal para manobras.",
@@ -170,7 +170,7 @@ function loadPage(sport) {
         </div>
     `;
 
-    
+
 
     // Atualiza botões ativos
     sportButtons.forEach(btn => btn.classList.remove("active"));
@@ -208,7 +208,7 @@ searchInput.addEventListener("keypress", (e) => {
     if (e.key === "Enter") {
         let query = searchInput.value.toLowerCase().trim();
 
-      
+
         const synonyms = {
             "surfe": "surf",
             "pedalar": "ciclismo",
@@ -224,7 +224,7 @@ searchInput.addEventListener("keypress", (e) => {
 
         if (pages[query]) {
             loadPage(query);
-            searchInput.value = ""; 
+            searchInput.value = "";
         } else {
             alert("Esporte não encontrado. Tente: corrida, surf ou ciclismo.");
         }
@@ -271,7 +271,7 @@ if (overlay) {
 // ---------------------------------------------------------
 (function initPersistentNotifications() {
     const bellBtn = Array.from(document.querySelectorAll('.material-symbols-outlined'))
-                         .find(el => el.textContent.trim() === 'notifications');
+        .find(el => el.textContent.trim() === 'notifications');
     const drawer = document.getElementById('notificationDrawer');
     const overlay = document.getElementById('notificationOverlay');
     const closeBtn = document.getElementById('closeNotifications');
@@ -293,7 +293,7 @@ if (overlay) {
     const applyReadStyle = () => {
         // Encontra todos os cards de notificação dentro do container
         const cards = container.querySelectorAll('.bg-white, .bg-orange-50');
-        
+
         cards.forEach(card => {
             // Aplica o fundo verde claro e remove o destaque de "não lido"
             card.classList.remove('bg-orange-50', 'bg-white');
@@ -333,7 +333,7 @@ if (overlay) {
     // --- 2. CARREGAMENTO INICIAL (PERSISTÊNCIA) ---
 
     const savedStatus = localStorage.getItem('sportclima_notifs_status');
-    
+
     // Adiciona o badge apenas se nunca foi lido ou limpo
     if (!savedStatus && !bellBtn.querySelector('.notification-badge')) {
         bellBtn.style.position = 'relative';
@@ -425,15 +425,15 @@ if (overlay) {
                 const query = topSearch.value.toLowerCase().trim();
                 if (query.length === 0) return;
 
-                const match = Array.from(items).find(i => 
-                    i.getAttribute('data-sport')?.toLowerCase().includes(query) || 
+                const match = Array.from(items).find(i =>
+                    i.getAttribute('data-sport')?.toLowerCase().includes(query) ||
                     i.textContent.toLowerCase().includes(query)
                 );
 
                 if (match) {
                     applyActiveStyle(match);
                     topSearch.value = ""; // Limpa para evitar repetição
-                    topSearch.blur(); 
+                    topSearch.blur();
                 } else {
                     alert(`Nenhum esporte encontrado para: "${topSearch.value}"`);
                     topSearch.value = ""; // Limpa para não dar alerta duplo
@@ -444,4 +444,28 @@ if (overlay) {
         });
     }
     applyActiveStyle(currentActive);
+})();
+
+// --- CONTROLE DO MENU DE PERFIL ---
+(function initProfileMenu() {
+    const trigger = document.getElementById('profileTrigger');
+    const menu = document.getElementById('profileMenu');
+
+    if (!trigger || !menu) return;
+
+    trigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        menu.classList.toggle('hidden');
+        // Adiciona uma pequena animação de entrada
+        if (!menu.classList.contains('hidden')) {
+            menu.style.animation = 'profileFadeIn 0.2s ease-out';
+        }
+    });
+
+    // Fecha o menu se clicar em qualquer outro lugar da tela
+    document.addEventListener('click', (e) => {
+        if (!menu.contains(e.target) && e.target !== trigger) {
+            menu.classList.add('hidden');
+        }
+    });
 })();

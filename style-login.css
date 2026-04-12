@@ -1,0 +1,74 @@
+/* Configurações de Cores e Fontes baseadas no seu projeto SportClima */
+:root {
+    --primary: #f27f0d;
+    --background: #f8f7f5;
+    --on-background: #241912;
+    --surface-low: #f8f7f5;
+}
+
+body {
+    font-family: 'Lexend', sans-serif;
+}
+
+/* Utilitários para os Inputs */
+.input-field {
+    width: 100%;
+    padding: 1rem 1rem 1rem 3rem;
+    border-radius: 0.75rem;
+    border: none;
+    background-color: var(--surface-low);
+    color: var(--on-background);
+    transition: all 0.2s;
+    outline: none;
+}
+
+.input-field:focus {
+    box-shadow: 0 0 0 2px rgba(242, 127, 13, 0.2);
+    background-color: white;
+}
+
+/* Botão Principal */
+.btn-primary {
+    width: 100%;
+    background-color: var(--primary);
+    color: white;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    font-weight: bold;
+    font-size: 1.125rem;
+    transition: all 0.2s;
+    box-shadow: 0 10px 15px -3px rgba(242, 127, 13, 0.2);
+}
+
+.btn-primary:hover {
+    background-color: #ea7400;
+}
+
+.btn-primary:active {
+    transform: scale(0.98);
+}
+
+/* Footer do Login */
+.footer-legal {
+    margin-top: 4rem;
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    font-size: 10px;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: bold;
+}
+
+.footer-legal a:hover {
+    color: var(--primary);
+}
+
+body {
+    font-family: 'Lexend', sans-serif;
+}
+
+.material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}

@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
-    <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Dashboard SportClima</title>
 
     <!-- Tailwind -->
@@ -12,8 +13,10 @@
     <link rel="stylesheet" href="styles.css">
 
     <!-- Fontes -->
-    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
 
     <script id="tailwind-config">
         tailwind.config = {
@@ -34,176 +37,242 @@
 </head>
 
 <body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
-<div class="layout-container flex h-full grow flex-col">
+    <div class="layout-container flex h-full grow flex-col">
 
-    <!-- HEADER ORIGINAL -->
-    <header class="flex items-center justify-between whitespace-nowrap border-b border-primary/10 px-6 md:px-10 py-3 bg-background-light/80 backdrop-blur-md sticky top-0 z-50">
-        <div class="flex items-center gap-8">
-            <div class="flex items-center gap-4 text-primary">
-                <div class="size-8 flex items-center justify-center bg-primary/10 rounded-lg">
-                    <span class="material-symbols-outlined filled">wb_sunny</span>
-                </div>
-                <h2 class="text-slate-900 dark:text-slate-100 text-lg font-bold">SportClima</h2>
-            </div>
-        </div>
-
-        <!-- PARTE DIREITA DO HEADER -->
-        <div class="flex flex-1 justify-end gap-4 md:gap-8 items-center">
-            <label class="hidden sm:flex flex-col min-w-40 !h-10 max-w-64">
-                <div class="flex w-full flex-1 items-stretch rounded-xl h-full">
-                    <div class="text-primary flex bg-primary/5 items-center justify-center pl-4 rounded-l-xl">
-                        <span class="material-symbols-outlined text-[20px]">search</span>
+        <!-- HEADER ORIGINAL -->
+        <header
+            class="flex items-center justify-between whitespace-nowrap border-b border-primary/10 px-6 md:px-10 py-3 bg-background-light/80 backdrop-blur-md sticky top-0 z-50">
+            <div class="flex items-center gap-8">
+                <div class="flex items-center gap-4 text-primary">
+                    <div class="size-8 flex items-center justify-center bg-primary/10 rounded-lg">
+                        <span class="material-symbols-outlined filled">wb_sunny</span>
                     </div>
-                    <input class="form-input flex w-full min-w-0 flex-1 rounded-r-xl bg-primary/5 h-full px-4 pl-2 text-sm placeholder:text-slate-400" placeholder="Buscar localização..."/>
+                    <h2 class="text-slate-900 dark:text-slate-100 text-lg font-bold">SportClima</h2>
                 </div>
-            </label>
+            </div>
 
-            <div class="flex items-center gap-3">
-                <span class="material-symbols-outlined text-slate-500 cursor-pointer">notifications</span>
-                <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border-2 border-primary/20" 
-                     style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDu10AVADf3jxf9qIsTkMffIB00rDsowymux5Z1I8DtpmmBEyHmvwHERPcCGapsoq6rx1qEq-R5FA9Hd8UDEAmLVfH5JwpzEmlyDk7IWtLY4IZACVIoSWKYtmMm5RbSUwoseKe1RuKqzVTImhtlEqZH71GJEJ_SU3ttzyfN8xgrEOtoL537Jtmr6dElNHAC488zGvCSuUk5FzduZwGBQbH72pVj8nALdKKJgSXZco5Eo6gamtL09u1YwB1KzE4b8t1JSoK98kEiGhU");'>
+            <!-- PARTE DIREITA DO HEADER -->
+            <div class="flex flex-1 justify-end gap-4 md:gap-8 items-center">
+                <label class="hidden sm:flex flex-col min-w-40 !h-10 max-w-64">
+                    <div class="flex w-full flex-1 items-stretch rounded-xl h-full">
+                        <div class="text-primary flex bg-primary/5 items-center justify-center pl-4 rounded-l-xl">
+                            <span class="material-symbols-outlined text-[20px]">search</span>
+                        </div>
+                        <input
+                            class="form-input flex w-full min-w-0 flex-1 rounded-r-xl bg-primary/5 h-full px-4 pl-2 text-sm placeholder:text-slate-400"
+                            placeholder="Buscar localização..." />
+                    </div>
+                </label>
+
+                <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-slate-500 cursor-pointer">notifications</span>
+                    <div id="profileTrigger"
+                        class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border-2 border-primary/20 cursor-pointer"
+                        style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDu10AVADf3jxf9qIsTkMffIB00rDsowymux5Z1I8DtpmmBEyHmvwHERPcCGapsoq6rx1qEq-R5FA9Hd8UDEAmLVfH5JwpzEmlyDk7IWtLY4IZACVIoSWKYtmMm5RbSUwoseKe1RuKqzVTImhtlEqZH71GJEJ_SU3ttzyfN8xgrEOtoL537Jtmr6dElNHAC488zGvCSuUk5FzduZwGBQbH72pVj8nALdKKJgSXZco5Eo6gamtL09u1YwB1KzE4b8t1JSoK98kEiGhU");'>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- LAYOUT PRINCIPAL -->
+        <main class="flex flex-1 flex-col lg:flex-row gap-6 p-4 md:p-8 max-w-[1440px] mx-auto w-full">
+
+            <aside class="w-full lg:w-64 flex flex-col gap-6">
+                <div id="sidebarMenu" class="flex flex-col gap-2">
+                    <div data-sport="home"
+                        class="sport-btn-sidebar flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-all duration-300 bg-primary text-white shadow-lg shadow-primary/20">
+                        <span class="material-symbols-outlined filled">dashboard</span>
+                        <p class="text-sm font-semibold">Visão geral</p>
+                    </div>
+
+                    <div data-sport="corrida"
+                        class="sport-btn-sidebar flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-all duration-300 text-slate-500 hover:bg-primary/10 group">
+                        <span class="material-symbols-outlined group-hover:text-primary">directions_run</span>
+                        <p class="text-sm font-medium">Corrida</p>
+                    </div>
+
+                    <div data-sport="surf"
+                        class="sport-btn-sidebar flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-all duration-300 text-slate-500 hover:bg-primary/10 group">
+                        <span class="material-symbols-outlined group-hover:text-primary">surfing</span>
+                        <p class="text-sm font-medium">Surfe</p>
+                    </div>
+
+                    <div data-sport="ciclismo"
+                        class="sport-btn-sidebar flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-all duration-300 text-slate-500 hover:bg-primary/10 group">
+                        <span class="material-symbols-outlined group-hover:text-primary">mountain_flag</span>
+                        <p class="text-sm font-medium">Ciclismo</p>
+                    </div>
+                </div>
+
+                <div class="rounded-xl p-5 bg-orange-50 border border-primary/20">
+                    <div class="flex items-center gap-2 mb-3 text-primary">
+                        <span class="material-symbols-outlined filled text-[20px]">warning</span>
+                        <h3 class="font-bold text-sm">Alertas de Segurança</h3>
+                    </div>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Alto índice de calor esperado entre 14h e 17h. Mantenha-se hidratado e evite trilhas expostas.
+                    </p>
+                    <button class="mt-4 text-xs font-bold text-primary hover:underline">Ver detalhes</button>
+                </div>
+            </aside>
+
+            <!-- ÁREA CENTRAL DINÂMICA SPA -->
+            <div id="spaContent" class="flex-1 flex flex-col gap-6"></div>
+
+            <!-- SIDEBAR DIREITA DINÂMICA SPA -->
+            <aside id="spaSidebarRight" class="w-full lg:w-80 flex flex-col gap-6"></aside>
+
+        </main>
+
+        <!-- FOOTER ORIGINAL -->
+        <footer class="border-t border-primary/10 p-6 text-center text-slate-500 text-xs">
+            <p>© 2026 SportClima. Projetado para os obcecados em esportes.</p>
+        </footer>
+    </div>
+    <div id="notificationOverlay"
+        class="fixed inset-0 bg-slate-900/20 backdrop-blur-sm z-[60] hidden opacity-0 transition-opacity duration-300 cursor-pointer">
+    </div>
+
+    <div id="notificationDrawer"
+        class="fixed top-4 right-4 bottom-4 w-full max-w-sm bg-white dark:bg-background-dark rounded-2xl shadow-2xl shadow-slate-900/10 z-[70] transform translate-x-[120%] transition-transform duration-300 flex flex-col overflow-hidden border border-slate-100 dark:border-slate-800">
+
+        <div class="p-6 pb-4 border-b border-slate-100 dark:border-slate-800/50">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-black text-slate-900 dark:text-slate-100">Notificações</h2>
+                <button id="closeNotifications"
+                    class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors p-1 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800">
+                    <span class="material-symbols-outlined text-[20px]">close</span>
+                </button>
+            </div>
+            <div class="flex items-center justify-between gap-4">
+                <button
+                    class="flex-1 bg-orange-50 dark:bg-primary/10 text-primary text-xs font-bold py-2 rounded-xl hover:bg-orange-100 dark:hover:bg-primary/20 transition-colors">Marcar
+                    todas como lidas</button>
+                <button
+                    class="text-slate-500 text-xs font-medium hover:text-slate-700 transition-colors px-2">Limpar</button>
+            </div>
+        </div>
+
+        <div class="flex-1 overflow-y-auto p-6 space-y-6 hide-scrollbar">
+            <div id="emptyState" class="hidden flex-col items-center justify-center h-full text-center space-y-3">
+                <div class="size-16 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center">
+                    <span class="material-symbols-outlined text-slate-300 text-3xl">notifications_off</span>
+                </div>
+                <p class="text-slate-500 text-sm">Você não possui notificações no momento.</p>
+            </div>
+
+            <div>
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Agora</p>
+                <div
+                    class="relative bg-orange-50/50 dark:bg-orange-900/10 p-3 rounded-xl border border-orange-100 dark:border-orange-900/30 flex gap-4 cursor-pointer hover:bg-orange-50 transition-colors group">
+                    <div class="absolute top-4 right-4 size-2 bg-primary rounded-full"></div>
+                    <div
+                        class="size-10 bg-red-100 dark:bg-red-900/30 text-red-600 rounded-xl flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined">air</span>
+                    </div>
+                    <div class="pr-4">
+                        <h4 class="text-sm font-bold text-slate-900 dark:text-slate-100 leading-tight">Alerta de Vento
+                            Forte - Rajadas de 40km/h previstas para as 16:00</h4>
+                        <p class="text-xs text-slate-500 mt-1">Acabou de chegar • Estação Base A</p>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Hoje</p>
+                <div class="space-y-3">
+                    <div
+                        class="p-3 rounded-xl flex gap-4 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border border-transparent">
+                        <div
+                            class="size-10 bg-green-100 dark:bg-green-900/30 text-green-600 rounded-xl flex items-center justify-center shrink-0">
+                            <span class="material-symbols-outlined">directions_run</span>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-semibold text-slate-900 dark:text-slate-100 leading-tight">Condições
+                                Ideais para Corrida - Temperatura de 22°C em Malibu</h4>
+                            <p class="text-xs text-slate-500 mt-1">há 2 horas • Requisito de performance atingido</p>
+                        </div>
+                    </div>
+                    <div
+                        class="p-3 rounded-xl flex gap-4 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border border-transparent">
+                        <div
+                            class="size-10 bg-blue-100 dark:bg-blue-900/30 text-blue-600 rounded-xl flex items-center justify-center shrink-0">
+                            <span class="material-symbols-outlined">surfing</span>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-semibold text-slate-900 dark:text-slate-100 leading-tight">Relatório
+                                de Surf Atualizado - Ondas de 4-6ft em North Shore</h4>
+                            <p class="text-xs text-slate-500 mt-1">há 5 horas • Update oceânico</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Ontem</p>
+                <div
+                    class="p-3 rounded-xl flex gap-4 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border border-transparent opacity-80">
+                    <div
+                        class="size-10 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-xl flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined">history</span>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-medium text-slate-800 dark:text-slate-300 leading-tight">Histórico de
+                            ontem disponível para consulta</h4>
+                        <p class="text-xs text-slate-500 mt-1">Ontem às 20:00 • Logs de sistema</p>
+                    </div>
                 </div>
             </div>
         </div>
-    </header>
 
-    <!-- LAYOUT PRINCIPAL -->
-    <main class="flex flex-1 flex-col lg:flex-row gap-6 p-4 md:p-8 max-w-[1440px] mx-auto w-full">
-
-       <aside class="w-full lg:w-64 flex flex-col gap-6">
-    <div id="sidebarMenu" class="flex flex-col gap-2">
-        <div data-sport="home" class="sport-btn-sidebar flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-all duration-300 bg-primary text-white shadow-lg shadow-primary/20">
-            <span class="material-symbols-outlined filled">dashboard</span>
-            <p class="text-sm font-semibold">Visão geral</p>
-        </div>
-
-        <div data-sport="corrida" class="sport-btn-sidebar flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-all duration-300 text-slate-500 hover:bg-primary/10 group">
-            <span class="material-symbols-outlined group-hover:text-primary">directions_run</span>
-            <p class="text-sm font-medium">Corrida</p>
-        </div>
-
-        <div data-sport="surf" class="sport-btn-sidebar flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-all duration-300 text-slate-500 hover:bg-primary/10 group">
-            <span class="material-symbols-outlined group-hover:text-primary">surfing</span>
-            <p class="text-sm font-medium">Surfe</p>
-        </div>
-
-        <div data-sport="ciclismo" class="sport-btn-sidebar flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-all duration-300 text-slate-500 hover:bg-primary/10 group">
-            <span class="material-symbols-outlined group-hover:text-primary">mountain_flag</span>
-            <p class="text-sm font-medium">Ciclismo</p>
-        </div>
-    </div>
-
-    <div class="rounded-xl p-5 bg-orange-50 border border-primary/20">
-        <div class="flex items-center gap-2 mb-3 text-primary">
-            <span class="material-symbols-outlined filled text-[20px]">warning</span>
-            <h3 class="font-bold text-sm">Alertas de Segurança</h3>
-        </div>
-        <p class="text-xs text-slate-600 leading-relaxed">
-            Alto índice de calor esperado entre 14h e 17h. Mantenha-se hidratado e evite trilhas expostas.
-        </p>
-        <button class="mt-4 text-xs font-bold text-primary hover:underline">Ver detalhes</button>
-    </div>
-</aside>
-
-        <!-- ÁREA CENTRAL DINÂMICA SPA -->
-        <div id="spaContent" class="flex-1 flex flex-col gap-6"></div>
-
-        <!-- SIDEBAR DIREITA DINÂMICA SPA -->
-        <aside id="spaSidebarRight" class="w-full lg:w-80 flex flex-col gap-6"></aside>
-
-    </main>
-
-    <!-- FOOTER ORIGINAL -->
-    <footer class="border-t border-primary/10 p-6 text-center text-slate-500 text-xs">
-        <p>© 2026 SportClima. Projetado para os obcecados em esportes.</p>
-    </footer>
-</div>
-<div id="notificationOverlay" class="fixed inset-0 bg-slate-900/20 backdrop-blur-sm z-[60] hidden opacity-0 transition-opacity duration-300 cursor-pointer"></div>
-
-<div id="notificationDrawer" class="fixed top-4 right-4 bottom-4 w-full max-w-sm bg-white dark:bg-background-dark rounded-2xl shadow-2xl shadow-slate-900/10 z-[70] transform translate-x-[120%] transition-transform duration-300 flex flex-col overflow-hidden border border-slate-100 dark:border-slate-800">
-    
-    <div class="p-6 pb-4 border-b border-slate-100 dark:border-slate-800/50">
-        <div class="flex items-center justify-between mb-4">
-            <h2 class="text-xl font-black text-slate-900 dark:text-slate-100">Notificações</h2>
-            <button id="closeNotifications" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors p-1 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800">
-                <span class="material-symbols-outlined text-[20px]">close</span>
+        <div class="p-4 border-t border-slate-100 dark:border-slate-800/50 bg-white dark:bg-background-dark">
+            <button
+                class="w-full flex items-center justify-center gap-2 py-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-sm font-bold text-slate-700 dark:text-slate-300 transition-colors">
+                <span class="material-symbols-outlined text-[18px]">settings</span>
+                Preferências de Alerta
             </button>
         </div>
-        <div class="flex items-center justify-between gap-4">
-            <button class="flex-1 bg-orange-50 dark:bg-primary/10 text-primary text-xs font-bold py-2 rounded-xl hover:bg-orange-100 dark:hover:bg-primary/20 transition-colors">Marcar todas como lidas</button>
-            <button class="text-slate-500 text-xs font-medium hover:text-slate-700 transition-colors px-2">Limpar</button>
-        </div>
     </div>
-
-    <div class="flex-1 overflow-y-auto p-6 space-y-6 hide-scrollbar">
-        <div id="emptyState" class="hidden flex-col items-center justify-center h-full text-center space-y-3">
-            <div class="size-16 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center">
-                <span class="material-symbols-outlined text-slate-300 text-3xl">notifications_off</span>
-            </div>
-            <p class="text-slate-500 text-sm">Você não possui notificações no momento.</p>
-        </div>
-
-        <div>
-            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Agora</p>
-            <div class="relative bg-orange-50/50 dark:bg-orange-900/10 p-3 rounded-xl border border-orange-100 dark:border-orange-900/30 flex gap-4 cursor-pointer hover:bg-orange-50 transition-colors group">
-                <div class="absolute top-4 right-4 size-2 bg-primary rounded-full"></div>
-                <div class="size-10 bg-red-100 dark:bg-red-900/30 text-red-600 rounded-xl flex items-center justify-center shrink-0">
-                    <span class="material-symbols-outlined">air</span>
+    <div id="profileMenu"
+        class="hidden fixed top-16 right-6 w-72 bg-white rounded-xl shadow-[0_20px_50px_rgba(242,127,13,0.15)] border border-stone-100 overflow-hidden z-[100]">
+        <div class="p-5 border-b border-stone-50 bg-stone-50/50">
+            <div class="flex items-center gap-4">
+                <div class="h-12 w-12 rounded-xl bg-orange-100 flex items-center justify-center text-orange-500">
+                    <span class="material-symbols-outlined text-3xl">account_circle</span>
                 </div>
-                <div class="pr-4">
-                    <h4 class="text-sm font-bold text-slate-900 dark:text-slate-100 leading-tight">Alerta de Vento Forte - Rajadas de 40km/h previstas para as 16:00</h4>
-                    <p class="text-xs text-slate-500 mt-1">Acabou de chegar • Estação Base A</p>
+                <div class="flex flex-col">
+                    <span class="text-slate-900 font-bold text-sm tracking-tight">Bem-vindo!</span>
+                    <span class="text-slate-500 text-xs">Visitante</span>
                 </div>
             </div>
         </div>
-
-        <div>
-            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Hoje</p>
-            <div class="space-y-3">
-                <div class="p-3 rounded-xl flex gap-4 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border border-transparent">
-                    <div class="size-10 bg-green-100 dark:bg-green-900/30 text-green-600 rounded-xl flex items-center justify-center shrink-0">
-                        <span class="material-symbols-outlined">directions_run</span>
-                    </div>
-                    <div>
-                        <h4 class="text-sm font-semibold text-slate-900 dark:text-slate-100 leading-tight">Condições Ideais para Corrida - Temperatura de 22°C em Malibu</h4>
-                        <p class="text-xs text-slate-500 mt-1">há 2 horas • Requisito de performance atingido</p>
-                    </div>
-                </div>
-                <div class="p-3 rounded-xl flex gap-4 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border border-transparent">
-                    <div class="size-10 bg-blue-100 dark:bg-blue-900/30 text-blue-600 rounded-xl flex items-center justify-center shrink-0">
-                        <span class="material-symbols-outlined">surfing</span>
-                    </div>
-                    <div>
-                        <h4 class="text-sm font-semibold text-slate-900 dark:text-slate-100 leading-tight">Relatório de Surf Atualizado - Ondas de 4-6ft em North Shore</h4>
-                        <p class="text-xs text-slate-500 mt-1">há 5 horas • Update oceânico</p>
-                    </div>
-                </div>
-            </div>
+        <div class="px-5 py-3 bg-orange-50/30 border-b border-stone-50">
+            <p class="text-xs text-slate-600 leading-relaxed">Faça login para acessar seu perfil, histórico e
+                configurações personalizadas.</p>
         </div>
-
-        <div>
-            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Ontem</p>
-            <div class="p-3 rounded-xl flex gap-4 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border border-transparent opacity-80">
-                <div class="size-10 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-xl flex items-center justify-center shrink-0">
-                    <span class="material-symbols-outlined">history</span>
-                </div>
-                <div>
-                    <h4 class="text-sm font-medium text-slate-800 dark:text-slate-300 leading-tight">Histórico de ontem disponível para consulta</h4>
-                    <p class="text-xs text-slate-500 mt-1">Ontem às 20:00 • Logs de sistema</p>
-                </div>
+        <nav class="py-2">
+            <div class="px-5 py-3">
+                <a href="login.html"
+                    class="w-full bg-primary text-white py-2.5 rounded-lg text-sm font-bold shadow-lg shadow-orange-500/20 hover:bg-orange-600 transition-colors text-center block">
+                    Entrar / Cadastrar
+                </a>
             </div>
-        </div>
+            <a class="flex items-center gap-3 px-5 py-3 text-slate-600 hover:bg-orange-50 hover:text-primary transition-colors group"
+                href="#">
+                <span class="material-symbols-outlined text-[20px]">person</span>
+                <span class="text-sm font-medium">Meu Perfil</span>
+            </a>
+            <a class="flex items-center gap-3 px-5 py-3 text-slate-600 hover:bg-orange-50 hover:text-primary transition-colors group"
+                href="#">
+                <span class="material-symbols-outlined text-[20px]">settings</span>
+                <span class="text-sm font-medium">Configurações</span>
+            </a>
+        </nav>
+        <div class="h-1 w-full bg-gradient-to-r from-orange-500 via-orange-600 to-orange-400"></div>
     </div>
-
-    <div class="p-4 border-t border-slate-100 dark:border-slate-800/50 bg-white dark:bg-background-dark">
-        <button class="w-full flex items-center justify-center gap-2 py-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-sm font-bold text-slate-700 dark:text-slate-300 transition-colors">
-            <span class="material-symbols-outlined text-[18px]">settings</span>
-            Preferências de Alerta
-        </button>
-    </div>
-</div>
-<!-- SCRIPT SPA -->
-<script src="script.js"></script>
+    <!-- SCRIPT SPA -->
+    <script src="script.js"></script>
 
 </body>
+
 </html>

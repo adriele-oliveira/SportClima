@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html class="light" lang="pt-br">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Entrar no SportClima</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="style-login.css">
+</head>
+
+<body class="bg-[#f8f7f5] text-[#241912] min-h-screen flex flex-col md:flex-row overflow-hidden">
+    <section class="hidden md:flex md:w-1/2 lg:w-3/5 relative overflow-hidden">
+        <img class="absolute inset-0 w-full h-full object-cover"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCF8SbrAsZd2iQCAI_Oaze1jQ1pyKehAmGBgkSRQ4yfoejKv-ZU1M4sItTnCTgTDBdYnxcKpyhTA1tiffOamEm_BTpJq6vpMGySaJwSGpo5zXv2t-w_M4G-QVKsguZ4C5ClC_IefB_egODN4-aL3-WiJzokMQ9CTn5aXFe_bR0eU74HGXpmFnoRyrYoTnOCwZueYmCNMjWwX0ly8f5FJ30XmBUcdSkEkPKXYFZDd61z8EH1Yb5nkb2DnyhiKj2H5qCFFfdjf8Kg7b4"
+            alt="Atleta SportClima" />
+        <div class="absolute inset-0 bg-gradient-to-t from-[#241912]/80 via-transparent to-transparent"></div>
+        <div class="relative z-10 p-16 flex flex-col justify-end h-full">
+            <span
+                class="inline-block bg-[#f27f0d] text-white px-4 py-1 rounded-full text-xs font-bold uppercase mb-4 w-fit">PROJETO
+                ACADÊMICO</span>
+            <h1 class="text-7xl font-black text-white leading-tight">SportClima</h1>
+            <p class="text-white/80 font-medium">Excelência em cada batida, precisão em cada passo.</p>
+        </div>
+    </section>
+    <main class="w-full md:w-1/2 lg:w-2/5 flex items-center justify-center p-8 bg-white">
+        <div class="w-full max-w-md">
+            <div class="mb-12">
+                <span class="text-3xl font-black text-[#f27f0d] italic">SportClima</span>
+                <h2 class="text-2xl font-bold mt-4">Entrar no SportClima</h2>
+                <p class="text-slate-500">Bem-vindo de volta à sua jornada.</p>
+            </div>
+            <form id="login-form" class="space-y-6">
+                <div>
+                    <label class="text-xs font-bold uppercase text-slate-500" for="email">E-mail</label>
+                    <input
+                        class="w-full p-4 rounded-xl bg-slate-100 border-none outline-none focus:ring-2 focus:ring-[#f27f0d]/20"
+                        id="email" type="email" required />
+                </div>
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold uppercase tracking-widest text-slate-500 ml-1"
+                        for="password">Senha</label>
+                    <div class="relative group">
+                        <span
+                            class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#f27f0d] transition-colors">lock</span>
+                        <input
+                            class="w-full pl-12 pr-4 py-4 rounded-xl border-none bg-slate-100 text-[#241912] placeholder-slate-400 focus:ring-2 focus:ring-[#f27f0d]/20 focus:bg-white transition-all outline-none"
+                            id="password" placeholder="••••••••" type="password" required />
+                    </div>
+                    <div class="flex justify-end pr-1">
+                        <a class="text-xs font-bold text-[#f27f0d] hover:underline" href="#">Esqueceu a senha?</a>
+                    </div>
+                </div>
+                <button
+                    class="w-full bg-[#f27f0d] text-white py-4 rounded-xl font-bold shadow-lg shadow-[#f27f0d]/20 hover:bg-orange-600 transition-all"
+                    type="submit">Login</button>
+            </form>
+        </div>
+    </main>
+    <script src="script-login.js"></script>
+</body>
+
+</html>
