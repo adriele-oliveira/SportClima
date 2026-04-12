@@ -1,33 +1,50 @@
-// Seletores principais
-const spaContent = document.getElementById("spaContent");
-const spaSidebarRight = document.getElementById("spaSidebarRight");
-const sportButtons = document.querySelectorAll(".sport-btn");
+// =============================================================
+// sportclima — script.js
+// controla: spa, navegação, busca, notificações, perfil e tema
+// =============================================================
+
+
+// -------------------------------------------------------------
+// 1. aplicação imediata do tema (evita flash ao carregar)
+// -------------------------------------------------------------
+(function applyThemeOnLoad() {
+    const saved = localStorage.getItem('theme');
+    if (saved === 'dark') {
+        document.documentElement.classList.add('dark');
+    } else {
+        document.documentElement.classList.remove('dark');
+    }
+})();
+
+
+// -------------------------------------------------------------
+// 2. seletores principais da spa
+// -------------------------------------------------------------
+const spaContent       = document.getElementById("spaContent");
+const spaSidebarRight  = document.getElementById("spaSidebarRight");
+const sportButtons     = document.querySelectorAll(".sport-btn");
 const sportSidebarButtons = document.querySelectorAll(".sport-btn-sidebar");
 
 
-// ----------------------------
-// DADOS DAS PÁGINAS DE ESPORTE
-// ----------------------------
-
+// -------------------------------------------------------------
+// 3. dados das páginas de esporte
+// -------------------------------------------------------------
 const pages = {
     home: {
         heroImg: "https://images.unsplash.com/photo-1607962837359-5e7e89f86776?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
         titulo: "Condições Ideais em Boulder",
         desc: "Céu limpo, brisa leve e temperaturas moderadas.",
-        sidebar: "06h–09h",
         metrics: {
             temp: "18°C",
             vento: "5 km/h",
             umidade: "45%",
             uv: "2"
         },
-        //mapImg: "https://images.unsplash.com/photo-1526336024174-e58f5cdd8e13?q=80&w=1000",
         sidebar: {
             melhorHorario: "06:00 - 09:00",
             descricao: "Ar fresco, pouca umidade e ventos fracos.",
             evitar: "13:00 - 16:00"
         }
-
     },
 
     corrida: {
@@ -40,7 +57,6 @@ const pages = {
             umidade: "45%",
             uv: "2"
         },
-        //  mapImg: "https://images.unsplash.com/photo-1526336024174-e58f5cdd8e13?q=80&w=1000",
         sidebar: {
             melhorHorario: "06:00 - 09:00",
             descricao: "Ar fresco, pouca umidade e ventos fracos.",
@@ -58,7 +74,6 @@ const pages = {
             umidade: "38%",
             uv: "4"
         },
-        // mapImg: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1000",
         sidebar: {
             melhorHorario: "07:00 - 10:00",
             descricao: "Baixa intensidade UV e temperatura amena.",
@@ -76,7 +91,6 @@ const pages = {
             umidade: "60%",
             uv: "8"
         },
-        //  mapImg: "https://images.unsplash.com/photo-1483683804023-6ccdb62f86ef?q=80&w=1000",
         sidebar: {
             melhorHorario: "05:40 - 08:20",
             descricao: "Ondas longas e vento ideal para manobras.",
@@ -86,16 +100,13 @@ const pages = {
 };
 
 
-// ----------------------------
-// FUNÇÃO PRINCIPAL DA SPA
-// ----------------------------
-
+// -------------------------------------------------------------
+// 4. função principal da spa — renderiza conteúdo central e sidebar
+// -------------------------------------------------------------
 function loadPage(sport) {
     const data = pages[sport];
 
-    // ----------------------------
-    // CENTRAL
-    // ----------------------------
+    // conteúdo central: hero, métricas e gráfico
     spaContent.innerHTML = `
         <div class="spa-hero group">
             <div class="spa-hero-bg" style="background-image: linear-gradient(to top,rgba(0,0,0,.8),rgba(0,0,0,.2)), url('${data.heroImg}')"></div>
@@ -106,29 +117,29 @@ function loadPage(sport) {
             </div>
         </div>
 
-        <!-- MÉTRICAS -->
+        <!-- cards de métricas climáticas -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
             <div class="metric-card">
-                <p class="text-sm text-slate-500">Temperatura</p>
-                <h4 class="text-2xl font-bold mt-1">${data.metrics.temp}</h4>
+                <p class="text-sm text-slate-500 dark:text-slate-400">Temperatura</p>
+                <h4 class="text-2xl font-bold mt-1 dark:text-slate-100">${data.metrics.temp}</h4>
             </div>
             <div class="metric-card">
-                <p class="text-sm text-slate-500">Vento</p>
-                <h4 class="text-2xl font-bold mt-1">${data.metrics.vento}</h4>
+                <p class="text-sm text-slate-500 dark:text-slate-400">Vento</p>
+                <h4 class="text-2xl font-bold mt-1 dark:text-slate-100">${data.metrics.vento}</h4>
             </div>
             <div class="metric-card">
-                <p class="text-sm text-slate-500">Umidade</p>
-                <h4 class="text-2xl font-bold mt-1">${data.metrics.umidade}</h4>
+                <p class="text-sm text-slate-500 dark:text-slate-400">Umidade</p>
+                <h4 class="text-2xl font-bold mt-1 dark:text-slate-100">${data.metrics.umidade}</h4>
             </div>
             <div class="metric-card">
-                <p class="text-sm text-slate-500">Índice UV</p>
-                <h4 class="text-2xl font-bold mt-1">${data.metrics.uv}</h4>
+                <p class="text-sm text-slate-500 dark:text-slate-400">Índice UV</p>
+                <h4 class="text-2xl font-bold mt-1 dark:text-slate-100">${data.metrics.uv}</h4>
             </div>
         </div>
 
-        <!-- GRÁFICO -->
+        <!-- gráfico de variação horária -->
         <div class="chart-container mt-6">
-            <h3 class="text-lg font-bold mb-4">Variação Horária</h3>
+            <h3 class="text-lg font-bold mb-4 dark:text-slate-100">Variação Horária</h3>
             <div class="flex items-end h-32">
                 <div class="chart-bar" style="height:80px"></div>
                 <div class="chart-bar" style="height:110px"></div>
@@ -138,52 +149,35 @@ function loadPage(sport) {
                 <div class="chart-bar" style="height:120px"></div>
             </div>
         </div>
-
-        <!-- MAPA 
-        <div class="map-box mt-6" style="background-image:url('${data.mapImg}')">
-            <div class="map-overlay">
-                <div class="map-ping"></div>
-            </div>
-        </div>-->
     `;
 
-
-    // ----------------------------
-    // SIDEBAR DIREITO VARIÁVEL
-    // ----------------------------
+    // sidebar direita: horários ideais
     spaSidebarRight.innerHTML = `
         <div class="spa-sidebar-card">
             <h3 class="text-primary flex items-center gap-2">
                 <span class="material-symbols-outlined">schedule</span>
                 Horários Ideais
             </h3>
-
-            <p class="text-xs text-slate-600 mt-2">
+            <p class="text-xs text-slate-600 dark:text-slate-400 mt-2">
                 <strong>Melhor horário:</strong> ${data.sidebar.melhorHorario}
             </p>
-
-            <p class="text-xs text-slate-600 mt-1">${data.sidebar.descricao}</p>
-
-            <p class="text-xs text-red-600 mt-3">
+            <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">${data.sidebar.descricao}</p>
+            <p class="text-xs text-red-600 dark:text-red-400 mt-3">
                 <strong>Evitar:</strong> ${data.sidebar.evitar}
             </p>
         </div>
     `;
 
-
-
-    // Atualiza botões ativos
+    // atualiza estado ativo dos botões de navegação
     sportButtons.forEach(btn => btn.classList.remove("active"));
     sportSidebarButtons.forEach(btn => btn.classList.remove("active"));
-
     document.querySelector(`[data-sport="${sport}"]`)?.classList.add("active");
 }
 
 
-// ----------------------------
-// EVENTOS
-// ----------------------------
-
+// -------------------------------------------------------------
+// 5. eventos dos botões de esporte na sidebar e no conteúdo
+// -------------------------------------------------------------
 sportButtons.forEach(btn =>
     btn.addEventListener("click", () => loadPage(btn.dataset.sport))
 );
@@ -193,213 +187,210 @@ sportSidebarButtons.forEach(btn =>
 );
 
 
-// ----------------------------
-// CARREGAR PÁGINA INICIAL PADRÃO
-// ----------------------------
+// -------------------------------------------------------------
+// 6. carregamento da página inicial padrão
+// -------------------------------------------------------------
 loadPage("home");
 
-// ----------------------------
-// LOGICA DE PESQUISA COM SINÔNIMOS
-// ----------------------------
 
+// -------------------------------------------------------------
+// 7. lógica de busca por localização com sinônimos
+// -------------------------------------------------------------
 const searchInput = document.querySelector('input[placeholder="Buscar localização..."]');
 
-searchInput.addEventListener("keypress", (e) => {
-    if (e.key === "Enter") {
-        let query = searchInput.value.toLowerCase().trim();
+if (searchInput) {
+    searchInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") {
+            let query = searchInput.value.toLowerCase().trim();
 
+            const synonyms = {
+                "surfe":     "surf",
+                "pedalar":   "ciclismo",
+                "bike":      "ciclismo",
+                "correr":    "corrida",
+                "inicio":    "home",
+                "dashboard": "home"
+            };
 
-        const synonyms = {
-            "surfe": "surf",
-            "pedalar": "ciclismo",
-            "bike": "ciclismo",
-            "correr": "corrida",
-            "inicio": "home",
-            "dashboard": "home"
-        };
+            if (synonyms[query]) query = synonyms[query];
 
-        if (synonyms[query]) {
-            query = synonyms[query];
-        }
-
-        if (pages[query]) {
-            loadPage(query);
-            searchInput.value = "";
-        } else {
-            alert("Esporte não encontrado. Tente: corrida, surf ou ciclismo.");
-        }
-    }
-});
-// ----------------------------
-// CONTROLE DE NOTIFICAÇÕES (VERSÃO CORRIGIDA)
-// ----------------------------
-
-const openBtn = document.getElementById('notificationBtn');
-const closeBtn = document.getElementById('closeNotifications');
-const drawer = document.getElementById('notificationDrawer');
-const overlay = document.getElementById('notificationOverlay');
-
-function openNav() {
-    overlay.classList.remove('hidden');
-    // Pequeno delay para a animação do Tailwind funcionar
-    setTimeout(() => {
-        drawer.classList.remove('translate-x-full');
-    }, 10);
-}
-
-function closeNav() {
-    drawer.classList.add('translate-x-full');
-    setTimeout(() => {
-        overlay.classList.add('hidden');
-    }, 300); // Tempo da transição do CSS
-}
-
-// Eventos de clique
-if (openBtn) {
-    openBtn.onclick = openNav;
-}
-
-if (closeBtn) {
-    closeBtn.onclick = closeNav;
-}
-
-if (overlay) {
-    overlay.onclick = closeNav;
-}
-// ---------------------------------------------------------
-// SISTEMA DE NOTIFICAÇÕES PERSISTENTE - SPORTCLIMA
-// ---------------------------------------------------------
-(function initPersistentNotifications() {
-    const bellBtn = Array.from(document.querySelectorAll('.material-symbols-outlined'))
-        .find(el => el.textContent.trim() === 'notifications');
-    const drawer = document.getElementById('notificationDrawer');
-    const overlay = document.getElementById('notificationOverlay');
-    const closeBtn = document.getElementById('closeNotifications');
-    const container = document.querySelector('#notificationDrawer .flex-1.overflow-y-auto');
-
-    // Seleção dos botões de ação
-    const clearBtn = Array.from(document.querySelectorAll('button, span')).find(el => el.textContent.trim() === 'Limpar');
-    const markReadBtn = Array.from(document.querySelectorAll('button, span')).find(el => el.textContent.trim() === 'Marcar todas como lidas');
-
-    if (!bellBtn || !drawer || !overlay || !container) return;
-
-    // --- 1. FUNÇÕES DE ESTADO (UI) ---
-
-    const removeBellBadge = () => {
-        const badge = bellBtn.querySelector('.notification-badge');
-        if (badge) badge.remove();
-    };
-
-    const applyReadStyle = () => {
-        // Encontra todos os cards de notificação dentro do container
-        const cards = container.querySelectorAll('.bg-white, .bg-orange-50');
-
-        cards.forEach(card => {
-            // Aplica o fundo verde claro e remove o destaque de "não lido"
-            card.classList.remove('bg-orange-50', 'bg-white');
-            card.classList.add('bg-green-50', 'border-l-4', 'border-green-400');
-
-            // Adiciona o ícone de Check se não existir
-            if (!card.querySelector('.check-done')) {
-                const check = document.createElement('span');
-                check.className = 'material-symbols-outlined check-done text-green-500 text-sm ml-auto';
-                check.textContent = 'done_all';
-                // Tenta inserir ao lado do título ou no topo do card
-                const header = card.querySelector('.flex') || card;
-                header.appendChild(check);
+            if (pages[query]) {
+                loadPage(query);
+                searchInput.value = "";
+            } else {
+                alert("Esporte não encontrado. Tente: corrida, surf ou ciclismo.");
             }
+        }
+    });
+}
 
-            // Remove o pontinho laranja/vermelho de notificação nova
-            const dot = card.querySelector('.bg-orange-500, .rounded-full');
-            if (dot) dot.remove();
-        });
 
-        removeBellBadge();
-        localStorage.setItem('sportclima_notifs_status', 'read');
-    };
+// -------------------------------------------------------------
+// 8. controle do drawer de notificações
+// -------------------------------------------------------------
+(function initNotifications() {
+    const bellBtn      = document.getElementById('notificationBtn');
+    const drawer       = document.getElementById('notificationDrawer');
+    const overlay      = document.getElementById('notificationOverlay');
+    const closeBtn     = document.getElementById('closeNotifications');
+    const markReadBtn  = document.getElementById('markAllReadBtn');
+    const clearBtn     = document.getElementById('clearNotifsBtn');
+    const emptyState   = document.getElementById('emptyState');
+    const badge        = document.getElementById('notifBadge');
+    const listArea     = document.querySelector('#notificationDrawer .flex-1.overflow-y-auto');
 
-    const applyClearState = () => {
-        container.innerHTML = `
-            <div class="flex flex-col items-center justify-center h-full text-center p-8">
-                <span class="material-symbols-outlined text-5xl text-gray-300 mb-2">notifications_off</span>
-                <p class="text-gray-500 font-medium text-sm">Nenhuma notificação por aqui</p>
-                <p class="text-gray-400 text-xs mt-1">Tudo limpo no seu dashboard!</p>
-            </div>
-        `;
-        removeBellBadge();
-        localStorage.setItem('sportclima_notifs_status', 'cleared');
-    };
+    if (!bellBtn || !drawer || !overlay) return;
 
-    // --- 2. CARREGAMENTO INICIAL (PERSISTÊNCIA) ---
-
-    const savedStatus = localStorage.getItem('sportclima_notifs_status');
-
-    // Adiciona o badge apenas se nunca foi lido ou limpo
-    if (!savedStatus && !bellBtn.querySelector('.notification-badge')) {
-        bellBtn.style.position = 'relative';
-        const badge = document.createElement('span');
-        badge.className = 'notification-badge absolute -top-1 -right-1 flex h-2.5 w-2.5 rounded-full bg-red-500 border-2 border-white';
-        bellBtn.appendChild(badge);
-    }
-
-    // Aplica o estado salvo ao carregar a página
-    if (savedStatus === 'cleared') applyClearState();
-    else if (savedStatus === 'read') applyReadStyle();
-
-    // --- 3. EVENTOS DE CLIQUE ---
-
-    if (markReadBtn) {
-        markReadBtn.onclick = (e) => {
-            e.preventDefault();
-            applyReadStyle();
-        };
-    }
-
-    if (clearBtn) {
-        clearBtn.onclick = (e) => {
-            e.preventDefault();
-            applyClearState();
-        };
-    }
-
-    // Lógica de abrir/fechar a aba (reutilizada do anterior)
-    bellBtn.onclick = () => {
+    // abre o drawer com animação
+    function openDrawer() {
         overlay.classList.remove('hidden');
-        setTimeout(() => {
-            overlay.classList.add('opacity-100');
-            drawer.classList.remove('translate-x-[120%]');
-        }, 10);
-    };
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                overlay.classList.add('opacity-100');
+                drawer.classList.remove('translate-x-[120%]');
+            });
+        });
+    }
 
-    const closeNav = () => {
+    // fecha o drawer com animação
+    function closeDrawer() {
         drawer.classList.add('translate-x-[120%]');
         overlay.classList.remove('opacity-100');
-        setTimeout(() => { if (drawer.classList.contains('translate-x-[120%]')) overlay.classList.add('hidden'); }, 300);
-    };
+        setTimeout(() => overlay.classList.add('hidden'), 300);
+    }
 
-    if (closeBtn) closeBtn.onclick = closeNav;
-    overlay.onclick = (e) => { if (e.target === overlay) closeNav(); };
+    // esconde o badge do sino
+    function hideBadge() {
+        if (badge) badge.classList.add('hidden');
+    }
+
+    // aplica estado "lidas" às notificações com destaque
+    function applyReadStyle() {
+        if (!listArea) return;
+        const highlighted = listArea.querySelectorAll('[class*="bg-orange"]');
+        highlighted.forEach(card => {
+            card.classList.remove('bg-orange-50/50', 'bg-orange-50', 'border-orange-100');
+            card.classList.add('opacity-70');
+            const dot = card.querySelector('.bg-primary.rounded-full');
+            if (dot) dot.remove();
+        });
+        hideBadge();
+        localStorage.setItem('sportclima_notifs_status', 'read');
+    }
+
+    // limpa todas as notificações e exibe estado vazio
+    function applyClearState() {
+        if (!listArea || !emptyState) return;
+        // remove todos os grupos de notificações
+        const groups = listArea.querySelectorAll('div:not(#emptyState)');
+        groups.forEach(g => g.remove());
+        // exibe mensagem de lista vazia
+        emptyState.classList.remove('hidden');
+        emptyState.classList.add('flex');
+        hideBadge();
+        localStorage.setItem('sportclima_notifs_status', 'cleared');
+    }
+
+    // restaura o estado salvo no localstorage ao carregar
+    const savedStatus = localStorage.getItem('sportclima_notifs_status');
+    if (savedStatus === 'cleared') {
+        // aguarda o dom estar pronto
+        setTimeout(applyClearState, 50);
+    } else if (savedStatus === 'read') {
+        setTimeout(applyReadStyle, 50);
+    }
+
+    // esconde o badge se já lido ou limpo
+    if (savedStatus && badge) badge.classList.add('hidden');
+
+    // eventos
+    bellBtn.addEventListener('click', openDrawer);
+    if (closeBtn)    closeBtn.addEventListener('click', closeDrawer);
+    if (markReadBtn) markReadBtn.addEventListener('click', applyReadStyle);
+    if (clearBtn)    clearBtn.addEventListener('click', applyClearState);
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) closeDrawer();
+    });
 })();
 
-// Procure por uma área de "Navegação" ou "Sidebar" no seu script.js
-(function finalSportClimaNavigation() {
+
+// -------------------------------------------------------------
+// 9. controle do menu de perfil (dropdown do avatar)
+// -------------------------------------------------------------
+(function initProfileMenu() {
+    const trigger = document.getElementById('profileTrigger');
+    const menu    = document.getElementById('profileMenu');
+
+    if (!trigger || !menu) return;
+
+    trigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        menu.classList.toggle('hidden');
+        if (!menu.classList.contains('hidden')) {
+            menu.style.animation = 'profileFadeIn 0.2s ease-out';
+        }
+    });
+
+    // fecha o menu ao clicar fora dele
+    document.addEventListener('click', (e) => {
+        if (!menu.contains(e.target) && e.target !== trigger) {
+            menu.classList.add('hidden');
+        }
+    });
+})();
+
+
+// -------------------------------------------------------------
+// 10. alternância de tema claro/escuro com persistência
+// -------------------------------------------------------------
+(function initThemeToggle() {
+    const toggleBtn = document.getElementById('dark-mode-toggle');
+    const darkIcon  = document.getElementById('dark-icon');
+    const html      = document.documentElement;
+
+    if (!toggleBtn) return;
+
+    // sincroniza o ícone com o tema atual ao carregar
+    if (localStorage.getItem('theme') === 'dark' && darkIcon) {
+        darkIcon.textContent = 'light_mode';
+    }
+
+    toggleBtn.addEventListener('click', () => {
+        const isDark = html.classList.toggle('dark');
+
+        if (isDark) {
+            localStorage.setItem('theme', 'dark');
+            if (darkIcon) darkIcon.textContent = 'light_mode';
+        } else {
+            localStorage.setItem('theme', 'light');
+            if (darkIcon) darkIcon.textContent = 'dark_mode';
+        }
+    });
+})();
+
+
+// -------------------------------------------------------------
+// 11. navegação ativa na sidebar com estilos visuais
+// -------------------------------------------------------------
+(function initSidebarNav() {
     const items = document.querySelectorAll('.sport-btn-sidebar');
     const topSearch = document.querySelector('header input');
     let currentActive = document.querySelector('[data-sport="home"]') || items[0];
 
     function applyActiveStyle(element) {
         if (!element) return;
+
         items.forEach(item => {
             item.style.backgroundColor = 'transparent';
-            item.style.color = '#64748b';
+            item.style.color = '';
             item.classList.remove('shadow-lg');
             const icon = item.querySelector('.material-symbols-outlined');
             const text = item.querySelector('p');
             if (icon) {
-                icon.style.setProperty('color', '#64748b', 'important');
+                icon.style.removeProperty('color');
                 icon.classList.remove('filled');
             }
-            if (text) text.style.setProperty('color', '#64748b', 'important');
+            if (text) text.style.removeProperty('color');
         });
 
         element.style.backgroundColor = '#f97316';
@@ -419,6 +410,7 @@ if (overlay) {
         item.addEventListener('click', () => applyActiveStyle(item));
     });
 
+    // busca no campo do header também ativa o item da sidebar
     if (topSearch) {
         topSearch.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
@@ -432,40 +424,17 @@ if (overlay) {
 
                 if (match) {
                     applyActiveStyle(match);
-                    topSearch.value = ""; // Limpa para evitar repetição
+                    topSearch.value = "";
                     topSearch.blur();
                 } else {
                     alert(`Nenhum esporte encontrado para: "${topSearch.value}"`);
-                    topSearch.value = ""; // Limpa para não dar alerta duplo
+                    topSearch.value = "";
                     topSearch.blur();
                     applyActiveStyle(currentActive);
                 }
             }
         });
     }
+
     applyActiveStyle(currentActive);
-})();
-
-// --- CONTROLE DO MENU DE PERFIL ---
-(function initProfileMenu() {
-    const trigger = document.getElementById('profileTrigger');
-    const menu = document.getElementById('profileMenu');
-
-    if (!trigger || !menu) return;
-
-    trigger.addEventListener('click', (e) => {
-        e.stopPropagation();
-        menu.classList.toggle('hidden');
-        // Adiciona uma pequena animação de entrada
-        if (!menu.classList.contains('hidden')) {
-            menu.style.animation = 'profileFadeIn 0.2s ease-out';
-        }
-    });
-
-    // Fecha o menu se clicar em qualquer outro lugar da tela
-    document.addEventListener('click', (e) => {
-        if (!menu.contains(e.target) && e.target !== trigger) {
-            menu.classList.add('hidden');
-        }
-    });
 })();

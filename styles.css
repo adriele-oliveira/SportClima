@@ -1,23 +1,54 @@
-/* --------------------------- */
-/* ESTILOS BASE ORIGINAIS */
-/* --------------------------- */
+/* ============================================================= */
+/* sportclima — styles.css                                        */
+/* estilos base + dark mode premium com fundo oled #0a0a0a       */
+/* ============================================================= */
 
+
+/* ----------------------------------------------------------- */
+/* variáveis de cor — light e dark                             */
+/* ----------------------------------------------------------- */
+:root {
+    --primary:          #f27f0d;
+    --bg-light:         #f8f7f5;
+    --bg-dark:          #0a0a0a;
+    --surface-1:        #121212;
+    --surface-2:        #1c1c1c;
+    --surface-3:        #252525;
+    --text-primary:     #0f172a;
+    --text-secondary:   #64748b;
+    --text-dark:        #f1f5f9;
+    --text-dark-muted:  #71717a;
+    --border-light:     rgba(242, 127, 13, 0.12);
+    --border-dark:      rgba(242, 127, 13, 0.06);
+}
+
+
+/* ----------------------------------------------------------- */
+/* base global: fonte e transições suaves                      */
+/* ----------------------------------------------------------- */
 body {
     font-family: 'Lexend', sans-serif;
 }
 
+/* transição suave global para mudanças de tema */
+*, *::before, *::after {
+    transition: background-color 0.25s ease, color 0.2s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+/* material symbols: variações padrão */
 .material-symbols-outlined {
     font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }
 
+/* variante preenchida para ícones de destaque */
 .filled {
     font-variation-settings: 'FILL' 1;
 }
 
-/* --------------------------- */
-/* BOTÕES DA SPA */
-/* --------------------------- */
 
+/* ----------------------------------------------------------- */
+/* botões da spa — sidebar e botões de esporte                 */
+/* ----------------------------------------------------------- */
 .sport-btn,
 .sport-btn-sidebar {
     transition: 0.25s all ease;
@@ -34,22 +65,19 @@ body {
     color: #f27f0d !important;
 }
 
-
-/* Botão Visão Geral ativo = texto branco */
+/* item "visão geral" ativo mantém texto branco sobre fundo laranja */
 .sport-btn-sidebar[data-sport="home"].active {
     color: white !important;
 }
 
-/* Ícone do Visão Geral ativo = branco */
 .sport-btn-sidebar[data-sport="home"].active .material-symbols-outlined {
     color: white !important;
 }
 
 
-/* --------------------------- */
-/* ÁREA CENTRAL DAS PÁGINAS DE ESPORTE */
-/* --------------------------- */
-
+/* ----------------------------------------------------------- */
+/* hero da spa: bloco com imagem de fundo e texto sobreposto   */
+/* ----------------------------------------------------------- */
 .spa-hero {
     position: relative;
     overflow: hidden;
@@ -80,10 +108,10 @@ body {
     max-width: 600px;
 }
 
-/* --------------------------- */
-/* CARTÕES DAS MÉTRICAS */
-/* --------------------------- */
 
+/* ----------------------------------------------------------- */
+/* cartões de métricas climáticas                             */
+/* ----------------------------------------------------------- */
 .metric-card {
     background: white;
     border: 1px solid rgba(242, 127, 13, 0.2);
@@ -96,15 +124,30 @@ body {
     box-shadow: 0 4px 12px rgba(242, 127, 13, 0.15);
 }
 
-/* --------------------------- */
-/* GRÁFICO SIMPLES */
-/* --------------------------- */
+/* modo escuro: superfície elevada sobre o fundo oled */
+.dark .metric-card {
+    background: var(--surface-2);
+    border-color: rgba(242, 127, 13, 0.12);
+}
 
+.dark .metric-card:hover {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(242, 127, 13, 0.15);
+}
+
+
+/* ----------------------------------------------------------- */
+/* gráfico de variação horária                                 */
+/* ----------------------------------------------------------- */
 .chart-container {
     background: white;
     border-radius: 1rem;
     border: 1px solid rgba(242, 127, 13, 0.15);
     padding: 24px;
+}
+
+.dark .chart-container {
+    background: var(--surface-2);
+    border-color: rgba(242, 127, 13, 0.1);
 }
 
 .chart-bar {
@@ -116,10 +159,16 @@ body {
     margin: 0 6px;
 }
 
-/* --------------------------- */
-/* MAPAS */
-/* --------------------------- */
+/* barras no modo escuro com brilho laranja mais intenso */
+.dark .chart-bar {
+    background: linear-gradient(to top, #f27f0d, #ffcc99);
+    box-shadow: 0 0 8px rgba(242, 127, 13, 0.3);
+}
 
+
+/* ----------------------------------------------------------- */
+/* caixas de mapa com ping animado                             */
+/* ----------------------------------------------------------- */
 .map-box {
     height: 180px;
     background-size: cover;
@@ -149,21 +198,14 @@ body {
 }
 
 @keyframes pingAnim {
-    0% {
-        transform: scale(1);
-        opacity: 1;
-    }
-
-    100% {
-        transform: scale(2.5);
-        opacity: 0;
-    }
+    0%   { transform: scale(1);   opacity: 1; }
+    100% { transform: scale(2.5); opacity: 0; }
 }
 
-/* --------------------------- */
-/* SIDEBAR DIREITO DA SPA */
-/* --------------------------- */
 
+/* ----------------------------------------------------------- */
+/* card da sidebar direita com horários ideais                 */
+/* ----------------------------------------------------------- */
 .spa-sidebar-card {
     background: white;
     border-radius: 1rem;
@@ -176,16 +218,30 @@ body {
     margin-bottom: 12px;
 }
 
-/* Estilo para o foco na busca */
+.dark .spa-sidebar-card {
+    background: var(--surface-2);
+    border-color: rgba(242, 127, 13, 0.12);
+}
+
+
+/* ----------------------------------------------------------- */
+/* campo de busca — foco com borda laranja                     */
+/* ----------------------------------------------------------- */
 input.form-input:focus {
     outline: none;
     border: 1px solid #f27f0d;
     background-color: white;
 }
 
-/* --------------------------- */
-/* PAINEL DE NOTIFICAÇÕES      */
-/* --------------------------- */
+.dark input.form-input:focus {
+    background-color: var(--surface-2);
+    border-color: #f27f0d;
+}
+
+
+/* ----------------------------------------------------------- */
+/* painel de notificações — scrollbar invisível                */
+/* ----------------------------------------------------------- */
 .hide-scrollbar::-webkit-scrollbar {
     display: none;
 }
@@ -195,34 +251,85 @@ input.form-input:focus {
     scrollbar-width: none;
 }
 
-.sport-btn-sidebar.active {
-    background-color: #f97316 !important;
-    /* Força o laranja */
-    color: white !important;
+
+/* ----------------------------------------------------------- */
+/* animação de entrada do menu de perfil                       */
+/* ----------------------------------------------------------- */
+@keyframes profileFadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to   { opacity: 1; transform: translateY(0);     }
 }
 
-.sport-btn-sidebar.active span,
-.sport-btn-sidebar.active p {
-    color: white !important;
+#profileMenu {
+    z-index: 9999;
 }
 
 #profileMenu.active {
     display: block !important;
 }
 
-@keyframes profileFadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
 
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+/* ----------------------------------------------------------- */
+/* dark mode — overrides globais para garantir o esquema oled  */
+/* ----------------------------------------------------------- */
+
+/* fundo principal totalmente preto (oled) */
+.dark body {
+    background-color: var(--bg-dark) !important;
+    color: var(--text-dark) !important;
 }
 
-/* Garante que o menu sobreponha tudo, incluindo o conteúdo da SPA */
-#profileMenu {
-    z-index: 9999;
+/* superfícies elevadas usam cinza escuro, não preto puro */
+.dark .bg-white {
+    background-color: var(--surface-1) !important;
+}
+
+/* textos secundários com opacidade adequada no escuro */
+.dark .text-slate-600 {
+    color: #a1a1aa !important;
+}
+
+.dark .text-slate-500 {
+    color: #71717a !important;
+}
+
+.dark .text-slate-400 {
+    color: #52525b !important;
+}
+
+/* bordas sutis no modo escuro */
+.dark .border-slate-100 {
+    border-color: var(--surface-3) !important;
+}
+
+.dark .border-stone-100 {
+    border-color: var(--surface-3) !important;
+}
+
+/* blocos com fundo stone ou orange-50 no escuro */
+.dark .bg-stone-50\/50 {
+    background-color: var(--surface-2) !important;
+}
+
+.dark .bg-orange-50\/30 {
+    background-color: rgba(242, 127, 13, 0.04) !important;
+}
+
+/* hover em itens de lista no drawer e menus */
+.dark .hover\:bg-slate-50:hover {
+    background-color: var(--surface-2) !important;
+}
+
+.dark .hover\:bg-orange-50:hover {
+    background-color: rgba(242, 127, 13, 0.08) !important;
+}
+
+/* badge de notificação no modo escuro */
+#notifBadge {
+    animation: badgePop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes badgePop {
+    0%   { transform: scale(0); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
 }

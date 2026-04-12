@@ -1,65 +1,125 @@
 <!DOCTYPE html>
-<html class="light" lang="pt-br">
+<html lang="pt-br">
 
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Entrar no SportClima</title>
+
+    <!-- tailwind cdn -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+    <!-- fontes: lexend e material symbols -->
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+
+    <!-- css específico da página de login -->
     <link rel="stylesheet" href="style-login.css">
+
+    <!-- configuração do tailwind com cores customizadas para o login -->
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary":          "#f27f0d",
+                        "background-light": "#f8f7f5",
+                        "background-dark":  "#0a0a0a",
+                        "surface-1":        "#121212",
+                        "surface-2":        "#1c1c1c",
+                        "surface-3":        "#252525",
+                    },
+                    fontFamily: { "display": ["Lexend"] },
+                },
+            },
+        }
+    </script>
+
+    <!-- aplica o tema salvo imediatamente para evitar flash na navegação -->
+    <script>
+        (function () {
+            if (localStorage.getItem('theme') === 'dark') {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        })();
+    </script>
 </head>
 
-<body class="bg-[#f8f7f5] text-[#241912] min-h-screen flex flex-col md:flex-row overflow-hidden">
+<!-- corpo com layout dividido: imagem à esquerda, formulário à direita -->
+<body class="bg-background-light dark:bg-background-dark text-[#241912] dark:text-white min-h-screen flex flex-col md:flex-row overflow-hidden transition-colors duration-300">
+
+    <!-- seção visual com imagem de fundo (apenas em desktop) -->
     <section class="hidden md:flex md:w-1/2 lg:w-3/5 relative overflow-hidden">
         <img class="absolute inset-0 w-full h-full object-cover"
             src="https://lh3.googleusercontent.com/aida-public/AB6AXuCF8SbrAsZd2iQCAI_Oaze1jQ1pyKehAmGBgkSRQ4yfoejKv-ZU1M4sItTnCTgTDBdYnxcKpyhTA1tiffOamEm_BTpJq6vpMGySaJwSGpo5zXv2t-w_M4G-QVKsguZ4C5ClC_IefB_egODN4-aL3-WiJzokMQ9CTn5aXFe_bR0eU74HGXpmFnoRyrYoTnOCwZueYmCNMjWwX0ly8f5FJ30XmBUcdSkEkPKXYFZDd61z8EH1Yb5nkb2DnyhiKj2H5qCFFfdjf8Kg7b4"
             alt="Atleta SportClima" />
-        <div class="absolute inset-0 bg-gradient-to-t from-[#241912]/80 via-transparent to-transparent"></div>
+        <!-- gradiente de sobreposição para legibilidade do texto -->
+        <div class="absolute inset-0 bg-gradient-to-t from-[#241912]/80 dark:from-black/90 via-transparent to-transparent transition-colors"></div>
         <div class="relative z-10 p-16 flex flex-col justify-end h-full">
-            <span
-                class="inline-block bg-[#f27f0d] text-white px-4 py-1 rounded-full text-xs font-bold uppercase mb-4 w-fit">PROJETO
-                ACADÊMICO</span>
+            <span class="inline-block bg-[#f27f0d] text-white px-4 py-1 rounded-full text-xs font-bold uppercase mb-4 w-fit">PROJETO ACADÊMICO</span>
             <h1 class="text-7xl font-black text-white leading-tight">SportClima</h1>
             <p class="text-white/80 font-medium">Excelência em cada batida, precisão em cada passo.</p>
         </div>
     </section>
-    <main class="w-full md:w-1/2 lg:w-2/5 flex items-center justify-center p-8 bg-white">
+
+    <!-- seção do formulário de autenticação -->
+    <main class="w-full md:w-1/2 lg:w-2/5 flex items-center justify-center p-8 bg-white dark:bg-surface-1 transition-colors relative">
+
+        <!-- botão de alternância de tema no topo direito do formulário -->
+        <button id="dark-mode-toggle"
+            class="absolute top-6 right-6 p-2 rounded-full hover:bg-slate-100 dark:hover:bg-surface-3 transition-colors"
+            aria-label="Alternar tema claro/escuro">
+            <span id="dark-icon" class="material-symbols-outlined text-slate-500 dark:text-slate-400">dark_mode</span>
+        </button>
+
         <div class="w-full max-w-md">
+
+            <!-- cabeçalho do formulário com marca e título -->
             <div class="mb-12">
                 <span class="text-3xl font-black text-[#f27f0d] italic">SportClima</span>
-                <h2 class="text-2xl font-bold mt-4">Entrar no SportClima</h2>
-                <p class="text-slate-500">Bem-vindo de volta à sua jornada.</p>
+                <h2 class="text-2xl font-bold mt-4 dark:text-white">Entrar no SportClima</h2>
+                <p class="text-slate-500 dark:text-zinc-400">Bem-vindo de volta à sua jornada.</p>
             </div>
+
+            <!-- formulário de login -->
             <form id="login-form" class="space-y-6">
+
+                <!-- campo de e-mail -->
                 <div>
-                    <label class="text-xs font-bold uppercase text-slate-500" for="email">E-mail</label>
+                    <label class="text-xs font-bold uppercase text-slate-500 dark:text-zinc-400" for="email">E-mail</label>
                     <input
-                        class="w-full p-4 rounded-xl bg-slate-100 border-none outline-none focus:ring-2 focus:ring-[#f27f0d]/20"
+                        class="w-full p-4 rounded-xl bg-slate-100 dark:bg-surface-2 dark:text-white border-none outline-none focus:ring-2 focus:ring-[#f27f0d]/20 transition-all mt-1.5"
                         id="email" type="email" required />
                 </div>
+
+                <!-- campo de senha com ícone de cadeado -->
                 <div class="space-y-1.5">
-                    <label class="text-xs font-bold uppercase tracking-widest text-slate-500 ml-1"
-                        for="password">Senha</label>
+                    <label class="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-zinc-400 ml-1" for="password">Senha</label>
                     <div class="relative group">
-                        <span
-                            class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#f27f0d] transition-colors">lock</span>
+                        <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#f27f0d] transition-colors">lock</span>
                         <input
-                            class="w-full pl-12 pr-4 py-4 rounded-xl border-none bg-slate-100 text-[#241912] placeholder-slate-400 focus:ring-2 focus:ring-[#f27f0d]/20 focus:bg-white transition-all outline-none"
+                            class="w-full pl-12 pr-4 py-4 rounded-xl border-none bg-slate-100 dark:bg-surface-2 dark:text-white placeholder-slate-400 dark:placeholder-zinc-500 focus:ring-2 focus:ring-[#f27f0d]/20 focus:bg-white dark:focus:bg-surface-3 transition-all outline-none"
                             id="password" placeholder="••••••••" type="password" required />
                     </div>
                     <div class="flex justify-end pr-1">
-                        <a class="text-xs font-bold text-[#f27f0d] hover:underline" href="#">Esqueceu a senha?</a>
+                        <a class="text-xs font-bold text-[#f27f0d] dark:text-orange-400 hover:underline" href="#">Esqueceu a senha?</a>
                     </div>
                 </div>
+
+                <!-- botão de submissão -->
                 <button
                     class="w-full bg-[#f27f0d] text-white py-4 rounded-xl font-bold shadow-lg shadow-[#f27f0d]/20 hover:bg-orange-600 transition-all"
-                    type="submit">Login</button>
+                    type="submit">
+                    Login
+                </button>
             </form>
         </div>
     </main>
+
+    <!-- script de autenticação e controle de tema do login -->
     <script src="script-login.js"></script>
 </body>
 
