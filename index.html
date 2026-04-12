@@ -13,10 +13,8 @@
     <link rel="stylesheet" href="styles.css">
 
     <!-- fontes: lexend e material symbols -->
-    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
 
     <!-- configuração do tailwind com paleta de cores e dark mode por classe -->
     <script id="tailwind-config">
@@ -25,12 +23,12 @@
             theme: {
                 extend: {
                     colors: {
-                        "primary": "#f27f0d",
+                        "primary":          "#f27f0d",
                         "background-light": "#f8f7f5",
-                        "background-dark": "#0a0a0a",
-                        "surface-1": "#121212",
-                        "surface-2": "#1c1c1c",
-                        "surface-3": "#252525",
+                        "background-dark":  "#0a0a0a",
+                        "surface-1":        "#121212",
+                        "surface-2":        "#1c1c1c",
+                        "surface-3":        "#252525",
                     },
                     fontFamily: { "display": ["Lexend"] },
                 },
@@ -40,13 +38,13 @@
 
     <!-- aplica o tema salvo imediatamente para evitar flash ao carregar -->
     <script>
-            (function () {
-                if (localStorage.getItem('theme') === 'dark') {
-                    document.documentElement.classList.add('dark');
-                } else {
-                    document.documentElement.classList.remove('dark');
-                }
-            })();
+        (function () {
+            if (localStorage.getItem('theme') === 'dark') {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        })();
     </script>
 </head>
 
@@ -54,8 +52,7 @@
     <div class="layout-container flex h-full grow flex-col">
 
         <!-- cabeçalho: logotipo, busca, toggle de tema, notificações e avatar -->
-        <header
-            class="flex items-center justify-between whitespace-nowrap border-b border-primary/10 dark:border-primary/5 px-6 md:px-10 py-3 bg-background-light/80 dark:bg-surface-1/90 backdrop-blur-md sticky top-0 z-50">
+        <header class="flex items-center justify-between whitespace-nowrap border-b border-primary/10 dark:border-primary/5 px-6 md:px-10 py-3 bg-background-light/80 dark:bg-surface-1/90 backdrop-blur-md sticky top-0 z-50">
 
             <!-- logotipo sportclima -->
             <div class="flex items-center gap-8">
@@ -73,8 +70,7 @@
                 <!-- campo de busca por localização -->
                 <label class="hidden sm:flex flex-col min-w-40 !h-10 max-w-64">
                     <div class="flex w-full flex-1 items-stretch rounded-xl h-full">
-                        <div
-                            class="text-primary flex bg-primary/5 dark:bg-primary/10 items-center justify-center pl-4 rounded-l-xl">
+                        <div class="text-primary flex bg-primary/5 dark:bg-primary/10 items-center justify-center pl-4 rounded-l-xl">
                             <span class="material-symbols-outlined text-[20px]">search</span>
                         </div>
                         <input
@@ -87,8 +83,7 @@
                 <button id="dark-mode-toggle"
                     class="p-2 rounded-full hover:bg-primary/10 dark:hover:bg-surface-3 transition-colors flex items-center justify-center"
                     aria-label="Alternar tema claro/escuro">
-                    <span id="dark-icon"
-                        class="material-symbols-outlined text-slate-500 dark:text-slate-400">dark_mode</span>
+                    <span id="dark-icon" class="material-symbols-outlined text-slate-500 dark:text-slate-400">dark_mode</span>
                 </button>
 
                 <!-- notificações e avatar -->
@@ -97,8 +92,7 @@
                     <!-- botão de notificações com badge numérico -->
                     <button id="notificationBtn"
                         class="relative p-1.5 rounded-full hover:bg-primary/10 dark:hover:bg-surface-3 transition-colors cursor-pointer">
-                        <span class="material-symbols-outlined text-slate-500 dark:text-slate-400"
-                            style="pointer-events:none">notifications</span>
+                        <span class="material-symbols-outlined text-slate-500 dark:text-slate-400" style="pointer-events:none">notifications</span>
                         <span id="notifBadge"
                             class="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] text-white font-bold">3</span>
                     </button>
@@ -158,18 +152,16 @@
                     </div>
                 </div>
 
-                <!-- bloco de alerta de website em desenvolvimento -->
-                <div
-                    class="rounded-xl p-5 bg-orange-50 dark:bg-primary/5 border border-primary/20 dark:border-primary/15">
+                <!-- card: projeto acadêmico em desenvolvimento -->
+                <div class="rounded-xl p-5 bg-orange-50 dark:bg-primary/5 border border-primary/20 dark:border-primary/15">
                     <div class="flex items-center gap-2 mb-3 text-primary">
                         <span class="material-symbols-outlined filled text-[20px]">warning</span>
-                        <h3 class="font-bold text-sm">Projeto academico em desenvolvimento</h3>
+                        <h3 class="font-bold text-sm">Projeto acadêmico em desenvolvimento</h3>
                     </div>
                     <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                        Trabalho com fins academicos em fase de desenvolvimento. Qualquer sugestão ou feedback é
-                        bem-vindo para aprimorar a experiência.
+                        Trabalho com fins acadêmicos em fase de desenvolvimento. Qualquer sugestão ou feedback é bem-vindo para aprimorar a experiência.
                     </p>
-                    <button class="mt-4 text-xs font-bold text-primary hover:underline">Enviar feedback</button>
+                    <button id="enviarFeedbackCardBtn" class="mt-4 text-xs font-bold text-primary hover:underline">Enviar feedback</button>
                 </div>
             </aside>
 
@@ -182,8 +174,7 @@
         </main>
 
         <!-- rodapé -->
-        <footer
-            class="border-t border-primary/10 dark:border-primary/5 p-6 text-center text-slate-500 dark:text-slate-600 text-xs">
+        <footer class="border-t border-primary/10 dark:border-primary/5 p-6 text-center text-slate-500 dark:text-slate-600 text-xs">
             <p>© 2026 SportClima. Projetado para os obcecados em esportes.</p>
         </footer>
     </div>
@@ -224,26 +215,21 @@
             <!-- estado vazio (exibido ao limpar todas) -->
             <div id="emptyState" class="hidden flex-col items-center justify-center h-full text-center space-y-3">
                 <div class="size-16 bg-slate-50 dark:bg-surface-2 rounded-full flex items-center justify-center">
-                    <span
-                        class="material-symbols-outlined text-slate-300 dark:text-slate-600 text-3xl">notifications_off</span>
+                    <span class="material-symbols-outlined text-slate-300 dark:text-slate-600 text-3xl">notifications_off</span>
                 </div>
                 <p class="text-slate-500 dark:text-slate-500 text-sm">Você não possui notificações no momento.</p>
             </div>
 
             <!-- notificação urgente: agora -->
             <div>
-                <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3">Agora
-                </p>
-                <div
-                    class="relative bg-orange-50/50 dark:bg-orange-900/10 p-3 rounded-xl border border-orange-100 dark:border-orange-900/20 flex gap-4 cursor-pointer hover:bg-orange-50 dark:hover:bg-orange-900/15 transition-colors group">
+                <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3">Agora</p>
+                <div class="relative bg-orange-50/50 dark:bg-orange-900/10 p-3 rounded-xl border border-orange-100 dark:border-orange-900/20 flex gap-4 cursor-pointer hover:bg-orange-50 dark:hover:bg-orange-900/15 transition-colors group">
                     <div class="absolute top-4 right-4 size-2 bg-primary rounded-full"></div>
-                    <div
-                        class="size-10 bg-red-100 dark:bg-red-900/30 text-red-600 rounded-xl flex items-center justify-center shrink-0">
+                    <div class="size-10 bg-red-100 dark:bg-red-900/30 text-red-600 rounded-xl flex items-center justify-center shrink-0">
                         <span class="material-symbols-outlined">air</span>
                     </div>
                     <div class="pr-4">
-                        <h4 class="text-sm font-bold text-slate-900 dark:text-slate-100 leading-tight">Alerta de Vento
-                            Forte - Rajadas de 40km/h previstas para as 16:00</h4>
+                        <h4 class="text-sm font-bold text-slate-900 dark:text-slate-100 leading-tight">Alerta de Vento Forte - Rajadas de 40km/h previstas para as 16:00</h4>
                         <p class="text-xs text-slate-500 dark:text-slate-500 mt-1">Acabou de chegar • Estação Base A</p>
                     </div>
                 </div>
@@ -251,31 +237,23 @@
 
             <!-- notificações informativas: hoje -->
             <div>
-                <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3">Hoje
-                </p>
+                <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3">Hoje</p>
                 <div class="space-y-3">
-                    <div
-                        class="p-3 rounded-xl flex gap-4 cursor-pointer hover:bg-slate-50 dark:hover:bg-surface-2 transition-colors border border-transparent">
-                        <div
-                            class="size-10 bg-green-100 dark:bg-green-900/30 text-green-600 rounded-xl flex items-center justify-center shrink-0">
+                    <div class="p-3 rounded-xl flex gap-4 cursor-pointer hover:bg-slate-50 dark:hover:bg-surface-2 transition-colors border border-transparent">
+                        <div class="size-10 bg-green-100 dark:bg-green-900/30 text-green-600 rounded-xl flex items-center justify-center shrink-0">
                             <span class="material-symbols-outlined">directions_run</span>
                         </div>
                         <div>
-                            <h4 class="text-sm font-semibold text-slate-900 dark:text-slate-100 leading-tight">Condições
-                                Ideais para Corrida - Temperatura de 22°C em Malibu</h4>
-                            <p class="text-xs text-slate-500 dark:text-slate-500 mt-1">há 2 horas • Requisito de
-                                performance atingido</p>
+                            <h4 class="text-sm font-semibold text-slate-900 dark:text-slate-100 leading-tight">Condições Ideais para Corrida - Temperatura de 22°C em Malibu</h4>
+                            <p class="text-xs text-slate-500 dark:text-slate-500 mt-1">há 2 horas • Requisito de performance atingido</p>
                         </div>
                     </div>
-                    <div
-                        class="p-3 rounded-xl flex gap-4 cursor-pointer hover:bg-slate-50 dark:hover:bg-surface-2 transition-colors border border-transparent">
-                        <div
-                            class="size-10 bg-blue-100 dark:bg-blue-900/30 text-blue-600 rounded-xl flex items-center justify-center shrink-0">
+                    <div class="p-3 rounded-xl flex gap-4 cursor-pointer hover:bg-slate-50 dark:hover:bg-surface-2 transition-colors border border-transparent">
+                        <div class="size-10 bg-blue-100 dark:bg-blue-900/30 text-blue-600 rounded-xl flex items-center justify-center shrink-0">
                             <span class="material-symbols-outlined">surfing</span>
                         </div>
                         <div>
-                            <h4 class="text-sm font-semibold text-slate-900 dark:text-slate-100 leading-tight">Relatório
-                                de Surf Atualizado - Ondas de 4-6ft em North Shore</h4>
+                            <h4 class="text-sm font-semibold text-slate-900 dark:text-slate-100 leading-tight">Relatório de Surf Atualizado - Ondas de 4-6ft em North Shore</h4>
                             <p class="text-xs text-slate-500 dark:text-slate-500 mt-1">há 5 horas • Update oceânico</p>
                         </div>
                     </div>
@@ -284,17 +262,13 @@
 
             <!-- notificações lidas: ontem -->
             <div>
-                <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3">Ontem
-                </p>
-                <div
-                    class="p-3 rounded-xl flex gap-4 cursor-pointer hover:bg-slate-50 dark:hover:bg-surface-2 transition-colors border border-transparent opacity-80">
-                    <div
-                        class="size-10 bg-slate-100 dark:bg-surface-3 text-slate-600 dark:text-slate-400 rounded-xl flex items-center justify-center shrink-0">
+                <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3">Ontem</p>
+                <div class="p-3 rounded-xl flex gap-4 cursor-pointer hover:bg-slate-50 dark:hover:bg-surface-2 transition-colors border border-transparent opacity-80">
+                    <div class="size-10 bg-slate-100 dark:bg-surface-3 text-slate-600 dark:text-slate-400 rounded-xl flex items-center justify-center shrink-0">
                         <span class="material-symbols-outlined">history</span>
                     </div>
                     <div>
-                        <h4 class="text-sm font-medium text-slate-800 dark:text-slate-300 leading-tight">Histórico de
-                            ontem disponível para consulta</h4>
+                        <h4 class="text-sm font-medium text-slate-800 dark:text-slate-300 leading-tight">Histórico de ontem disponível para consulta</h4>
                         <p class="text-xs text-slate-500 dark:text-slate-500 mt-1">Ontem às 20:00 • Logs de sistema</p>
                     </div>
                 </div>
@@ -303,8 +277,7 @@
 
         <!-- rodapé do drawer com preferências de alerta -->
         <div class="p-4 border-t border-slate-100 dark:border-surface-3 bg-white dark:bg-surface-1">
-            <button
-                class="w-full flex items-center justify-center gap-2 py-3 rounded-xl border border-slate-200 dark:border-surface-3 hover:bg-slate-50 dark:hover:bg-surface-2 text-sm font-bold text-slate-700 dark:text-slate-300 transition-colors">
+            <button class="w-full flex items-center justify-center gap-2 py-3 rounded-xl border border-slate-200 dark:border-surface-3 hover:bg-slate-50 dark:hover:bg-surface-2 text-sm font-bold text-slate-700 dark:text-slate-300 transition-colors">
                 <span class="material-symbols-outlined text-[18px]">settings</span>
                 Preferências de Alerta
             </button>
@@ -316,8 +289,7 @@
         class="hidden fixed top-16 right-6 w-72 bg-white dark:bg-surface-1 rounded-xl shadow-[0_20px_50px_rgba(242,127,13,0.15)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-stone-100 dark:border-surface-3 overflow-hidden z-[100]">
         <div class="p-5 border-b border-stone-50 dark:border-surface-3 bg-stone-50/50 dark:bg-surface-2">
             <div class="flex items-center gap-4">
-                <div
-                    class="h-12 w-12 rounded-xl bg-orange-100 dark:bg-primary/15 flex items-center justify-center text-orange-500">
+                <div class="h-12 w-12 rounded-xl bg-orange-100 dark:bg-primary/15 flex items-center justify-center text-orange-500">
                     <span class="material-symbols-outlined text-3xl">account_circle</span>
                 </div>
                 <div class="flex flex-col">
@@ -327,8 +299,7 @@
             </div>
         </div>
         <div class="px-5 py-3 bg-orange-50/30 dark:bg-primary/5 border-b border-stone-50 dark:border-surface-3">
-            <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">Faça login para acessar seu perfil,
-                histórico e configurações personalizadas.</p>
+            <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">Faça login para acessar seu perfil, histórico e configurações personalizadas.</p>
         </div>
         <nav class="py-2">
             <div class="px-5 py-3">
@@ -337,19 +308,147 @@
                     Entrar / Cadastrar
                 </a>
             </div>
-            <a class="flex items-center gap-3 px-5 py-3 text-slate-600 dark:text-slate-400 hover:bg-orange-50 dark:hover:bg-surface-2 hover:text-primary transition-colors group"
-                href="#">
+            <a class="flex items-center gap-3 px-5 py-3 text-slate-600 dark:text-slate-400 hover:bg-orange-50 dark:hover:bg-surface-2 hover:text-primary transition-colors group" href="#">
                 <span class="material-symbols-outlined text-[20px]">person</span>
                 <span class="text-sm font-medium">Meu Perfil</span>
             </a>
-            <a class="flex items-center gap-3 px-5 py-3 text-slate-600 dark:text-slate-400 hover:bg-orange-50 dark:hover:bg-surface-2 hover:text-primary transition-colors group"
-                href="#">
+            <a class="flex items-center gap-3 px-5 py-3 text-slate-600 dark:text-slate-400 hover:bg-orange-50 dark:hover:bg-surface-2 hover:text-primary transition-colors group" href="#">
                 <span class="material-symbols-outlined text-[20px]">settings</span>
                 <span class="text-sm font-medium">Configurações</span>
             </a>
+            <button id="feedbackMenuBtn" class="w-full flex items-center gap-3 px-5 py-3 text-slate-600 dark:text-slate-400 hover:bg-orange-50 dark:hover:bg-surface-2 hover:text-primary transition-colors group">
+                <span class="material-symbols-outlined text-[20px]">chat_bubble</span>
+                <span class="text-sm font-medium">Enviar Feedback</span>
+            </button>
         </nav>
         <div class="h-1 w-full bg-gradient-to-r from-orange-500 via-orange-600 to-orange-400"></div>
     </div>
+
+    <!-- =========================================================== -->
+    <!-- modal: enviar feedback                                        -->
+    <!-- =========================================================== -->
+    <div id="feedbackModal"
+        class="modal-overlay hidden fixed inset-0 z-[200] flex items-center justify-center px-4
+               bg-slate-900/40 dark:bg-black/70 backdrop-blur-sm">
+
+        <div class="modal-card bg-white dark:bg-surface-1
+                    w-full max-w-lg rounded-2xl overflow-hidden
+                    shadow-2xl shadow-primary/15 dark:shadow-black/60
+                    border border-orange-100 dark:border-surface-3
+                    scale-95 transition-transform duration-300">
+
+            <!-- cabeçalho -->
+            <div class="p-7 pb-5 border-b border-slate-100 dark:border-surface-3 relative">
+                <button id="closeFeedbackModal"
+                    class="absolute top-5 right-5 p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-surface-3 text-slate-400 dark:text-slate-500 transition-colors">
+                    <span class="material-symbols-outlined text-[20px]">close</span>
+                </button>
+                <div class="flex flex-col items-center text-center">
+                    <div class="size-12 rounded-full bg-primary/10 dark:bg-primary/15 flex items-center justify-center mb-4">
+                        <span class="material-symbols-outlined filled text-primary text-[24px]">chat_bubble</span>
+                    </div>
+                    <h2 class="text-xl font-black text-slate-900 dark:text-slate-100 tracking-tight mb-1">Enviar Feedback</h2>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 leading-relaxed max-w-sm">
+                        Sua opinião é fundamental para a evolução do SportClima.
+                    </p>
+                </div>
+            </div>
+
+            <!-- formulário -->
+            <div class="p-7 pt-5 space-y-4 overflow-y-auto max-h-[60vh] hide-scrollbar">
+
+                <!-- nome -->
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2 ml-1">Nome Completo</label>
+                    <div class="relative">
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 dark:text-slate-500 text-[20px]">person</span>
+                        <input id="feedbackNome" type="text" placeholder="Digite seu nome"
+                            class="form-input w-full pl-11 pr-4 py-3
+                                   bg-slate-50 dark:bg-surface-2
+                                   border border-slate-200 dark:border-surface-3
+                                   rounded-xl text-sm
+                                   text-slate-800 dark:text-slate-100
+                                   placeholder:text-slate-400 dark:placeholder:text-slate-600
+                                   focus:border-primary dark:focus:border-primary
+                                   focus:bg-white dark:focus:bg-surface-2
+                                   transition-colors" />
+                    </div>
+                </div>
+
+                <!-- email -->
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2 ml-1">E-mail para Contato</label>
+                    <div class="relative">
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 dark:text-slate-500 text-[20px]">mail</span>
+                        <input id="feedbackEmail" type="email" placeholder="seu@email.com"
+                            class="form-input w-full pl-11 pr-4 py-3
+                                   bg-slate-50 dark:bg-surface-2
+                                   border border-slate-200 dark:border-surface-3
+                                   rounded-xl text-sm
+                                   text-slate-800 dark:text-slate-100
+                                   placeholder:text-slate-400 dark:placeholder:text-slate-600
+                                   focus:border-primary dark:focus:border-primary
+                                   focus:bg-white dark:focus:bg-surface-2
+                                   transition-colors" />
+                    </div>
+                </div>
+
+                <!-- assunto -->
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2 ml-1">Assunto</label>
+                    <div class="relative">
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 dark:text-slate-500 text-[20px]">label</span>
+                        <input id="feedbackAssunto" type="text" placeholder="Ex: Sugestão de melhoria"
+                            class="form-input w-full pl-11 pr-4 py-3
+                                   bg-slate-50 dark:bg-surface-2
+                                   border border-slate-200 dark:border-surface-3
+                                   rounded-xl text-sm
+                                   text-slate-800 dark:text-slate-100
+                                   placeholder:text-slate-400 dark:placeholder:text-slate-600
+                                   focus:border-primary dark:focus:border-primary
+                                   focus:bg-white dark:focus:bg-surface-2
+                                   transition-colors" />
+                    </div>
+                </div>
+
+                <!-- mensagem -->
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2 ml-1">Sua Mensagem</label>
+                    <textarea id="feedbackMensagem" rows="4"
+                        placeholder="Escreva aqui seu feedback, sugestões ou dúvidas..."
+                        class="form-input w-full px-4 py-3 resize-none
+                               bg-slate-50 dark:bg-surface-2
+                               border border-slate-200 dark:border-surface-3
+                               rounded-xl text-sm
+                               text-slate-800 dark:text-slate-100
+                               placeholder:text-slate-400 dark:placeholder:text-slate-600
+                               focus:border-primary dark:focus:border-primary
+                               focus:bg-white dark:focus:bg-surface-2
+                               transition-colors"></textarea>
+                </div>
+
+                <!-- botão enviar -->
+                <button id="feedbackSubmitBtn"
+                    class="w-full py-3.5 bg-primary hover:bg-orange-600 active:scale-[0.98]
+                           text-white font-bold rounded-xl
+                           shadow-lg shadow-primary/20
+                           transition-all duration-200
+                           flex items-center justify-center gap-2 group">
+                    <span>Enviar Feedback</span>
+                    <span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">send</span>
+                </button>
+
+                <!-- cancelar -->
+                <div class="text-center pb-1">
+                    <button id="cancelFeedbackBtn"
+                        class="text-xs text-slate-400 dark:text-slate-500 hover:text-primary dark:hover:text-primary font-medium transition-colors">
+                        Cancelar e voltar ao dashboard
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <!-- script principal da spa -->
     <script src="script.js"></script>

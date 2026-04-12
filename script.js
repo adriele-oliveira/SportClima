@@ -105,28 +105,28 @@ const pages = {
 // -------------------------------------------------------------
 const criadoras = [
     {
-        nome: "Ana Beatriz Silva",
-        cargo: "Engenheira de Software",
+        nome: "Adriele de Oliveira",
+        cargo: "Estudante de Engenharia da Computação",
         descricao: "Especializada em análise de dados climáticos e sistemas de monitoramento em tempo real.",
-        github: "#",
-        linkedin: "#",
+        github: "https://github.com/adriele-oliveira",
+        linkedin: "https://www.linkedin.com/in/adriele-mesquita-de-oliveira-5ba8591b3/",
         foto: ""
     },
     {
-        nome: "Mariana Costa",
-        cargo: "Designer de Interface",
+        nome: "Gabriela Lissa Nogami",
+        cargo: "Estudante de Engenharia da Computação",
         descricao: "Focada em criar experiências intuitivas e acessíveis para atletas de alta performance.",
         github: "#",
-        linkedin: "#",
+        linkedin: "https://www.linkedin.com/in/gabriela-nogami-940604263/",
         foto: ""
     },
     {
-        nome: "Juliana Oliveira",
-        cargo: "Desenvolvedora Full-Stack",
-        descricao: "Com paixão por sistemas de alto desempenho e integrações de dados meteorológicos.",
-        github: "#",
-        linkedin: "#",
-        foto: ""
+        nome: "Isabella Valim",
+        cargo: "Estudante de Engenharia da Computação",
+        descricao: "Técnica em Informática movida a aprendizado constante, café e linhas de código. Dedicada a aprimorar minhas habilidades a cada novo projeto.",
+        github: "https://github.com/IsabellaValim",
+        linkedin: "https://www.linkedin.com/in/isabella-valim-de-carvalho-aba21b287/",
+        foto: "profile_pic_isabella.jpeg"
     }
 ];
 
@@ -592,4 +592,106 @@ if (searchInput) {
     }
 
     applyActiveStyle(currentActive);
+})();
+
+
+// -------------------------------------------------------------
+// 15. modal de enviar feedback
+// gatilhos: botão do menu de perfil + botão do card da sidebar
+// -------------------------------------------------------------
+(function initFeedbackModal() {
+    const menuBtn    = document.getElementById('feedbackMenuBtn');
+    const cardBtn    = document.getElementById('enviarFeedbackCardBtn');
+    const modal      = document.getElementById('feedbackModal');
+    const closeBtn   = document.getElementById('closeFeedbackModal');
+    const cancelBtn  = document.getElementById('cancelFeedbackBtn');
+    const submitBtn  = document.getElementById('feedbackSubmitBtn');
+    const profileMenu = document.getElementById('profileMenu');
+
+    if (!modal) return;
+
+    function openModal() {
+        // fecha o menu de perfil se estiver aberto
+        if (profileMenu) profileMenu.classList.add('hidden');
+        modal.classList.remove('hidden');
+        modal.classList.add('modal-open');
+        document.body.classList.add('modal-lock');
+    }
+
+    function closeModal() {
+        modal.classList.remove('modal-open');
+        modal.classList.add('hidden');
+        document.body.classList.remove('modal-lock');
+    }
+
+    function clearForm() {
+        const nome     = document.getElementById('feedbackNome');
+        const email    = document.getElementById('feedbackEmail');
+        const assunto  = document.getElementById('feedbackAssunto');
+        const mensagem = document.getElementById('feedbackMensagem');
+        if (nome)     nome.value     = '';
+        if (email)    email.value    = '';
+        if (assunto)  assunto.value  = '';
+        if (mensagem) mensagem.value = '';
+    }
+
+    function handleSubmit() {
+        const nome     = document.getElementById('feedbackNome')?.value.trim();
+        const email    = document.getElementById('feedbackEmail')?.value.trim();
+        const mensagem = document.getElementById('feedbackMensagem')?.value.trim();
+
+        if (!nome || !email || !mensagem) {
+            // destaca campos vazios com borda vermelha brevemente
+            [document.getElementById('feedbackNome'),
+             document.getElementById('feedbackEmail'),
+             document.getElementById('feedbackMensagem')].forEach(el => {
+                if (el && !el.value.trim()) {
+                    el.style.borderColor = '#ef4444';
+                    setTimeout(() => el.style.removeProperty('border-color'), 1800);
+                }
+            });
+            return;
+        }
+
+        // feedback visual de sucesso no botão
+        if (submitBtn) {
+            submitBtn.innerHTML = `
+                <span class="material-symbols-outlined filled text-[18px]">check_circle</span>
+                <span>Enviado com sucesso!</span>`;
+            submitBtn.disabled = true;
+            submitBtn.classList.add('bg-green-500', 'shadow-green-500/20');
+            submitBtn.classList.remove('bg-primary', 'shadow-primary/20');
+        }
+
+        setTimeout(() => {
+            closeModal();
+            clearForm();
+            // restaura botão
+            if (submitBtn) {
+                submitBtn.innerHTML = `<span>Enviar Feedback</span>
+                    <span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">send</span>`;
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('bg-green-500', 'shadow-green-500/20');
+                submitBtn.classList.add('bg-primary', 'shadow-primary/20');
+            }
+        }, 1600);
+    }
+
+    // gatilhos de abertura: menu de perfil e card da sidebar
+    if (menuBtn) menuBtn.addEventListener('click', openModal);
+    if (cardBtn) cardBtn.addEventListener('click', openModal);
+
+    if (closeBtn)  closeBtn.addEventListener('click', closeModal);
+    if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+    if (submitBtn) submitBtn.addEventListener('click', handleSubmit);
+
+    // fecha ao clicar no overlay
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+
+    // fecha com ESC
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('modal-open')) closeModal();
+    });
 })();
