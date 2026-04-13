@@ -20,9 +20,9 @@
 // -------------------------------------------------------------
 // 2. seletores principais da spa
 // -------------------------------------------------------------
-const spaContent          = document.getElementById("spaContent");
-const spaSidebarRight     = document.getElementById("spaSidebarRight");
-const sportButtons        = document.querySelectorAll(".sport-btn");
+const spaContent = document.getElementById("spaContent");
+const spaSidebarRight = document.getElementById("spaSidebarRight");
+const sportButtons = document.querySelectorAll(".sport-btn");
 const sportSidebarButtons = document.querySelectorAll(".sport-btn-sidebar");
 
 
@@ -105,28 +105,28 @@ const pages = {
 // -------------------------------------------------------------
 const criadoras = [
     {
-        nome: "Ana Beatriz Silva",
-        cargo: "Engenheira de Software",
-        descricao: "Especializada em análise de dados climáticos e sistemas de monitoramento em tempo real.",
-        github: "#",
-        linkedin: "#",
-        foto: ""
-    },
-    {
-        nome: "Mariana Costa",
-        cargo: "Designer de Interface",
-        descricao: "Focada em criar experiências intuitivas e acessíveis para atletas de alta performance.",
-        github: "#",
-        linkedin: "#",
-        foto: ""
-    },
-    {
-        nome: "Isabella VAlim",
+        nome: "Adriele Mesquita de Oliveira",
         cargo: "Estudante de Engenharia de Computação",
-        descricao: "Técnica em Informática movida a aprendizado constante, café e linhas de código.",
-        github: "#",
-        linkedin: "#",
-        foto: "profile_pic_isabella.jpeg"
+        descricao: "Especializada em análise de dados climáticos e sistemas de monitoramento em tempo real.",
+        github: "https://github.com/adriele-oliveira",
+        linkedin: "https://www.linkedin.com/in/adriele-mesquita-de-oliveira-5ba8591b3/",
+        foto: ""
+    },
+    {
+        nome: "Gabriela Lissa Nogami",
+        cargo: "Estudante de Engenharia de Computação",
+        descricao: "Focada em criar experiências intuitivas e acessíveis para atletas de alta performance.",
+        github: "https://github.com/gabriela-nogami",
+        linkedin: "https://www.linkedin.com/in/gabriela-nogami-940604263/",
+        foto: ""
+    },
+    {
+        nome: "Isabella Valim",
+        cargo: "Estudante de Engenharia de Computação",
+        descricao: "Técnica em Informática movida a aprendizado constante, café e linhas de código. Dedicada a aprimorar minhas habilidades a cada novo projeto.",
+        github: "https://github.com/IsabellaValim",
+        linkedin: "https://www.linkedin.com/in/isabella-valim-de-carvalho-aba21b287/",
+        foto: "assets/profile_pic_isabella.jpeg"
     }
 ];
 
@@ -154,9 +154,9 @@ function loadSobreProjeto() {
                         bg-slate-100 dark:bg-surface-3
                         flex items-center justify-center shrink-0">
                 ${c.foto
-                    ? `<img src="${c.foto}" alt="Foto de ${c.nome}" class="w-full h-full object-cover" />`
-                    : `<span class="material-symbols-outlined text-4xl text-slate-300 dark:text-slate-600">account_circle</span>`
-                }
+            ? `<img src="${c.foto}" alt="Foto de ${c.nome}" class="w-full h-full object-cover" />`
+            : `<span class="material-symbols-outlined text-4xl text-slate-300 dark:text-slate-600">account_circle</span>`
+        }
             </div>
 
             <!-- nome e cargo da criadora -->
@@ -365,11 +365,11 @@ if (searchInput) {
             let query = searchInput.value.toLowerCase().trim();
 
             const synonyms = {
-                "surfe":     "surf",
-                "pedalar":   "ciclismo",
-                "bike":      "ciclismo",
-                "correr":    "corrida",
-                "inicio":    "home",
+                "surfe": "surf",
+                "pedalar": "ciclismo",
+                "bike": "ciclismo",
+                "correr": "corrida",
+                "inicio": "home",
                 "dashboard": "home"
             };
 
@@ -390,15 +390,15 @@ if (searchInput) {
 // 11. controle do drawer de notificações
 // -------------------------------------------------------------
 (function initNotifications() {
-    const bellBtn     = document.getElementById('notificationBtn');
-    const drawer      = document.getElementById('notificationDrawer');
-    const overlay     = document.getElementById('notificationOverlay');
-    const closeBtn    = document.getElementById('closeNotifications');
+    const bellBtn = document.getElementById('notificationBtn');
+    const drawer = document.getElementById('notificationDrawer');
+    const overlay = document.getElementById('notificationOverlay');
+    const closeBtn = document.getElementById('closeNotifications');
     const markReadBtn = document.getElementById('markAllReadBtn');
-    const clearBtn    = document.getElementById('clearNotifsBtn');
-    const emptyState  = document.getElementById('emptyState');
-    const badge       = document.getElementById('notifBadge');
-    const listArea    = document.querySelector('#notificationDrawer .flex-1.overflow-y-auto');
+    const clearBtn = document.getElementById('clearNotifsBtn');
+    const emptyState = document.getElementById('emptyState');
+    const badge = document.getElementById('notifBadge');
+    const listArea = document.querySelector('#notificationDrawer .flex-1.overflow-y-auto');
 
     if (!bellBtn || !drawer || !overlay) return;
 
@@ -459,9 +459,9 @@ if (searchInput) {
 
     // eventos do drawer
     bellBtn.addEventListener('click', openDrawer);
-    if (closeBtn)    closeBtn.addEventListener('click', closeDrawer);
+    if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
     if (markReadBtn) markReadBtn.addEventListener('click', applyReadStyle);
-    if (clearBtn)    clearBtn.addEventListener('click', applyClearState);
+    if (clearBtn) clearBtn.addEventListener('click', applyClearState);
     overlay.addEventListener('click', (e) => {
         if (e.target === overlay) closeDrawer();
     });
@@ -473,7 +473,7 @@ if (searchInput) {
 // -------------------------------------------------------------
 (function initProfileMenu() {
     const trigger = document.getElementById('profileTrigger');
-    const menu    = document.getElementById('profileMenu');
+    const menu = document.getElementById('profileMenu');
 
     if (!trigger || !menu) return;
 
@@ -499,8 +499,8 @@ if (searchInput) {
 // -------------------------------------------------------------
 (function initThemeToggle() {
     const toggleBtn = document.getElementById('dark-mode-toggle');
-    const darkIcon  = document.getElementById('dark-icon');
-    const html      = document.documentElement;
+    const darkIcon = document.getElementById('dark-icon');
+    const html = document.documentElement;
 
     if (!toggleBtn) return;
 
@@ -526,7 +526,7 @@ if (searchInput) {
 // 14. navegação ativa na sidebar com estilos visuais consistentes
 // -------------------------------------------------------------
 (function initSidebarNav() {
-    const items     = document.querySelectorAll('.sport-btn-sidebar');
+    const items = document.querySelectorAll('.sport-btn-sidebar');
     const topSearch = document.querySelector('header input');
     let currentActive = document.querySelector('[data-sport="home"]') || items[0];
 
@@ -593,12 +593,12 @@ if (searchInput) {
 // gatilhos: botão do menu de perfil + botão do card da sidebar
 // -------------------------------------------------------------
 (function initFeedbackModal() {
-    const menuBtn    = document.getElementById('feedbackMenuBtn');
-    const cardBtn    = document.getElementById('enviarFeedbackCardBtn');
-    const modal      = document.getElementById('feedbackModal');
-    const closeBtn   = document.getElementById('closeFeedbackModal');
-    const cancelBtn  = document.getElementById('cancelFeedbackBtn');
-    const submitBtn  = document.getElementById('feedbackSubmitBtn');
+    const menuBtn = document.getElementById('feedbackMenuBtn');
+    const cardBtn = document.getElementById('enviarFeedbackCardBtn');
+    const modal = document.getElementById('feedbackModal');
+    const closeBtn = document.getElementById('closeFeedbackModal');
+    const cancelBtn = document.getElementById('cancelFeedbackBtn');
+    const submitBtn = document.getElementById('feedbackSubmitBtn');
     const profileMenu = document.getElementById('profileMenu');
 
     if (!modal) return;
@@ -618,26 +618,26 @@ if (searchInput) {
     }
 
     function clearForm() {
-        const nome     = document.getElementById('feedbackNome');
-        const email    = document.getElementById('feedbackEmail');
-        const assunto  = document.getElementById('feedbackAssunto');
+        const nome = document.getElementById('feedbackNome');
+        const email = document.getElementById('feedbackEmail');
+        const assunto = document.getElementById('feedbackAssunto');
         const mensagem = document.getElementById('feedbackMensagem');
-        if (nome)     nome.value     = '';
-        if (email)    email.value    = '';
-        if (assunto)  assunto.value  = '';
+        if (nome) nome.value = '';
+        if (email) email.value = '';
+        if (assunto) assunto.value = '';
         if (mensagem) mensagem.value = '';
     }
 
     function handleSubmit() {
-        const nome     = document.getElementById('feedbackNome')?.value.trim();
-        const email    = document.getElementById('feedbackEmail')?.value.trim();
+        const nome = document.getElementById('feedbackNome')?.value.trim();
+        const email = document.getElementById('feedbackEmail')?.value.trim();
         const mensagem = document.getElementById('feedbackMensagem')?.value.trim();
 
         if (!nome || !email || !mensagem) {
             // destaca campos vazios com borda vermelha brevemente
             [document.getElementById('feedbackNome'),
-             document.getElementById('feedbackEmail'),
-             document.getElementById('feedbackMensagem')].forEach(el => {
+            document.getElementById('feedbackEmail'),
+            document.getElementById('feedbackMensagem')].forEach(el => {
                 if (el && !el.value.trim()) {
                     el.style.borderColor = '#ef4444';
                     setTimeout(() => el.style.removeProperty('border-color'), 1800);
@@ -674,7 +674,7 @@ if (searchInput) {
     if (menuBtn) menuBtn.addEventListener('click', openModal);
     if (cardBtn) cardBtn.addEventListener('click', openModal);
 
-    if (closeBtn)  closeBtn.addEventListener('click', closeModal);
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
     if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
     if (submitBtn) submitBtn.addEventListener('click', handleSubmit);
 
@@ -688,3 +688,74 @@ if (searchInput) {
         if (e.key === 'Escape' && modal.classList.contains('modal-open')) closeModal();
     });
 })();
+
+// Abrir/Fechar Menu do Topo
+function toggleMenu() {
+    const menu = document.getElementById('profileMenu');
+    if (menu) {
+        menu.classList.toggle('hidden');
+    }
+}
+
+// Abrir o Modal de Perfil
+function abrirModalPerfil() {
+    const menu = document.getElementById('profileMenu');
+    const modal = document.getElementById('modalPerfil');
+
+    if (menu) menu.classList.add('hidden'); // Fecha o menu pequeno
+    if (modal) {
+        modal.classList.remove('hidden'); // Mostra o modal grande
+        document.body.style.overflow = 'hidden'; // Trava o scroll do fundo
+    }
+}
+
+// Fechar o Modal
+function fecharModal() {
+    const modal = document.getElementById('modalPerfil');
+    if (modal) {
+        modal.classList.add('hidden');
+        document.body.style.overflow = 'auto'; // Destrava o scroll
+    }
+}
+
+// Fechar menu ao clicar fora (Opcional, mas melhora a experiência)
+window.onclick = function (event) {
+    const menu = document.getElementById('profileMenu');
+    const profileBtn = document.querySelector('[onclick="toggleMenu()"]'); // Seleciona o botão que abre o menu
+
+    if (menu && !menu.contains(event.target) && event.target !== profileBtn) {
+        menu.classList.add('hidden');
+    }
+}
+
+// --- Função para processar o upload da nova foto ---
+function processarNovaFoto(input) {
+    // Verifica se um arquivo foi selecionado
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+
+        // Define o que acontece quando o arquivo for lido
+        reader.onload = function (e) {
+            // e.target.result contém a imagem em formato base64
+            const novaImagemUrl = e.target.result;
+
+            // 1. Atualizar o Modal de Perfil (Grande)
+            document.getElementById('fotoPerfilGrande').src = novaImagemUrl; // Define a nova imagem
+            document.getElementById('fotoPerfilGrande').classList.remove('hidden'); // Mostra a imagem
+            document.getElementById('placeholderFotoGrande').classList.add('hidden'); // Esconde o ícone
+
+            // 2. Atualizar o Menu Suspenso (Pequeno)
+            document.getElementById('fotoPerfilPequena').src = novaImagemUrl; // Define a nova imagem
+            document.getElementById('fotoPerfilPequena').classList.remove('hidden'); // Mostra a imagem
+            document.getElementById('placeholderFotoPequena').classList.add('hidden'); // Esconde o ícone
+
+            // Opcional: Atualizar o avatar do topo (Header) se tiver o mesmo esquema
+            // document.getElementById('fotoPerfilHeader').src = novaImagemUrl;
+
+            console.log("Foto de perfil atualizada com sucesso no SportClima!");
+        };
+
+        // Lê o arquivo como uma URL de dados (base64)
+        reader.readAsDataURL(input.files[0]);
+    }
+}

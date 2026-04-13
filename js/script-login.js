@@ -32,8 +32,8 @@ document.addEventListener('DOMContentLoaded', () => {
 // -------------------------------------------------------------
 (function initThemeToggle() {
     const toggleBtn = document.getElementById('dark-mode-toggle');
-    const darkIcon  = document.getElementById('dark-icon');
-    const html      = document.documentElement;
+    const darkIcon = document.getElementById('dark-icon');
+    const html = document.documentElement;
 
     if (!toggleBtn) return;
 
@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loginForm.addEventListener('submit', (e) => {
         e.preventDefault();
 
-        const email    = document.getElementById('email').value;
+        const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
 
         // validação básica de campos
@@ -79,3 +79,26 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = 'index.html';
     });
 });
+
+// Seleciona o formulário
+const loginForm = document.querySelector('form');
+
+// Lógica para o envio do formulário (Botão Login)
+loginForm.addEventListener('submit', function (e) {
+    e.preventDefault(); // Impede o recarregamento
+
+    // Validação fictícia
+    console.log("Validando login...");
+
+    // Se tudo estiver certo, vai para a Home
+    window.location.href = "index.html";
+});
+
+// Lógica para o botão "Criar Conta"
+// Certifique-se de adicionar o ID 'btnIrParaCadastro' no seu HTML
+const btnCadastro = document.getElementById('btnIrParaCadastro');
+if (btnCadastro) {
+    btnCadastro.addEventListener('click', function () {
+        window.location.href = "cadastro.html";
+    });
+}
