@@ -49,29 +49,50 @@ body {
 /* ----------------------------------------------------------- */
 /* botões da spa — sidebar de esportes                         */
 /* ----------------------------------------------------------- */
+/* ----------------------------------------------------------- */
+/* botões da spa — sidebar de esportes                         */
+/* ----------------------------------------------------------- */
 .sport-btn,
 .sport-btn-sidebar {
     transition: 0.25s all ease;
     cursor: pointer;
 }
 
-.sport-btn.active,
-.sport-btn-sidebar.active {
-    color: #f27f0d !important;
-    font-weight: 700 !important;
-}
-
-.sport-btn-sidebar.active .material-symbols-outlined {
-    color: #f27f0d !important;
-}
-
-/* item "visão geral" ativo mantém texto branco sobre fundo laranja */
-.sport-btn-sidebar[data-sport="home"].active {
+/* estado ativo: fundo laranja + texto e ícone brancos */
+.sport-btn-sidebar.sidebar-active {
+    background-color: #f97316 !important;
     color: white !important;
+    box-shadow: 0 4px 14px rgba(249, 115, 22, 0.2);
 }
 
-.sport-btn-sidebar[data-sport="home"].active .material-symbols-outlined {
+.sport-btn-sidebar.sidebar-active .material-symbols-outlined {
     color: white !important;
+    font-variation-settings: 'FILL' 1;
+}
+
+.sport-btn-sidebar.sidebar-active p {
+    color: white !important;
+    font-weight: 600;
+}
+
+/* estado inativo: texto cinza padrão (tema claro e escuro) */
+.sport-btn-sidebar:not(.sidebar-active) {
+    background-color: transparent !important;
+    color: #64748b;  /* slate-500 */
+}
+
+.dark .sport-btn-sidebar:not(.sidebar-active) {
+    color: #94a3b8;  /* slate-400 */
+}
+
+.sport-btn-sidebar:not(.sidebar-active) .material-symbols-outlined {
+    color: inherit !important;
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+.sport-btn-sidebar:not(.sidebar-active) p {
+    color: inherit !important;
+    font-weight: 500;
 }
 
 

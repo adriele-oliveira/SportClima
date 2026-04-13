@@ -105,27 +105,27 @@ const pages = {
 // -------------------------------------------------------------
 const criadoras = [
     {
-        nome: "Adriele de Oliveira",
-        cargo: "Estudante de Engenharia da Computação",
+        nome: "Ana Beatriz Silva",
+        cargo: "Engenheira de Software",
         descricao: "Especializada em análise de dados climáticos e sistemas de monitoramento em tempo real.",
-        github: "https://github.com/adriele-oliveira",
-        linkedin: "https://www.linkedin.com/in/adriele-mesquita-de-oliveira-5ba8591b3/",
+        github: "#",
+        linkedin: "#",
         foto: ""
     },
     {
-        nome: "Gabriela Lissa Nogami",
-        cargo: "Estudante de Engenharia da Computação",
+        nome: "Mariana Costa",
+        cargo: "Designer de Interface",
         descricao: "Focada em criar experiências intuitivas e acessíveis para atletas de alta performance.",
         github: "#",
-        linkedin: "https://www.linkedin.com/in/gabriela-nogami-940604263/",
+        linkedin: "#",
         foto: ""
     },
     {
-        nome: "Isabella Valim",
-        cargo: "Estudante de Engenharia da Computação",
-        descricao: "Técnica em Informática movida a aprendizado constante, café e linhas de código. Dedicada a aprimorar minhas habilidades a cada novo projeto.",
-        github: "https://github.com/IsabellaValim",
-        linkedin: "https://www.linkedin.com/in/isabella-valim-de-carvalho-aba21b287/",
+        nome: "Isabella VAlim",
+        cargo: "Estudante de Engenharia de Computação",
+        descricao: "Técnica em Informática movida a aprendizado constante, café e linhas de código.",
+        github: "#",
+        linkedin: "#",
         foto: "profile_pic_isabella.jpeg"
     }
 ];
@@ -297,8 +297,8 @@ function loadPage(sport) {
 
     // atualiza estado ativo na sidebar
     sportButtons.forEach(btn => btn.classList.remove("active"));
-    sportSidebarButtons.forEach(btn => btn.classList.remove("active"));
-    document.querySelector(`[data-sport="${sport}"]`)?.classList.add("active");
+    sportSidebarButtons.forEach(btn => btn.classList.remove("sidebar-active"));
+    document.querySelector(`[data-sport="${sport}"]`)?.classList.add("sidebar-active");
 
     // remove destaque do botão "sobre o projeto" ao navegar para um esporte
     const sobreBtn = document.getElementById('sobreProjetoBtn');
@@ -332,19 +332,17 @@ loadPage("home");
     if (!sobreBtn) return;
 
     sobreBtn.addEventListener('click', () => {
-        // remove o destaque de todos os itens de esporte
+        // remove o destaque de todos os itens de esporte via classe
         const sidebarItems = document.querySelectorAll('.sport-btn-sidebar');
         sidebarItems.forEach(item => {
+            item.classList.remove('sidebar-active');
             item.style.removeProperty('background-color');
             item.style.removeProperty('color');
             item.classList.remove('shadow-lg');
             const icon = item.querySelector('.material-symbols-outlined');
             const text = item.querySelector('p');
-            if (icon) {
-                icon.style.removeProperty('color');
-                icon.classList.remove('filled');
-            }
-            if (text) text.style.removeProperty('color');
+            if (icon) { icon.style.removeProperty('color'); }
+            if (text) { text.style.removeProperty('color'); }
         });
 
         // destaca o botão "sobre o projeto"
@@ -535,29 +533,24 @@ if (searchInput) {
     function applyActiveStyle(element) {
         if (!element) return;
 
-        // reseta todos os itens de esporte
+        // reseta todos os itens: remove classe ativa, limpa qualquer inline style residual
         items.forEach(item => {
+            item.classList.remove('sidebar-active');
             item.style.removeProperty('background-color');
             item.style.removeProperty('color');
             item.classList.remove('shadow-lg');
             const icon = item.querySelector('.material-symbols-outlined');
             const text = item.querySelector('p');
-            if (icon) { icon.style.removeProperty('color'); icon.classList.remove('filled'); }
-            if (text) text.style.removeProperty('color');
+            if (icon) { icon.style.removeProperty('color'); }
+            if (text) { text.style.removeProperty('color'); }
         });
 
         // remove destaque do botão "sobre o projeto"
         const sobreBtn = document.getElementById('sobreProjetoBtn');
         if (sobreBtn) sobreBtn.classList.remove('sobre-btn-active');
 
-        // aplica destaque ao item clicado
-        element.style.backgroundColor = '#f97316';
-        element.style.color = 'white';
-        element.classList.add('shadow-lg');
-        const activeIcon = element.querySelector('.material-symbols-outlined');
-        const activeText = element.querySelector('p');
-        if (activeIcon) { activeIcon.style.setProperty('color', 'white', 'important'); activeIcon.classList.add('filled'); }
-        if (activeText) activeText.style.setProperty('color', 'white', 'important');
+        // ativa o item clicado apenas via classe
+        element.classList.add('sidebar-active');
         currentActive = element;
     }
 
