@@ -592,6 +592,10 @@ if (searchInput) {
 // 15. modal de enviar feedback
 // gatilhos: botão do menu de perfil + botão do card da sidebar
 // -------------------------------------------------------------
+emailjs.init({
+    publicKey: "4VsEjc_Hr6MccvJBz",
+});
+
 (function initFeedbackModal() {
     const menuBtn = document.getElementById('feedbackMenuBtn');
     const cardBtn = document.getElementById('enviarFeedbackCardBtn');
@@ -604,7 +608,6 @@ if (searchInput) {
     if (!modal) return;
 
     function openModal() {
-        // fecha o menu de perfil se estiver aberto
         if (profileMenu) profileMenu.classList.add('hidden');
         modal.classList.remove('hidden');
         modal.classList.add('modal-open');
@@ -622,22 +625,28 @@ if (searchInput) {
         const email = document.getElementById('feedbackEmail');
         const assunto = document.getElementById('feedbackAssunto');
         const mensagem = document.getElementById('feedbackMensagem');
+
         if (nome) nome.value = '';
         if (email) email.value = '';
         if (assunto) assunto.value = '';
         if (mensagem) mensagem.value = '';
     }
 
-    function handleSubmit() {
-        const nome = document.getElementById('feedbackNome')?.value.trim();
-        const email = document.getElementById('feedbackEmail')?.value.trim();
-        const mensagem = document.getElementById('feedbackMensagem')?.value.trim();
+    function handleSubmit(event) {
+        if (event) event.preventDefault();
+
+        const nomeInput = document.getElementById('feedbackNome');
+        const emailInput = document.getElementById('feedbackEmail');
+        const assuntoInput = document.getElementById('feedbackAssunto');
+        const mensagemInput = document.getElementById('feedbackMensagem');
+
+        const nome = nomeInput?.value.trim();
+        const email = emailInput?.value.trim();
+        const assunto = assuntoInput?.value.trim();
+        const mensagem = mensagemInput?.value.trim();
 
         if (!nome || !email || !mensagem) {
-            // destaca campos vazios com borda vermelha brevemente
-            [document.getElementById('feedbackNome'),
-            document.getElementById('feedbackEmail'),
-            document.getElementById('feedbackMensagem')].forEach(el => {
+            [nomeInput, emailInput, mensagemInput].forEach(el => {
                 if (el && !el.value.trim()) {
                     el.style.borderColor = '#ef4444';
                     setTimeout(() => el.style.removeProperty('border-color'), 1800);
@@ -646,44 +655,67 @@ if (searchInput) {
             return;
         }
 
-        // feedback visual de sucesso no botão
         if (submitBtn) {
             submitBtn.innerHTML = `
-                <span class="material-symbols-outlined filled text-[18px]">check_circle</span>
-                <span>Enviado com sucesso!</span>`;
+                <span class="material-symbols-outlined animate-spin text-[18px]">progress_activity</span>
+                <span>Enviando...</span>`;
             submitBtn.disabled = true;
-            submitBtn.classList.add('bg-green-500', 'shadow-green-500/20');
-            submitBtn.classList.remove('bg-primary', 'shadow-primary/20');
         }
 
-        setTimeout(() => {
-            closeModal();
-            clearForm();
-            // restaura botão
-            if (submitBtn) {
-                submitBtn.innerHTML = `<span>Enviar Feedback</span>
-                    <span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">send</span>`;
-                submitBtn.disabled = false;
-                submitBtn.classList.remove('bg-green-500', 'shadow-green-500/20');
-                submitBtn.classList.add('bg-primary', 'shadow-primary/20');
-            }
-        }, 1600);
+        const formData = {
+            nome: nome,
+            email: email,
+            assunto: assunto,
+            mensagem: mensagem
+        };
+
+        const serviceID = "service_qz0wtwq";
+        const templateID = "template_ma91mtj";
+
+        emailjs.send(serviceID, templateID, formData)
+            .then(() => {
+                if (submitBtn) {
+                    submitBtn.innerHTML = `
+                        <span class="material-symbols-outlined filled text-[18px]">check_circle</span>
+                        <span>Enviado com sucesso!</span>`;
+                    submitBtn.classList.add('bg-green-500', 'shadow-green-500/20');
+                    submitBtn.classList.remove('bg-primary', 'shadow-primary/20');
+                }
+
+                setTimeout(() => {
+                    closeModal();
+                    clearForm();
+
+                    if (submitBtn) {
+                        submitBtn.innerHTML = `<span>Enviar Feedback</span>
+                            <span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">send</span>`;
+                        submitBtn.disabled = false;
+                        submitBtn.classList.remove('bg-green-500', 'shadow-green-500/20');
+                        submitBtn.classList.add('bg-primary', 'shadow-primary/20');
+                    }
+                }, 1600);
+            })
+            .catch((error) => {
+                alert("Erro ao enviar feedback. Tente novamente.");
+
+                if (submitBtn) {
+                    submitBtn.innerHTML = `<span>Enviar Feedback</span>
+                        <span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">send</span>`;
+                    submitBtn.disabled = false;
+                }
+            });
     }
 
-    // gatilhos de abertura: menu de perfil e card da sidebar
     if (menuBtn) menuBtn.addEventListener('click', openModal);
     if (cardBtn) cardBtn.addEventListener('click', openModal);
-
     if (closeBtn) closeBtn.addEventListener('click', closeModal);
     if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
     if (submitBtn) submitBtn.addEventListener('click', handleSubmit);
 
-    // fecha ao clicar no overlay
     modal.addEventListener('click', (e) => {
         if (e.target === modal) closeModal();
     });
 
-    // fecha com ESC
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && modal.classList.contains('modal-open')) closeModal();
     });
@@ -759,3 +791,4 @@ function processarNovaFoto(input) {
         reader.readAsDataURL(input.files[0]);
     }
 }
+

@@ -22,6 +22,9 @@
     <!-- tailwind cdn com plugins de forms e container-queries -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 
+    <!-- configuração do EmailJS -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"> </script>
+
     <!-- css externo do projeto -->
     <link rel="stylesheet" href="css/styles.css">
 
@@ -419,18 +422,19 @@
                 </div>
             </div>
 
-            <!-- formulário -->
-            <div class="p-7 pt-5 space-y-4 overflow-y-auto max-h-[60vh] hide-scrollbar">
+            <form method="post" id="formFeedback">
+                <!-- formulário -->
+                <div class="p-7 pt-5 space-y-4 overflow-y-auto max-h-[60vh] hide-scrollbar">
 
-                <!-- nome -->
-                <div>
-                    <label
-                        class="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2 ml-1">Nome
-                        Completo</label>
-                    <div class="relative">
-                        <span
-                            class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 dark:text-slate-500 text-[20px]">person</span>
-                        <input id="feedbackNome" type="text" placeholder="Digite seu nome" class="form-input w-full pl-11 pr-4 py-3
+                    <!-- nome -->
+                    <div>
+                        <label
+                            class="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2 ml-1">Nome
+                            Completo</label>
+                        <div class="relative">
+                            <span
+                                class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 dark:text-slate-500 text-[20px]">person</span>
+                            <input id="feedbackNome" type="text" name="nome" placeholder="Digite seu nome" class="form-input w-full pl-11 pr-4 py-3
                                    bg-slate-50 dark:bg-surface-2
                                    border border-slate-200 dark:border-surface-3
                                    rounded-xl text-sm
@@ -439,18 +443,18 @@
                                    focus:border-primary dark:focus:border-primary
                                    focus:bg-white dark:focus:bg-surface-2
                                    transition-colors" />
+                        </div>
                     </div>
-                </div>
 
-                <!-- email -->
-                <div>
-                    <label
-                        class="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2 ml-1">E-mail
-                        para Contato</label>
-                    <div class="relative">
-                        <span
-                            class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 dark:text-slate-500 text-[20px]">mail</span>
-                        <input id="feedbackEmail" type="email" placeholder="seu@email.com" class="form-input w-full pl-11 pr-4 py-3
+                    <!-- email -->
+                    <div>
+                        <label
+                            class="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2 ml-1">E-mail
+                            para Contato</label>
+                        <div class="relative">
+                            <span
+                                class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 dark:text-slate-500 text-[20px]">mail</span>
+                            <input id="feedbackEmail" type="email" name="email" placeholder="seu@email.com" class="form-input w-full pl-11 pr-4 py-3
                                    bg-slate-50 dark:bg-surface-2
                                    border border-slate-200 dark:border-surface-3
                                    rounded-xl text-sm
@@ -459,17 +463,17 @@
                                    focus:border-primary dark:focus:border-primary
                                    focus:bg-white dark:focus:bg-surface-2
                                    transition-colors" />
+                        </div>
                     </div>
-                </div>
 
-                <!-- assunto -->
-                <div>
-                    <label
-                        class="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2 ml-1">Assunto</label>
-                    <div class="relative">
-                        <span
-                            class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 dark:text-slate-500 text-[20px]">label</span>
-                        <input id="feedbackAssunto" type="text" placeholder="Ex: Sugestão de melhoria" class="form-input w-full pl-11 pr-4 py-3
+                    <!-- assunto -->
+                    <div>
+                        <label
+                            class="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2 ml-1">Assunto</label>
+                        <div class="relative">
+                            <span
+                                class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 dark:text-slate-500 text-[20px]">label</span>
+                            <input id="feedbackAssunto" type="text" name="assunto" placeholder="Ex: Sugestão de melhoria" class="form-input w-full pl-11 pr-4 py-3
                                    bg-slate-50 dark:bg-surface-2
                                    border border-slate-200 dark:border-surface-3
                                    rounded-xl text-sm
@@ -478,16 +482,16 @@
                                    focus:border-primary dark:focus:border-primary
                                    focus:bg-white dark:focus:bg-surface-2
                                    transition-colors" />
+                        </div>
                     </div>
-                </div>
 
-                <!-- mensagem -->
-                <div>
-                    <label
-                        class="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2 ml-1">Sua
-                        Mensagem</label>
-                    <textarea id="feedbackMensagem" rows="4"
-                        placeholder="Escreva aqui seu feedback, sugestões ou dúvidas..." class="form-input w-full px-4 py-3 resize-none
+                    <!-- mensagem -->
+                    <div>
+                        <label
+                            class="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2 ml-1">Sua
+                            Mensagem</label>
+                        <textarea id="feedbackMensagem" rows="4"
+                            placeholder="Escreva aqui seu feedback, sugestões ou dúvidas..." class="form-input w-full px-4 py-3 resize-none
                                bg-slate-50 dark:bg-surface-2
                                border border-slate-200 dark:border-surface-3
                                rounded-xl text-sm
@@ -496,27 +500,28 @@
                                focus:border-primary dark:focus:border-primary
                                focus:bg-white dark:focus:bg-surface-2
                                transition-colors"></textarea>
-                </div>
+                    </div>
 
-                <!-- botão enviar -->
-                <button id="feedbackSubmitBtn" class="w-full py-3.5 bg-primary hover:bg-orange-600 active:scale-[0.98]
+                    <!-- botão enviar -->
+                    <button id="feedbackSubmitBtn" type="submit" class="w-full py-3.5 bg-primary hover:bg-orange-600 active:scale-[0.98]
                            text-white font-bold rounded-xl
                            shadow-lg shadow-primary/20
                            transition-all duration-200
                            flex items-center justify-center gap-2 group">
-                    <span>Enviar Feedback</span>
-                    <span
-                        class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">send</span>
-                </button>
-
-                <!-- cancelar -->
-                <div class="text-center pb-1">
-                    <button id="cancelFeedbackBtn"
-                        class="text-xs text-slate-400 dark:text-slate-500 hover:text-primary dark:hover:text-primary font-medium transition-colors">
-                        Cancelar e voltar ao dashboard
+                        <span>Enviar Feedback</span>
+                        <span
+                            class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">send</span>
                     </button>
+
+                    <!-- cancelar -->
+                    <div class="text-center pb-1">
+                        <button id="cancelFeedbackBtn"
+                            class="text-xs text-slate-400 dark:text-slate-500 hover:text-primary dark:hover:text-primary font-medium transition-colors">
+                            Cancelar e voltar ao dashboard
+                        </button>
+                    </div>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
 
