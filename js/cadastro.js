@@ -1,63 +1,92 @@
+(function () {
+    const saved = localStorage.getItem('theme');
+    if (saved === 'dark') {
+        document.documentElement.classList.add('dark');
+        document.documentElement.classList.remove('light');
+    } else {
+        document.documentElement.classList.add('light');
+        document.documentElement.classList.remove('dark');
+    }
+})();
+
 document.addEventListener('DOMContentLoaded', () => {
     const themeToggle = document.getElementById('theme-toggle');
     const themeIcon = document.getElementById('theme-icon');
-    const htmlElement = document.documentElement;
+    const html = document.documentElement;
 
-    // Função para atualizar o ícone baseado no estado atual
     const syncIcon = () => {
         if (themeIcon) {
-            themeIcon.innerText = htmlElement.classList.contains('dark') ? 'light_mode' : 'dark_mode';
+            themeIcon.innerText = html.classList.contains('dark') ? 'light_mode' : 'dark_mode';
         }
     };
 
-    // Sincroniza o ícone assim que a página abre
     syncIcon();
 
-    // Evento de clique para trocar e salvar
     themeToggle?.addEventListener('click', () => {
-        if (htmlElement.classList.contains('dark')) {
-            htmlElement.classList.remove('dark');
-            htmlElement.classList.add('light');
-            localStorage.setItem('theme', 'light');
-        } else {
-            htmlElement.classList.add('dark');
-            htmlElement.classList.remove('light');
-            localStorage.setItem('theme', 'dark');
-        }
+        const isDark = html.classList.toggle('dark');
+        isDark ? html.classList.remove('light') : html.classList.add('light');
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
         syncIcon();
     });
-});
 
-document.addEventListener('DOMContentLoaded', () => {
-    const themeToggle = document.getElementById('theme-toggle');
-    const themeIcon = document.getElementById('theme-icon');
-    const htmlElement = document.documentElement;
+    const form = document.getElementById('formCadastro');
+    const emailInput = document.getElementById('email');
+    const emailError = document.getElementById('emailError');
+    const submitBtn = document.getElementById('btnCadastrar');
+    const emailRegex = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
 
-    // 1. Sincroniza o ícone do botão assim que a página abre
-    const syncIcon = () => {
-        if (themeIcon) {
-            // Se a página está dark, mostra o ícone de sol (para voltar pro claro)
-            // Se está light, mostra o ícone de lua (para ir pro escuro)
-            themeIcon.innerText = htmlElement.classList.contains('dark') ? 'light_mode' : 'dark_mode';
+    const showEmailError = (msg) => {
+        if (emailError) {
+            emailError.textContent = msg;
+            emailError.classList.remove('hidden');
         }
+        emailInput?.classList.add('ring-2', 'ring-red-400');
     };
 
-    syncIcon(); // Executa ao carregar a página
+    const clearEmailError = () => {
+        if (emailError) emailError.classList.add('hidden');
+        emailInput?.classList.remove('ring-2', 'ring-red-400');
+    };
 
-    // 2. Lógica do Clique (O ajuste que serve para os dois lados)
-    themeToggle?.addEventListener('click', () => {
-        // Se estiver escuro, vira claro. Se estiver claro, vira escuro.
-        const isDark = htmlElement.classList.toggle('dark');
+    emailInput?.addEventListener('input', clearEmailError);
 
-        if (isDark) {
-            htmlElement.classList.remove('light');
-            localStorage.setItem('theme', 'dark');
-        } else {
-            htmlElement.classList.add('light');
-            localStorage.setItem('theme', 'light');
+    form?.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const name = document.getElementById('name').value.trim();
+        const email = emailInput.value.trim();
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirm-password').value;
+
+        if (!emailRegex.test(email)) {
+            showEmailError('Insira um e-mail válido. Ex: nome@dominio.com');
+            return;
         }
 
-        syncIcon(); // Atualiza o ícone após a troca
-        console.log("Tema ajustado para:", isDark ? "Escuro" : "Claro");
+        if (password !== confirmPassword) {
+            alert('As senhas não coincidem.');
+            return;
+        }
+
+        const users = JSON.parse(localStorage.getItem('sportclima_users') || '[]');
+
+        if (users.find(u => u.email === email)) {
+            showEmailError('Este e-mail já está cadastrado.');
+            return;
+        }
+
+        users.push({ name, email, password });
+        localStorage.setItem('sportclima_users', JSON.stringify(users));
+
+        if (submitBtn) {
+            submitBtn.innerHTML = `<span class="material-symbols-outlined align-middle text-[20px]">check_circle</span> Cadastro realizado!`;
+            submitBtn.disabled = true;
+            submitBtn.classList.remove('bg-primary', 'hover:shadow-primary/40', 'hover:-translate-y-0.5');
+            submitBtn.classList.add('bg-green-500', 'cursor-not-allowed');
+        }
+
+        setTimeout(() => {
+            window.location.href = 'login.html';
+        }, 3000);
     });
 });

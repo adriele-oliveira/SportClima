@@ -1,104 +1,69 @@
-// =============================================================
-// sportclima — script-login.js
-// controla: formulário de login e alternância de tema
-// =============================================================
-
-
-// -------------------------------------------------------------
-// 1. aplicação imediata do tema (evita flash ao navegar)
-// -------------------------------------------------------------
-(function applyThemeOnLoad() {
-    if (localStorage.getItem('theme') === 'dark') {
+(function () {
+    const saved = localStorage.getItem('theme');
+    if (saved === 'dark') {
         document.documentElement.classList.add('dark');
+        document.documentElement.classList.remove('light');
     } else {
+        document.documentElement.classList.add('light');
         document.documentElement.classList.remove('dark');
     }
 })();
 
-
-// -------------------------------------------------------------
-// 2. sincronização do ícone do botão de tema ao carregar
-// -------------------------------------------------------------
 document.addEventListener('DOMContentLoaded', () => {
     const darkIcon = document.getElementById('dark-icon');
+    const toggleBtn = document.getElementById('dark-mode-toggle');
+    const html = document.documentElement;
+
     if (darkIcon && localStorage.getItem('theme') === 'dark') {
         darkIcon.textContent = 'light_mode';
     }
-});
 
-
-// -------------------------------------------------------------
-// 3. alternância de tema com persistência no localstorage
-// -------------------------------------------------------------
-(function initThemeToggle() {
-    const toggleBtn = document.getElementById('dark-mode-toggle');
-    const darkIcon = document.getElementById('dark-icon');
-    const html = document.documentElement;
-
-    if (!toggleBtn) return;
-
-    toggleBtn.addEventListener('click', () => {
+    toggleBtn?.addEventListener('click', () => {
         const isDark = html.classList.toggle('dark');
-
-        if (isDark) {
-            localStorage.setItem('theme', 'dark');
-            if (darkIcon) darkIcon.textContent = 'light_mode';
-        } else {
-            localStorage.setItem('theme', 'light');
-            if (darkIcon) darkIcon.textContent = 'dark_mode';
-        }
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        if (darkIcon) darkIcon.textContent = isDark ? 'light_mode' : 'dark_mode';
     });
-})();
 
-
-// -------------------------------------------------------------
-// 4. lógica do formulário de login
-// -------------------------------------------------------------
-document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('login-form');
+    const emailInput = document.getElementById('email');
+    const emailError = document.getElementById('emailError');
+    const emailRegex = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
 
-    if (!loginForm) return;
+    const showEmailError = (msg) => {
+        if (emailError) {
+            emailError.textContent = msg;
+            emailError.classList.remove('hidden');
+        }
+        emailInput?.classList.add('ring-2', 'ring-red-400');
+    };
 
-    loginForm.addEventListener('submit', (e) => {
+    const clearEmailError = () => {
+        if (emailError) emailError.classList.add('hidden');
+        emailInput?.classList.remove('ring-2', 'ring-red-400');
+    };
+
+    emailInput?.addEventListener('input', clearEmailError);
+
+    loginForm?.addEventListener('submit', (e) => {
         e.preventDefault();
 
-        const email = document.getElementById('email').value;
+        const email = emailInput.value.trim();
         const password = document.getElementById('password').value;
 
-        // validação básica de campos
-        if (!email || !password) {
-            alert('Por favor, preencha todos os campos.');
+        if (!emailRegex.test(email)) {
+            showEmailError('Insira um e-mail válido. Ex: nome@dominio.com');
             return;
         }
 
-        // simulação de autenticação bem-sucedida
-        console.log('tentativa de login com:', email);
-        alert('Login realizado com sucesso!');
+        const users = JSON.parse(localStorage.getItem('sportclima_users') || '[]');
+        const user = users.find(u => u.email === email && u.password === password);
 
-        // redireciona para o dashboard mantendo o tema atual
+        if (!user) {
+            showEmailError('E-mail ou senha incorretos.');
+            return;
+        }
+
+        localStorage.setItem('sportclima_session', JSON.stringify({ name: user.name, email: user.email }));
         window.location.href = 'index.html';
     });
 });
-
-// Seleciona o formulário
-const loginForm = document.querySelector('form');
-
-// Lógica para o envio do formulário (Botão Login)
-loginForm.addEventListener('submit', function (e) {
-    e.preventDefault(); // Impede o recarregamento
-
-    // Validação fictícia
-    console.log("Validando login...");
-
-    // Se tudo estiver certo, vai para a Home
-    window.location.href = "index.html";
-});
-
-// Lógica para o botão "Criar Conta"
-// Certifique-se de adicionar o ID 'btnIrParaCadastro' no seu HTML
-const btnCadastro = document.getElementById('btnIrParaCadastro');
-if (btnCadastro) {
-    btnCadastro.addEventListener('click', function () {
-        window.location.href = "cadastro.html";
-    });
-}

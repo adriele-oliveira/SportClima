@@ -3,7 +3,6 @@
 
 <head>
     <script>
-        // Função que aplica o tema salvo IMEDIATAMENTE
         (function () {
             const savedTheme = localStorage.getItem('theme');
             if (savedTheme === 'dark') {
@@ -118,6 +117,7 @@
                                 class="w-full pl-12 pr-4 py-4 bg-surface-container-low dark:bg-surface-3 dark:text-white border-none rounded-xl focus:ring-2 focus:ring-primary/20 transition-all"
                                 id="email" placeholder="exemplo@email.com" type="email" required />
                         </div>
+                        <p id="emailError" class="hidden text-red-500 text-xs mt-1.5 ml-1">Insira um e-mail válido.</p>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -137,7 +137,7 @@
                         </div>
                     </div>
 
-                    <button
+                    <button id="btnCadastrar"
                         class="w-full bg-primary text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-primary/40 hover:-translate-y-0.5 active:scale-95 transition-all duration-200"
                         type="submit">
                         Criar Conta
@@ -152,29 +152,7 @@
         </section>
     </main>
 
-    <script>
-        // Esse script dentro do HTML vai forçar o funcionamento
-        document.addEventListener('DOMContentLoaded', () => {
-            const btn = document.getElementById('theme-toggle');
-            const html = document.documentElement;
-            const icon = document.getElementById('theme-icon');
-
-            if (!btn) {
-                alert("ERRO: O botão 'theme-toggle' não foi encontrado no HTML!");
-                return;
-            }
-
-            btn.addEventListener('click', () => {
-                html.classList.toggle('dark');
-                const isDark = html.classList.contains('dark');
-                icon.innerText = isDark ? 'light_mode' : 'dark_mode';
-                console.log("Clique detectado! Dark:", isDark);
-            });
-
-            console.log("Script interno carregado com sucesso!");
-        });
-    </script>
-</body>
+    <script src="js/cadastro.js"></script>
 </body>
 
 </html>
