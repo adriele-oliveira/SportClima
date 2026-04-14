@@ -508,19 +508,19 @@
                         <label class="text-sm font-bold text-on-background ml-1">Nome</label>
                         <input
                             class="w-full px-4 py-3 rounded-xl bg-surface-low border-none focus:ring-2 focus:ring-primary text-slate-600"
-                            type="text" value="Alex">
+                            type="text" id="modalNome">
                     </div>
                     <div class="flex flex-col gap-2">
                         <label class="text-sm font-bold text-on-background ml-1">Sobrenome</label>
                         <input
                             class="w-full px-4 py-3 rounded-xl bg-surface-low border-none focus:ring-2 focus:ring-primary text-slate-600"
-                            type="text" value="Meridian">
+                            type="text" id="modalSobrenome">
                     </div>
                     <div class="flex flex-col gap-2 md:col-span-2">
                         <label class="text-sm font-bold text-on-background ml-1">Apelido</label>
                         <input
                             class="w-full px-4 py-3 rounded-xl bg-surface-low border-none focus:ring-2 focus:ring-primary text-slate-600"
-                            type="text" value="Alex Meridian">
+                            type="text" id="modalApelido">
                         <div class="flex items-center gap-2 mt-1 px-3 py-2 bg-orange-50 rounded-lg">
                             <span class="material-symbols-outlined text-orange-600 text-[16px]">info</span>
                             <p class="text-[11px] text-orange-700 font-medium">Este nome será exibido quando você
@@ -531,13 +531,13 @@
                         <label class="text-sm font-bold text-on-background ml-1">E-mail para contato</label>
                         <input
                             class="w-full px-4 py-3 rounded-xl bg-surface-low border-none focus:ring-2 focus:ring-primary text-slate-600"
-                            type="email" value="alex@meridian.com">
+                            type="email" id="modalEmail" readonly>
                     </div>
                     <div class="flex flex-col gap-2 md:col-span-2">
                         <label class="text-sm font-bold text-on-background ml-1">Data de Nascimento</label>
                         <input
                             class="w-full px-4 py-3 rounded-xl bg-surface-low border-none focus:ring-2 focus:ring-primary text-slate-600"
-                            type="date" value="1992-05-15">
+                            type="date" id="modalDataNascimento">
                     </div>
                 </form>
             </div>
@@ -546,7 +546,7 @@
                 <button onclick="fecharModal()"
                     class="px-6 py-2 rounded-xl font-bold text-slate-400 hover:bg-slate-200 transition-colors">Cancelar</button>
                 <button
-                    class="px-8 py-2 rounded-xl font-bold bg-primary text-white shadow-lg shadow-orange-500/20 hover:bg-orange-600 active:scale-95 transition-all">Salvar
+                    class="px-8 py-2 rounded-xl font-bold bg-primary text-white shadow-lg shadow-orange-500/20 hover:bg-orange-600 active:scale-95 transition-all" onclick="salvarAlteracoesPerfil()">Salvar
                     Alterações</button>
             </footer>
         </div>

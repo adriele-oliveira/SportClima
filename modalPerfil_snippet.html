@@ -1,0 +1,104 @@
+<!-- ═══════════════════════════════════════════════════════════════
+     MODAL DE PERFIL
+     Alterações em relação ao original:
+       • IDs adicionados em todos os campos do formulário
+         (modalNome, modalSobrenome, modalApelido, modalEmail,
+          modalDataNascimento) para que o JavaScript possa
+         preenchê-los e lê-los dinamicamente.
+       • Valores fixos (value="Alex" etc.) removidos — os campos
+         são preenchidos pela função preencherModalPerfil().
+       • Botão "Salvar Alterações" recebe onclick="salvarAlteracoesPerfil()"
+         para persistir as mudanças no localStorage.
+     Tudo o mais (estrutura, classes, layout) permanece intacto.
+════════════════════════════════════════════════════════════════ -->
+    <div id="modalPerfil"
+        class="hidden fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm font-lexend">
+        <div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <header class="flex justify-between items-center px-8 py-6 border-b border-gray-100">
+                <h1 class="text-2xl font-bold text-on-background">Meu Perfil</h1>
+                <button onclick="fecharModal()"
+                    class="text-gray-400 hover:bg-gray-100 p-2 rounded-full transition-colors">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </header>
+
+            <div class="flex-1 overflow-y-auto px-8 py-8 space-y-8">
+                <div class="flex flex-col items-center gap-4">
+                    <div class="relative group">
+                        <div
+                            class="w-32 h-32 rounded-full border-4 border-avatar-bg flex items-center justify-center bg-white shadow-inner overflow-hidden">
+                            <span id="placeholderFotoGrande"
+                                class="material-symbols-outlined text-7xl text-primary">account_circle</span>
+                            <img id="fotoPerfilGrande" src="" alt="Sua Foto de Perfil"
+                                class="hidden w-full h-full object-cover">
+                        </div>
+                        <button onclick="document.getElementById('inputFotoPerfil').click()"
+                            class="absolute bottom-0 right-0 bg-primary text-white p-2.5 rounded-full shadow-lg border-4 border-white hover:scale-110 active:scale-95 transition-all flex items-center justify-center">
+                            <span class="material-symbols-outlined text-[20px]">photo_camera</span>
+                        </button>
+                    </div>
+                    <div class="text-center">
+                        <button onclick="document.getElementById('inputFotoPerfil').click()"
+                            class="text-primary font-bold text-sm hover:underline">Alterar Foto</button>
+                        <p class="text-slate-400 text-[11px] mt-1">Sua foto será salva automaticamente ao confirmar.</p>
+                    </div>
+                </div>
+                <form class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left" onsubmit="event.preventDefault()">
+                    <div class="flex flex-col gap-2">
+                        <label class="text-sm font-bold text-on-background ml-1">Nome</label>
+                        <input
+                            id="modalNome"
+                            class="w-full px-4 py-3 rounded-xl bg-surface-low border-none focus:ring-2 focus:ring-primary text-slate-600"
+                            type="text"
+                            placeholder="Seu primeiro nome">
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <label class="text-sm font-bold text-on-background ml-1">Sobrenome</label>
+                        <input
+                            id="modalSobrenome"
+                            class="w-full px-4 py-3 rounded-xl bg-surface-low border-none focus:ring-2 focus:ring-primary text-slate-600"
+                            type="text"
+                            placeholder="Seu sobrenome">
+                    </div>
+                    <div class="flex flex-col gap-2 md:col-span-2">
+                        <label class="text-sm font-bold text-on-background ml-1">Apelido</label>
+                        <input
+                            id="modalApelido"
+                            class="w-full px-4 py-3 rounded-xl bg-surface-low border-none focus:ring-2 focus:ring-primary text-slate-600"
+                            type="text"
+                            placeholder="Como quer ser chamado?">
+                        <div class="flex items-center gap-2 mt-1 px-3 py-2 bg-orange-50 rounded-lg">
+                            <span class="material-symbols-outlined text-orange-600 text-[16px]">info</span>
+                            <p class="text-[11px] text-orange-700 font-medium">Este nome será exibido quando você
+                                estiver logado no app.</p>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-2 md:col-span-2">
+                        <label class="text-sm font-bold text-on-background ml-1">E-mail para contato</label>
+                        <input
+                            id="modalEmail"
+                            class="w-full px-4 py-3 rounded-xl bg-surface-low border-none focus:ring-2 focus:ring-primary text-slate-600"
+                            type="email"
+                            placeholder="seu@email.com"
+                            readonly>
+                    </div>
+                    <div class="flex flex-col gap-2 md:col-span-2">
+                        <label class="text-sm font-bold text-on-background ml-1">Data de Nascimento</label>
+                        <input
+                            id="modalDataNascimento"
+                            class="w-full px-4 py-3 rounded-xl bg-surface-low border-none focus:ring-2 focus:ring-primary text-slate-600"
+                            type="date">
+                    </div>
+                </form>
+            </div>
+
+            <footer class="px-8 py-6 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
+                <button onclick="fecharModal()"
+                    class="px-6 py-2 rounded-xl font-bold text-slate-400 hover:bg-slate-200 transition-colors">Cancelar</button>
+                <button
+                    onclick="salvarAlteracoesPerfil()"
+                    class="px-8 py-2 rounded-xl font-bold bg-primary text-white shadow-lg shadow-orange-500/20 hover:bg-orange-600 active:scale-95 transition-all">Salvar
+                    Alterações</button>
+            </footer>
+        </div>
+    </div>

@@ -1,3 +1,21 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// script.js — SportClima Dashboard
+// Organização dos módulos:
+//   1. Tema (aplicação imediata)
+//   2. Dados e páginas SPA (pages, loadPage, loadSobreProjeto)
+//   3. Navegação lateral (initSobreProjeto, busca, initSidebarNav)
+//   4. Notificações (initNotifications)
+//   5. Menu de Perfil (initProfileMenu)
+//   6. Tema Toggle (initThemeToggle)
+//   7. Feedback Modal (initFeedbackModal)
+//   8. Modal de Perfil — Preenchimento e Persistência
+//   9. Funções globais do modal (toggleMenu, abrirModalPerfil, fecharModal)
+//  10. Foto de Perfil (processarNovaFoto)
+//  11. Sessão (initSession)
+// ─────────────────────────────────────────────────────────────────────────────
+
+
+// ─── 1. TEMA — Aplicação imediata antes do render ────────────────────────────
 (function applyThemeOnLoad() {
     if (localStorage.getItem('theme') === 'dark') {
         document.documentElement.classList.add('dark');
@@ -7,6 +25,7 @@
 })();
 
 
+// ─── 2. SPA — Referências e dados das páginas ────────────────────────────────
 const spaContent = document.getElementById("spaContent");
 const spaSidebarRight = document.getElementById("spaSidebarRight");
 const sportButtons = document.querySelectorAll(".sport-btn");
@@ -112,84 +131,7 @@ const criadoras = [
 ];
 
 
-function loadSobreProjeto() {
-    spaSidebarRight.innerHTML = "";
-    spaSidebarRight.classList.add('hidden');
-    spaContent.classList.add('lg:col-span-full');
-
-    const cardsHtml = criadoras.map(c => `
-        <div class="sobre-creator-card flex flex-col items-center text-center p-6 rounded-2xl
-                    bg-white dark:bg-surface-2
-                    border border-slate-100 dark:border-surface-3
-                    shadow-sm hover:shadow-md dark:hover:shadow-black/30
-                    transition-shadow duration-300">
-
-            <div class="sobre-foto-placeholder w-24 h-24 rounded-full mb-5 overflow-hidden
-                        border-4 border-primary/20 dark:border-primary/30
-                        bg-slate-100 dark:bg-surface-3
-                        flex items-center justify-center shrink-0">
-                ${c.foto
-                    ? `<img src="${c.foto}" alt="Foto de ${c.nome}" class="w-full h-full object-cover" />`
-                    : `<span class="material-symbols-outlined text-4xl text-slate-300 dark:text-slate-600">account_circle</span>`
-                }
-            </div>
-
-            <h3 class="text-base font-bold text-slate-900 dark:text-slate-100 mb-1">${c.nome}</h3>
-            <p class="text-xs font-semibold text-primary uppercase tracking-wider mb-3">${c.cargo}</p>
-            <p class="text-sm text-slate-500 dark:text-slate-400 leading-relaxed mb-6 flex-1">${c.descricao}</p>
-
-            <div class="w-full flex flex-col gap-2 mt-auto">
-                <a href="${c.github}" target="_blank" rel="noopener noreferrer"
-                    class="flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl
-                           bg-primary hover:bg-orange-600 active:scale-95
-                           text-white text-sm font-bold
-                           shadow-sm shadow-primary/20
-                           transition-all duration-200">
-                    <span class="material-symbols-outlined text-[18px]">code</span>
-                    GitHub
-                </a>
-                <a href="${c.linkedin}" target="_blank" rel="noopener noreferrer"
-                    class="flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl
-                           bg-primary/15 hover:bg-primary/25 active:scale-95
-                           text-primary dark:text-orange-300 text-sm font-bold
-                           transition-all duration-200">
-                    <span class="material-symbols-outlined text-[18px]">person</span>
-                    LinkedIn
-                </a>
-            </div>
-        </div>
-    `).join('');
-
-    spaContent.innerHTML = `
-        <div class="w-full max-w-4xl mx-auto">
-        <div class="text-center py-8 px-4">
-            <h1 class="text-4xl font-black text-primary mb-2 tracking-tight">SportClima</h1>
-            <p class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em] mb-8">Sobre o Projeto</p>
-            <p class="text-base font-semibold text-slate-700 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed">
-                Este é um projeto acadêmico focado no monitoramento climático para atletas de alta performance,
-                unindo tecnologia e esporte para proporcionar insights precisos.
-            </p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-5 pb-6">
-            ${cardsHtml}
-        </div>
-
-        <div class="flex items-center justify-between pt-4 pb-2 border-t border-slate-100 dark:border-surface-3 px-1">
-            <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
-                © 2026 SportClima Academic
-            </p>
-            <div class="flex items-center gap-3 text-primary/50">
-                <span class="material-symbols-outlined text-[18px]">show_chart</span>
-                <span class="material-symbols-outlined text-[18px]">thunderstorm</span>
-                <span class="material-symbols-outlined text-[18px]">device_thermostat</span>
-            </div>
-        </div>
-        </div>
-    `;
-}
-
-
+// Renderiza a página SPA de acordo com o esporte selecionado
 function loadPage(sport) {
     const data = pages[sport];
 
@@ -275,6 +217,87 @@ sportSidebarButtons.forEach(btn =>
 loadPage("home");
 
 
+// ─── 3. NAVEGAÇÃO — Sobre o Projeto e busca por localização ──────────────────
+
+// Renderiza a seção "Sobre o Projeto" com os cards das criadoras
+function loadSobreProjeto() {
+    spaSidebarRight.innerHTML = "";
+    spaSidebarRight.classList.add('hidden');
+    spaContent.classList.add('lg:col-span-full');
+
+    const cardsHtml = criadoras.map(c => `
+        <div class="sobre-creator-card flex flex-col items-center text-center p-6 rounded-2xl
+                    bg-white dark:bg-surface-2
+                    border border-slate-100 dark:border-surface-3
+                    shadow-sm hover:shadow-md dark:hover:shadow-black/30
+                    transition-shadow duration-300">
+
+            <div class="sobre-foto-placeholder w-24 h-24 rounded-full mb-5 overflow-hidden
+                        border-4 border-primary/20 dark:border-primary/30
+                        bg-slate-100 dark:bg-surface-3
+                        flex items-center justify-center shrink-0">
+                ${c.foto
+                    ? `<img src="${c.foto}" alt="Foto de ${c.nome}" class="w-full h-full object-cover" />`
+                    : `<span class="material-symbols-outlined text-4xl text-slate-300 dark:text-slate-600">account_circle</span>`
+                }
+            </div>
+
+            <h3 class="text-base font-bold text-slate-900 dark:text-slate-100 mb-1">${c.nome}</h3>
+            <p class="text-xs font-semibold text-primary uppercase tracking-wider mb-3">${c.cargo}</p>
+            <p class="text-sm text-slate-500 dark:text-slate-400 leading-relaxed mb-6 flex-1">${c.descricao}</p>
+
+            <div class="w-full flex flex-col gap-2 mt-auto">
+                <a href="${c.github}" target="_blank" rel="noopener noreferrer"
+                    class="flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl
+                           bg-primary hover:bg-orange-600 active:scale-95
+                           text-white text-sm font-bold
+                           shadow-sm shadow-primary/20
+                           transition-all duration-200">
+                    <span class="material-symbols-outlined text-[18px]">code</span>
+                    GitHub
+                </a>
+                <a href="${c.linkedin}" target="_blank" rel="noopener noreferrer"
+                    class="flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl
+                           bg-primary/15 hover:bg-primary/25 active:scale-95
+                           text-primary dark:text-orange-300 text-sm font-bold
+                           transition-all duration-200">
+                    <span class="material-symbols-outlined text-[18px]">person</span>
+                    LinkedIn
+                </a>
+            </div>
+        </div>
+    `).join('');
+
+    spaContent.innerHTML = `
+        <div class="w-full max-w-4xl mx-auto">
+        <div class="text-center py-8 px-4">
+            <h1 class="text-4xl font-black text-primary mb-2 tracking-tight">SportClima</h1>
+            <p class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em] mb-8">Sobre o Projeto</p>
+            <p class="text-base font-semibold text-slate-700 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed">
+                Este é um projeto acadêmico focado no monitoramento climático para atletas de alta performance,
+                unindo tecnologia e esporte para proporcionar insights precisos.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5 pb-6">
+            ${cardsHtml}
+        </div>
+
+        <div class="flex items-center justify-between pt-4 pb-2 border-t border-slate-100 dark:border-surface-3 px-1">
+            <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
+                © 2026 SportClima Academic
+            </p>
+            <div class="flex items-center gap-3 text-primary/50">
+                <span class="material-symbols-outlined text-[18px]">show_chart</span>
+                <span class="material-symbols-outlined text-[18px]">thunderstorm</span>
+                <span class="material-symbols-outlined text-[18px]">device_thermostat</span>
+            </div>
+        </div>
+        </div>
+    `;
+}
+
+
 (function initSobreProjeto() {
     const sobreBtn = document.getElementById('sobreProjetoBtn');
     if (!sobreBtn) return;
@@ -298,6 +321,7 @@ loadPage("home");
 })();
 
 
+// Busca por localização na barra de pesquisa do header
 const searchInput = document.querySelector('input[placeholder="Buscar localização..."]');
 
 if (searchInput) {
@@ -327,6 +351,7 @@ if (searchInput) {
 }
 
 
+// ─── 4. NOTIFICAÇÕES — Drawer lateral ────────────────────────────────────────
 (function initNotifications() {
     const bellBtn = document.getElementById('notificationBtn');
     const drawer = document.getElementById('notificationDrawer');
@@ -399,6 +424,7 @@ if (searchInput) {
 })();
 
 
+// ─── 5. MENU DE PERFIL — Dropdown do header ───────────────────────────────────
 (function initProfileMenu() {
     const trigger = document.getElementById('profileTrigger');
     const menu = document.getElementById('profileMenu');
@@ -421,6 +447,7 @@ if (searchInput) {
 })();
 
 
+// ─── 6. TEMA TOGGLE — Botão claro/escuro do header ───────────────────────────
 (function initThemeToggle() {
     const toggleBtn = document.getElementById('dark-mode-toggle');
     const darkIcon = document.getElementById('dark-icon');
@@ -445,6 +472,7 @@ if (searchInput) {
 })();
 
 
+// ─── 3b. NAVEGAÇÃO LATERAL — Destaque ativo e busca integrada ────────────────
 (function initSidebarNav() {
     const items = document.querySelectorAll('.sport-btn-sidebar');
     const topSearch = document.querySelector('header input');
@@ -504,6 +532,7 @@ if (searchInput) {
 })();
 
 
+// ─── 7. FEEDBACK MODAL — Envio via EmailJS ───────────────────────────────────
 emailjs.init({
     publicKey: "4VsEjc_Hr6MccvJBz",
 });
@@ -634,22 +663,103 @@ emailjs.init({
 })();
 
 
+// ─── 8. MODAL DE PERFIL — Preenchimento dinâmico e persistência ──────────────
+
+/**
+ * Lê o usuário ativo do localStorage e preenche os campos
+ * do modal de perfil com os dados reais. O apelido é gerado
+ * automaticamente pelo primeiro nome caso não tenha sido
+ * definido pelo usuário anteriormente.
+ */
+function preencherModalPerfil() {
+    const session = JSON.parse(localStorage.getItem('sportclima_session') || 'null');
+    if (!session) return;
+
+    // Busca os dados completos do usuário no array de cadastros
+    const users = JSON.parse(localStorage.getItem('sportclima_users') || '[]');
+    const user = users.find(u => u.email === session.email) || {};
+
+    // Separa o nome completo em primeiro nome e sobrenome
+    const partes = (user.name || session.name || '').trim().split(' ');
+    const primeiroNome = partes[0] || '';
+    const sobrenome = partes.slice(1).join(' ') || '';
+
+    const inputNome = document.getElementById('modalNome');
+    const inputSobrenome = document.getElementById('modalSobrenome');
+    const inputApelido = document.getElementById('modalApelido');
+    const inputEmail = document.getElementById('modalEmail');
+    const inputData = document.getElementById('modalDataNascimento');
+
+    if (inputNome) inputNome.value = primeiroNome;
+    if (inputSobrenome) inputSobrenome.value = sobrenome;
+    // Exibe o apelido salvo ou gera um baseado no primeiro nome
+    if (inputApelido) inputApelido.value = user.apelido || primeiroNome;
+    if (inputEmail) inputEmail.value = session.email || '';
+    if (inputData) inputData.value = user.dataNascimento || '';
+}
+
+/**
+ * Lê os valores editados no modal, atualiza o objeto do usuário
+ * no array 'sportclima_users' no localStorage e sincroniza
+ * a sessão ativa e os elementos visuais do menu de perfil.
+ */
+function salvarAlteracoesPerfil() {
+    const session = JSON.parse(localStorage.getItem('sportclima_session') || 'null');
+    if (!session) { fecharModal(); return; }
+
+    const primeiroNome = document.getElementById('modalNome')?.value.trim() || '';
+    const sobrenome = document.getElementById('modalSobrenome')?.value.trim() || '';
+    const apelido = document.getElementById('modalApelido')?.value.trim() || '';
+    const dataNascimento = document.getElementById('modalDataNascimento')?.value || '';
+
+    // Reconstrói o nome completo a partir dos campos separados
+    const nomeCompleto = [primeiroNome, sobrenome].filter(Boolean).join(' ');
+
+    // Atualiza o objeto do usuário no array persistido
+    const users = JSON.parse(localStorage.getItem('sportclima_users') || '[]');
+    const idx = users.findIndex(u => u.email === session.email);
+
+    if (idx !== -1) {
+        if (nomeCompleto) users[idx].name = nomeCompleto;
+        users[idx].apelido = apelido;
+        users[idx].dataNascimento = dataNascimento;
+        localStorage.setItem('sportclima_users', JSON.stringify(users));
+    }
+
+    // Atualiza a sessão ativa com o novo nome
+    const updatedSession = { ...session, name: nomeCompleto || session.name };
+    localStorage.setItem('sportclima_session', JSON.stringify(updatedSession));
+
+    // Reflete o novo nome no menu de perfil sem recarregar a página
+    const profileUserName = document.getElementById('profileUserName');
+    if (profileUserName) profileUserName.textContent = updatedSession.name;
+
+    fecharModal();
+}
+
+
+// ─── 9. FUNÇÕES GLOBAIS DO MODAL DE PERFIL ───────────────────────────────────
+
+// Alterna visibilidade do menu dropdown de perfil
 function toggleMenu() {
     const menu = document.getElementById('profileMenu');
     if (menu) menu.classList.toggle('hidden');
 }
 
+// Abre o modal de perfil e preenche os campos com dados do usuário logado
 function abrirModalPerfil() {
     const menu = document.getElementById('profileMenu');
     const modal = document.getElementById('modalPerfil');
 
     if (menu) menu.classList.add('hidden');
     if (modal) {
+        preencherModalPerfil();
         modal.classList.remove('hidden');
         document.body.style.overflow = 'hidden';
     }
 }
 
+// Fecha o modal de perfil e restaura o scroll da página
 function fecharModal() {
     const modal = document.getElementById('modalPerfil');
     if (modal) {
@@ -658,6 +768,14 @@ function fecharModal() {
     }
 }
 
+
+// ─── 10. FOTO DE PERFIL — Upload e exibição imediata ─────────────────────────
+
+/**
+ * Processa a imagem selecionada pelo usuário, salva em Base64
+ * no localStorage vinculado ao e-mail da sessão e atualiza
+ * todos os elementos visuais de avatar na interface.
+ */
 function processarNovaFoto(input) {
     if (input.files && input.files[0]) {
         const reader = new FileReader();
@@ -689,6 +807,13 @@ function processarNovaFoto(input) {
 }
 
 
+// ─── 11. SESSÃO — Inicialização do estado de login na interface ───────────────
+
+/**
+ * Verifica se existe uma sessão ativa no localStorage e, caso exista,
+ * exibe o nome e e-mail do usuário no menu de perfil, oculta o botão
+ * de login, exibe o botão de logout e carrega a foto de perfil salva.
+ */
 (function initSession() {
     const session = JSON.parse(localStorage.getItem('sportclima_session') || 'null');
 
@@ -720,6 +845,7 @@ function processarNovaFoto(input) {
         });
     }
 
+    // Restaura a foto de perfil salva para o e-mail da sessão
     const savedPhoto = localStorage.getItem(`sportclima_foto_${session.email}`);
     if (savedPhoto) {
         if (profileTrigger) profileTrigger.style.backgroundImage = `url("${savedPhoto}")`;
