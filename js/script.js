@@ -110,7 +110,7 @@ const criadoras = [
         descricao: "Apaixonada por resolver problemas reais através da tecnologia, transformando ideias em soluções que fazem a diferença. Sempre em movimento, sempre aprendendo.",
         github: "https://github.com/adriele-oliveira",
         linkedin: "https://www.linkedin.com/in/adriele-mesquita-de-oliveira-5ba8591b3/",
-        foto: ""
+        foto: "assets/profile_pic_adriele.jpg"
     },
     {
         nome: "Gabriela Lissa Nogami",
