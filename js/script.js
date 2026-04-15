@@ -107,7 +107,7 @@ const criadoras = [
     {
         nome: "Adriele Mesquita de Oliveira",
         cargo: "Estudante de Engenharia de Computação",
-        descricao: "Especializada em análise de dados climáticos e sistemas de monitoramento em tempo real.",
+        descricao: "Apaixonada por resolver problemas reais através da tecnologia, transformando ideias em soluções que fazem a diferença. Sempre em movimento, sempre aprendendo.",
         github: "https://github.com/adriele-oliveira",
         linkedin: "https://www.linkedin.com/in/adriele-mesquita-de-oliveira-5ba8591b3/",
         foto: ""
