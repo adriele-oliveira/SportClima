@@ -115,10 +115,10 @@ const criadoras = [
     {
         nome: "Gabriela Lissa Nogami",
         cargo: "Estudante de Engenharia de Computação",
-        descricao: "Focada em criar experiências intuitivas e acessíveis para atletas de alta performance.",
-        github: "https://github.com/gabriela-nogami",
+        descricao: "Sempre a procura de novos desafios, buscando unir minha paixão por esportes e tecnologia para criar soluções inovadoras.",
+        github: "https://github.com/gabriela-lissa",
         linkedin: "https://www.linkedin.com/in/gabriela-nogami-940604263/",
-        foto: ""
+        foto: "assets/profile_pic_gabriela.jpg"
     },
     {
         nome: "Isabella Valim",
