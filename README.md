@@ -47,7 +47,9 @@ Durante a construção do projeto, buscou-se aplicar e reforçar conhecimentos r
 * Implementação de interatividade com JavaScript
 * Desenvolvimento de layouts responsivos
 * Organização de arquivos e estrutura de projetos front-end
-* Aplicação de conceitos de usabilidade e experiência do usuário
+* Utilização da metodologia ágil Scrum para organização e acompanhamento das etapas do projeto
+* Gerenciamento de tarefas por meio de board no Trello com estrutura baseada em Kanban
+* Aplicação de práticas de melhoria contínua durante o processo de desenvolvimento
 
 ---
 
@@ -98,5 +100,3 @@ Após clonar o repositório, basta abrir o arquivo `index.html` no navegador ou 
 **Gabriela Lissa Nogami** — RA 236897
 **Adriele Mesquita de Oliveira** — RA 224515
 **Isabella Valim de Carvalho** — RA 247499
-
----
