@@ -1,6 +1,6 @@
 # SportClima
 
-O SportClima é uma aplicação web desenvolvida como trabalho da disciplina de Desenvolvimento Web Design, com o objetivo de colocar em prática os conhecimentos adquiridos ao longo das aulas por meio da criação de uma solução web voltada à experiência do usuário.
+O SportClima é uma aplicação web desenvolvida como trabalho da disciplina de Desenvolvimento Web, com o objetivo de colocar em prática os conhecimentos adquiridos ao longo das aulas por meio da criação de uma solução web voltada à experiência do usuário.
 
 A proposta do projeto é oferecer uma plataforma de previsão do tempo com foco em esportes ao ar livre, reunindo informações climáticas importantes para auxiliar praticantes no planejamento de suas atividades esportivas de forma mais segura e confortável.
 
