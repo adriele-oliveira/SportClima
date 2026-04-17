@@ -53,7 +53,7 @@
     </script>
 </head>
 
-<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
+<body class="bg-background dark:bg-surface-1 text-slate-900 dark:text-slate-100 min-h-screen">
     <input type="file" id="inputFotoPerfil" accept="image/*" class="hidden" onchange="processarNovaFoto(this)">
     <div class="layout-container flex h-full grow flex-col">
 
@@ -79,7 +79,10 @@
                         </div>
                         <input
                             class="form-input flex w-full min-w-0 flex-1 rounded-r-xl bg-primary/5 dark:bg-primary/10 dark:text-slate-100 dark:placeholder:text-slate-500 h-full px-4 pl-2 text-sm placeholder:text-slate-400"
-                            placeholder="Buscar localização..." />
+                           id="inputCidade" placeholder="Buscar localização..." />
+                        <button id="btnBuscarCidade" class="px-4 bg-primary text-white text-sm font-bold rounded-r-xl hover:bg-orange-600 transition-colors">
+                            Buscar
+                         </button>
                     </div>
                 </label>
 
@@ -161,7 +164,10 @@
                 </div>
             </aside>
 
-            <div id="spaContent" class="flex-1 flex flex-col gap-6"></div>
+            <div id="spaContent" class="flex-1 flex flex-col gap-6">
+
+
+            </div>
 
             <aside id="spaSidebarRight" class="w-full lg:w-80 flex flex-col gap-6"></aside>
 

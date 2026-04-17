@@ -148,22 +148,22 @@ function loadPage(sport) {
             </div>
         </div>
 
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+        <div id="weatherMetrics" class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
             <div class="metric-card">
                 <p class="text-sm text-slate-500 dark:text-slate-400">Temperatura</p>
-                <h4 class="text-2xl font-bold mt-1 dark:text-slate-100">${data.metrics.temp}</h4>
+                <h4 id="temp" class="text-2xl font-bold mt-1 dark:text-slate-100">${data.metrics.temp}</h4>
             </div>
             <div class="metric-card">
                 <p class="text-sm text-slate-500 dark:text-slate-400">Vento</p>
-                <h4 class="text-2xl font-bold mt-1 dark:text-slate-100">${data.metrics.vento}</h4>
+               <h4 id="vento" class="text-2xl font-bold mt-1 dark:text-slate-100">${data.metrics.vento}</h4>
             </div>
             <div class="metric-card">
                 <p class="text-sm text-slate-500 dark:text-slate-400">Umidade</p>
-                <h4 class="text-2xl font-bold mt-1 dark:text-slate-100">${data.metrics.umidade}</h4>
+                <h4 id="umidade" class="text-2xl font-bold mt-1 dark:text-slate-100">${data.metrics.umidade}</h4>
             </div>
             <div class="metric-card">
                 <p class="text-sm text-slate-500 dark:text-slate-400">Índice UV</p>
-                <h4 class="text-2xl font-bold mt-1 dark:text-slate-100">${data.metrics.uv}</h4>
+                <h4 id="uv" class="text-2xl font-bold mt-1 dark:text-slate-100">${data.metrics.uv}</h4>
             </div>
         </div>
 
@@ -178,6 +178,7 @@ function loadPage(sport) {
                 <div class="chart-bar" style="height:120px"></div>
             </div>
         </div>
+        <div id="weatherHourly" class="mt-6"></div>
     `;
 
     spaSidebarRight.innerHTML = `
@@ -194,6 +195,7 @@ function loadPage(sport) {
                 <strong>Evitar:</strong> ${data.sidebar.evitar}
             </p>
         </div>
+        atualizarClimaNaTela();
     `;
 
     sportButtons.forEach(btn => btn.classList.remove("active"));
@@ -863,3 +865,112 @@ function processarNovaFoto(input) {
         });
     }
 })();
+
+// ─── 12. FUNÇÃO PARA API ───────────────────────────────────────────────────────────────────────────
+
+const API_KEY = "acf0f9a2de62c1192e03cccf429be48d";
+
+async function usarAPI() {
+    const cidade = "Sorocaba";
+
+    const url = `https://api.openweathermap.org/data/2.5/forecast?q=${cidade}&appid=${API_KEY}&units=metric&lang=pt_br`;
+
+    const resposta = await fetch(url);
+    const dados = await resposta.json();
+
+    console.log(dados);
+}
+usarAPI();
+
+document.getElementById("btnBuscarCidade")
+  .addEventListener("click", () => {
+    const cidade = document.getElementById("inputCidade").value;
+    console.log(cidade);
+});
+
+const inputCidade = document.getElementById("inputCidade");
+const btnBuscar = document.getElementById("btnBuscarCidade");
+
+//──────────────────── FUNÇÃO BUSCA POR CIDADE E CHAMADA DA API ────────────────────────────────────────────────
+async function buscarEMostrarClima(cidade) {
+    const API_KEY = "acf0f9a2de62c1192e03cccf429be48d";
+
+    const url = `https://api.openweathermap.org/data/2.5/forecast?q=${cidade}&appid=${API_KEY}&units=metric&lang=pt_br`;
+
+    try {
+        const resposta = await fetch(url);
+        const dados = await resposta.json();
+
+        console.log(dados); // só pra ver no console
+
+        // MOSTRAR NA TELA
+        const container = document.getElementById("spaContent");
+
+        container.innerHTML = `
+            <div class="bg-white dark:bg-surface-1 p-6 rounded-2xl">
+                <h2 class="text-xl font-bold mb-4">Clima em ${cidade}</h2>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    ${dados.list.slice(0,8).map(item => `
+                        <div class="bg-slate-100 dark:bg-surface-2 p-4 rounded-xl text-center">
+                            <p class="text-sm">${item.dt_txt.slice(11,16)}</p>
+                            <p class="text-lg font-bold">${Math.round(item.main.temp)}°C</p>
+                            <p class="text-xs">${item.weather[0].description}</p>
+                        </div>
+                    `).join("")}
+                </div>
+            </div>
+        `;
+
+    } catch (erro) {
+        console.error("Erro:", erro);
+    }
+}
+btnBuscar.addEventListener("click", () => {
+    const cidade = inputCidade.value.trim();
+
+    if (cidade !== "") {
+        buscarEMostrarClima(cidade);
+    }
+});
+inputCidade.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") {
+        btnBuscar.click();
+    }
+});
+
+//──────────────────── FUNÇÃO PARA ATUALIZAR O CLIMA NA TELA ────────────────────────────────────────────────
+
+async function atualizarClimaNaTela(cidade = "Sorocaba") {
+    const API_KEY = "SUA_CHAVE_AQUI";
+
+    const url = `https://api.openweathermap.org/data/2.5/forecast?q=${cidade}&appid=${API_KEY}&units=metric&lang=pt_br`;
+
+    try {
+        const res = await fetch(url);
+        const dados = await res.json();
+
+        const atual = dados.list[0];
+
+        document.getElementById("temp").textContent =
+            Math.round(atual.main.temp) + "°C";
+
+        document.getElementById("vento").textContent =
+            atual.wind.speed + " km/h";
+
+        document.getElementById("umidade").textContent =
+            atual.main.humidity + "%";
+
+        document.getElementById("uv").textContent = "—"; // API gratuita não tem UV
+
+    } catch (erro) {
+        console.error("Erro clima:", erro);
+    }
+}
+btnBuscar.addEventListener("click", () => {
+    const cidade = inputCidade.value.trim();
+
+    if (cidade !== "") {
+        atualizarClimaNaTela(cidade);
+    }
+});
