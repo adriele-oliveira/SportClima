@@ -870,18 +870,6 @@ function processarNovaFoto(input) {
 
 const API_KEY = "acf0f9a2de62c1192e03cccf429be48d";
 
-async function usarAPI() {
-    const cidade = "Sorocaba";
-
-    const url = `https://api.openweathermap.org/data/2.5/forecast?q=${cidade}&appid=${API_KEY}&units=metric&lang=pt_br`;
-
-    const resposta = await fetch(url);
-    const dados = await resposta.json();
-
-    console.log(dados);
-}
-usarAPI();
-
 document.getElementById("btnBuscarCidade")
   .addEventListener("click", () => {
     const cidade = document.getElementById("inputCidade").value;
@@ -893,7 +881,6 @@ const btnBuscar = document.getElementById("btnBuscarCidade");
 
 //──────────────────── FUNÇÃO BUSCA POR CIDADE E CHAMADA DA API ────────────────────────────────────────────────
 async function buscarEMostrarClima(cidade) {
-    const API_KEY = "acf0f9a2de62c1192e03cccf429be48d";
 
     const url = `https://api.openweathermap.org/data/2.5/forecast?q=${cidade}&appid=${API_KEY}&units=metric&lang=pt_br`;
 
@@ -942,7 +929,6 @@ inputCidade.addEventListener("keypress", (e) => {
 //──────────────────── FUNÇÃO PARA ATUALIZAR O CLIMA NA TELA ────────────────────────────────────────────────
 
 async function atualizarClimaNaTela(cidade = "Sorocaba") {
-    const API_KEY = "SUA_CHAVE_AQUI";
 
     const url = `https://api.openweathermap.org/data/2.5/forecast?q=${cidade}&appid=${API_KEY}&units=metric&lang=pt_br`;
 
