@@ -195,8 +195,8 @@ function loadPage(sport) {
                 <strong>Evitar:</strong> ${data.sidebar.evitar}
             </p>
         </div>
-        atualizarClimaNaTela();
     `;
+    atualizarClimaNaTela();
 
     sportButtons.forEach(btn => btn.classList.remove("active"));
     sportSidebarButtons.forEach(btn => btn.classList.remove("sidebar-active"));
