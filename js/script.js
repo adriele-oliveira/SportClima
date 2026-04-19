@@ -913,18 +913,15 @@ async function buscarEMostrarClima(cidade) {
         console.error("Erro:", erro);
     }
 }
-btnBuscar.addEventListener("click", () => {
-    const cidade = inputCidade.value.trim();
 
-    if (cidade !== "") {
-        buscarEMostrarClima(cidade);
-    }
-});
 inputCidade.addEventListener("keypress", (e) => {
     if (e.key === "Enter") {
         btnBuscar.click();
     }
 });
+
+let searchInputRef = replaceNodeWithoutListeners(document.getElementById("inputCidade"));
+let searchButtonRef = replaceNodeWithoutListeners(document.getElementById("btnBuscarCidade"));
 
 //──────────────────── FUNÇÃO PARA ATUALIZAR O CLIMA NA TELA ────────────────────────────────────────────────
 
@@ -953,10 +950,3 @@ async function atualizarClimaNaTela(cidade = "Sorocaba") {
         console.error("Erro clima:", erro);
     }
 }
-btnBuscar.addEventListener("click", () => {
-    const cidade = inputCidade.value.trim();
-
-    if (cidade !== "") {
-        atualizarClimaNaTela(cidade);
-    }
-});
