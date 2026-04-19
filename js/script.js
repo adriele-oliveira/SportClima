@@ -942,7 +942,7 @@ async function atualizarClimaNaTela(cidade = "Sorocaba") {
             Math.round(atual.main.temp) + "°C";
 
         document.getElementById("vento").textContent =
-            atual.wind.speed + " km/h";
+            Math.round(atual.wind.speed * 3.6) + " km/h";
 
         document.getElementById("umidade").textContent =
             atual.main.humidity + "%";
