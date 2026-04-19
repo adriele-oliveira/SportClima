@@ -950,3 +950,36 @@ async function atualizarClimaNaTela(cidade = "Sorocaba") {
         console.error("Erro clima:", erro);
     }
 }
+async function searchCity() {
+    const city = searchInputRef?.value.trim();
+    if (!city) return;
+
+    await runWeatherRequest(
+        () => fetchWeatherContextByCity(city),
+        `Buscando clima e recomendações para ${city}...`
+    );
+
+    searchInputRef.value = "";
+}
+
+if (searchButtonRef) {
+    searchButtonRef.addEventListener("click", searchCity);
+}
+
+if (searchInputRef) {
+    searchInputRef.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            searchCity();
+        }
+    });
+}
+
+if (searchInputRef) {
+    searchInputRef.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            searchCity();
+        }
+    });
+}
