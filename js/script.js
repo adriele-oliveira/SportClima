@@ -206,16 +206,6 @@ function loadPage(sport) {
     if (sobreBtn) sobreBtn.classList.remove('sobre-btn-active');
 }
 
-
-sportButtons.forEach(btn =>
-    btn.addEventListener("click", () => loadPage(btn.dataset.sport))
-);
-
-sportSidebarButtons.forEach(btn =>
-    btn.addEventListener("click", () => loadPage(btn.dataset.sport))
-);
-
-
 loadPage("home");
 
 
@@ -890,38 +880,23 @@ async function buscarEMostrarClima(cidade) {
 
         console.log(dados); // só pra ver no console
 
-        // MOSTRAR NA TELA
-        const container = document.getElementById("spaContent");
-
-        container.innerHTML = `
-            <div class="bg-white dark:bg-surface-1 p-6 rounded-2xl">
-                <h2 class="text-xl font-bold mb-4">Clima em ${cidade}</h2>
-
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    ${dados.list.slice(0,8).map(item => `
-                        <div class="bg-slate-100 dark:bg-surface-2 p-4 rounded-xl text-center">
-                            <p class="text-sm">${item.dt_txt.slice(11,16)}</p>
-                            <p class="text-lg font-bold">${Math.round(item.main.temp)}°C</p>
-                            <p class="text-xs">${item.weather[0].description}</p>
-                        </div>
-                    `).join("")}
-                </div>
-            </div>
-        `;
-
     } catch (erro) {
         console.error("Erro:", erro);
     }
 }
 
+btnBuscar.addEventListener("click", () => {
+    const cidade = inputCidade.value.trim();
+
+    if (cidade !== "") {
+        buscarEMostrarClima(cidade);
+    }
+});
 inputCidade.addEventListener("keypress", (e) => {
     if (e.key === "Enter") {
         btnBuscar.click();
     }
 });
-
-let searchInputRef = replaceNodeWithoutListeners(document.getElementById("inputCidade"));
-let searchButtonRef = replaceNodeWithoutListeners(document.getElementById("btnBuscarCidade"));
 
 //──────────────────── FUNÇÃO PARA ATUALIZAR O CLIMA NA TELA ────────────────────────────────────────────────
 
@@ -950,36 +925,10 @@ async function atualizarClimaNaTela(cidade = "Sorocaba") {
         console.error("Erro clima:", erro);
     }
 }
-async function searchCity() {
-    const city = searchInputRef?.value.trim();
-    if (!city) return;
+btnBuscar.addEventListener("click", () => {
+    const cidade = inputCidade.value.trim();
 
-    await runWeatherRequest(
-        () => fetchWeatherContextByCity(city),
-        `Buscando clima e recomendações para ${city}...`
-    );
-
-    searchInputRef.value = "";
-}
-
-if (searchButtonRef) {
-    searchButtonRef.addEventListener("click", searchCity);
-}
-
-if (searchInputRef) {
-    searchInputRef.addEventListener("keydown", (event) => {
-        if (event.key === "Enter") {
-            event.preventDefault();
-            searchCity();
-        }
-    });
-}
-
-if (searchInputRef) {
-    searchInputRef.addEventListener("keydown", (event) => {
-        if (event.key === "Enter") {
-            event.preventDefault();
-            searchCity();
-        }
-    });
-}
+    if (cidade !== "") {
+        atualizarClimaNaTela(cidade);
+    }
+});
