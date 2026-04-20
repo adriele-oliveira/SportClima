@@ -35,18 +35,18 @@ const sportSidebarButtons = document.querySelectorAll(".sport-btn-sidebar");
 const pages = {
     home: {
         heroImg: "https://images.unsplash.com/photo-1607962837359-5e7e89f86776?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-        titulo: "Condições Ideais em Boulder",
-        desc: "Céu limpo, brisa leve e temperaturas moderadas.",
+        titulo: "Visão Geral — Esportes & Clima",
+        desc: "Escolha um esporte para ver a análise climática personalizada.",
         metrics: {
-            temp: "18°C",
-            vento: "5 km/h",
-            umidade: "45%",
-            uv: "2"
+            temp: "—",
+            vento: "—",
+            umidade: "—",
+            uv: "—"
         },
         sidebar: {
-            melhorHorario: "06:00 - 09:00",
-            descricao: "Ar fresco, pouca umidade e ventos fracos.",
-            evitar: "13:00 - 16:00"
+            melhorHorario: "—",
+            descricao: "Selecione um esporte na barra lateral.",
+            evitar: "—"
         }
     },
 
@@ -166,6 +166,41 @@ function loadPage(sport) {
                 <h4 id="uv" class="text-2xl font-bold mt-1 dark:text-slate-100">${data.metrics.uv}</h4>
             </div>
         </div>
+
+        ${sport === "home" ? `
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+            <div class="rounded-2xl overflow-hidden relative group cursor-pointer shadow-md"
+                onclick="loadPage('corrida')">
+                <img src="https://images.unsplash.com/photo-1571008887538-b36bb32f4571?w=600&auto=format&fit=crop"
+                    class="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300" alt="Corrida">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-4">
+                    <p class="text-white font-black text-lg">Corrida</p>
+                    <p class="text-white/70 text-xs mt-0.5">Ideal com temperatura entre 10°C e 25°C, vento fraco e sem chuva.</p>
+                </div>
+            </div>
+
+            <div class="rounded-2xl overflow-hidden relative group cursor-pointer shadow-md"
+                onclick="loadPage('ciclismo')">
+                <img src="https://plus.unsplash.com/premium_photo-1684820878202-52781d8e0ea9?w=600&auto=format&fit=crop"
+                    class="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300" alt="Ciclismo">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-4">
+                    <p class="text-white font-black text-lg">Ciclismo</p>
+                    <p class="text-white/70 text-xs mt-0.5">Melhor com vento até 30 km/h, temperatura amena e pista seca.</p>
+                </div>
+            </div>
+
+            <div class="rounded-2xl overflow-hidden relative group cursor-pointer shadow-md"
+                onclick="loadPage('surf')">
+                <img src="https://images.unsplash.com/photo-1530870110042-98b2cb110834?w=600&auto=format&fit=crop"
+                    class="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300" alt="Surf">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-4">
+                    <p class="text-white font-black text-lg">Surf</p>
+                    <p class="text-white/70 text-xs mt-0.5">Ventos acima de 10 km/h e temperatura do mar favorável fazem a diferença.</p>
+                </div>
+            </div>
+        </div>
+        ` : ""}
+        <div class="chart-container mt-6">
 
         <div class="chart-container mt-6">
             <div class="flex items-center justify-between mb-4">
