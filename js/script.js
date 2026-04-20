@@ -197,17 +197,17 @@ function loadPage(sport) {
         <div class="spa-sidebar-card">
             <h3 class="text-primary flex items-center gap-2">
                 <span class="material-symbols-outlined">schedule</span>
-                Horários Ideais
+                Análise - ${sport}
             </h3>
-            <p class="text-xs text-slate-600 dark:text-slate-400 mt-2">
-                <strong>Melhor horário:</strong> ${data.sidebar.melhorHorario}
-            </p>
-            <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">${data.sidebar.descricao}</p>
-            <p class="text-xs text-red-600 dark:text-red-400 mt-3">
-                <strong>Evitar:</strong> ${data.sidebar.evitar}
-            </p>
+            <div id="analiseEsporte" class="mt-3 text-xs text-slate-500 dark:text-slate-400">
+                <p class="italic">Carregando análise...</p>
+            </div>
         </div>
     `;
+
+// Após carregar os dados da API, atualiza a análise
+setTimeout(() => analisarEsporte(sport), 1800);
+
     atualizarClimaNaTela();
 
     sportButtons.forEach(btn => btn.classList.remove("active"));
@@ -1023,6 +1023,91 @@ function renderizarGrafico(tipo) {
                 ${item.dt_txt.slice(11, 16)}
             </div>`).join("");
     }
+}
+    // ─── 13. ANÁLISE DE ESPORTE COM BASE NA API ──────────────────────────────────
+function analisarEsporte(sport) {
+    const dados = window._dadosClimaAPI;
+    const el = document.getElementById("analiseEsporte");
+    if (!dados || !el) return;
+
+    const fatias = dados.list.slice(0, 16); // próximas 48h em blocos de 3h
+
+    // Critérios por esporte
+    const criterios = {
+        corrida: (item) => item.main.temp >= 10 && item.main.temp <= 25
+            && item.wind.speed * 3.6 <= 20
+            && (item.rain?.["3h"] || 0) === 0,
+
+        ciclismo: (item) => item.main.temp >= 12 && item.main.temp <= 28
+            && item.wind.speed * 3.6 <= 30
+            && (item.rain?.["3h"] || 0) === 0,
+
+        surf: (item) => item.wind.speed * 3.6 >= 10
+            && item.main.temp >= 18,
+
+        home: (item) => item.main.temp >= 15 && item.main.temp <= 30
+            && (item.rain?.["3h"] || 0) === 0
+    };
+
+    const criterio = criterios[sport] || criterios.home;
+
+    const bons = fatias.filter(criterio);
+    const ruins = fatias.filter(i => !criterio(i));
+
+    const melhor = bons[0];
+    const pior = ruins[0];
+
+    function formatHora(dtTxt) {
+        return dtTxt ? dtTxt.slice(11, 16) : "—";
+    }
+
+    function gerarMotivo(item, sport, bom) {
+        if (!item) return "Dados insuficientes.";
+        const temp = Math.round(item.main.temp);
+        const vento = Math.round(item.wind.speed * 3.6);
+        const chuva = item.rain?.["3h"] || 0;
+
+        if (bom) {
+            if (sport === "surf") return `Vento de ${vento} km/h favorece as ondas.`;
+            if (chuva === 0 && temp <= 25) return `Sem chuva e temperatura agradável de ${temp}°C.`;
+            return `Condições equilibradas: ${temp}°C, vento ${vento} km/h.`;
+        } else {
+            if (chuva > 0) return `Chuva prevista (${chuva}mm) — evite sair.`;
+            if (temp > 30) return `Calor excessivo: ${temp}°C — risco de desidratação.`;
+            if (vento > 35) return `Vento forte: ${vento} km/h — perigoso para ciclismo e corrida.`;
+            return `Condições desfavoráveis: ${temp}°C, vento ${vento} km/h.`;
+        }
+    }
+
+    el.innerHTML = `
+        <div class="flex flex-col gap-3">
+            <div class="p-3 rounded-xl bg-green-50 dark:bg-green-900/20 border border-green-100 dark:border-green-800">
+                <p class="font-bold text-green-700 dark:text-green-400 flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[14px]">check_circle</span>
+                    Melhor horário
+                </p>
+                <p class="mt-1 text-slate-700 dark:text-slate-300 font-semibold">
+                    ${formatHora(melhor?.dt_txt)}
+                </p>
+                <p class="mt-0.5 text-slate-500 dark:text-slate-400">
+                    ${gerarMotivo(melhor, sport, true)}
+                </p>
+            </div>
+
+            <div class="p-3 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800">
+                <p class="font-bold text-red-600 dark:text-red-400 flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[14px]">cancel</span>
+                    Evitar
+                </p>
+                <p class="mt-1 text-slate-700 dark:text-slate-300 font-semibold">
+                    ${formatHora(pior?.dt_txt)}
+                </p>
+                <p class="mt-0.5 text-slate-500 dark:text-slate-400">
+                    ${gerarMotivo(pior, sport, false)}
+                </p>
+            </div>
+        </div>
+    `;
 }
 
 
