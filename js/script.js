@@ -207,7 +207,32 @@ function loadPage(sport) {
 }
 
 loadPage("home");
-
+// Solicita localização do usuário ao carregar
+(function initGeolocation() {
+    if (!navigator.geolocation) {
+        atualizarClimaNaTela("Sorocaba");
+        return;
+    }
+    navigator.geolocation.getCurrentPosition(
+        async (pos) => {
+            const { latitude, longitude } = pos.coords;
+            const url = `https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&appid=${API_KEY}&units=metric&lang=pt_br`;
+            try {
+                const res = await fetch(url);
+                const dados = await res.json();
+                // Salva o nome da cidade detectada para uso posterior
+                window._cidadeAtual = dados.city?.name || "Sua localização";
+                await atualizarClimaNaTela(window._cidadeAtual);
+            } catch (e) {
+                atualizarClimaNaTela("Sorocaba");
+            }
+        },
+        () => {
+            // Usuário negou permissão — usa fallback
+            atualizarClimaNaTela("Sorocaba");
+        }
+    );
+})();
 
 // ─── 3. NAVEGAÇÃO — Sobre o Projeto e busca por localização ──────────────────
 
