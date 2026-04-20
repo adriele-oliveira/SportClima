@@ -168,17 +168,29 @@ function loadPage(sport) {
         </div>
 
         <div class="chart-container mt-6">
-            <h3 class="text-lg font-bold mb-4 dark:text-slate-100">Variação Horária</h3>
-            <div class="flex items-end h-32">
-                <div class="chart-bar" style="height:80px"></div>
-                <div class="chart-bar" style="height:110px"></div>
-                <div class="chart-bar" style="height:70px"></div>
-                <div class="chart-bar" style="height:95px"></div>
-                <div class="chart-bar" style="height:60px"></div>
-                <div class="chart-bar" style="height:120px"></div>
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-bold dark:text-slate-100">Variação Horária</h3>
+                <div class="flex gap-2">
+                    <button onclick="mudarGrafico('temp')" id="btnGraficoTemp"
+                        class="chart-tab-btn active-chart-tab px-3 py-1 rounded-full text-xs font-bold transition-all">
+                        🌡 Temperatura
+                    </button>
+                    <button onclick="mudarGrafico('chuva')" id="btnGraficoChuva"
+                        class="chart-tab-btn px-3 py-1 rounded-full text-xs font-bold transition-all">
+                        🌧 Chuva
+                    </button>
+                    <button onclick="mudarGrafico('vento')" id="btnGraficoVento"
+                        class="chart-tab-btn px-3 py-1 rounded-full text-xs font-bold transition-all">
+                        💨 Vento
+                    </button>
+                </div>
             </div>
+            <div id="chartBars" class="flex items-end h-32 gap-1"></div>
+            <div id="chartLabels" class="flex gap-1 mt-1"></div>
         </div>
         <div id="weatherHourly" class="mt-6"></div>
+
+
     `;
 
     spaSidebarRight.innerHTML = `
@@ -926,30 +938,94 @@ inputCidade.addEventListener("keypress", (e) => {
 //──────────────────── FUNÇÃO PARA ATUALIZAR O CLIMA NA TELA ────────────────────────────────────────────────
 
 async function atualizarClimaNaTela(cidade = "Sorocaba") {
-
     const url = `https://api.openweathermap.org/data/2.5/forecast?q=${cidade}&appid=${API_KEY}&units=metric&lang=pt_br`;
 
     try {
         const res = await fetch(url);
         const dados = await res.json();
 
+        window._dadosClimaAPI = dados; // salva globalmente para o gráfico
+
         const atual = dados.list[0];
 
-        document.getElementById("temp").textContent =
-            Math.round(atual.main.temp) + "°C";
+        const elTemp = document.getElementById("temp");
+        const elVento = document.getElementById("vento");
+        const elUmidade = document.getElementById("umidade");
+        const elUv = document.getElementById("uv");
 
-        document.getElementById("vento").textContent =
-            Math.round(atual.wind.speed * 3.6) + " km/h";
+        if (elTemp) elTemp.textContent = Math.round(atual.main.temp) + "°C";
+        if (elVento) elVento.textContent = Math.round(atual.wind.speed * 3.6) + " km/h";
+        if (elUmidade) elUmidade.textContent = atual.main.humidity + "%";
+        if (elUv) elUv.textContent = "—";
 
-        document.getElementById("umidade").textContent =
-            atual.main.humidity + "%";
-
-        document.getElementById("uv").textContent = "—"; // API gratuita não tem UV
+        // Renderiza o gráfico padrão de temperatura
+        renderizarGrafico("temp");
 
     } catch (erro) {
         console.error("Erro clima:", erro);
     }
 }
+
+// Alterna o tipo do gráfico e destaca o botão ativo
+function mudarGrafico(tipo) {
+    ["temp", "chuva", "vento"].forEach(t => {
+        const btn = document.getElementById(`btnGrafico${t.charAt(0).toUpperCase() + t.slice(1)}`);
+        if (btn) {
+            btn.classList.remove("active-chart-tab");
+        }
+    });
+    const ativo = document.getElementById(`btnGrafico${tipo.charAt(0).toUpperCase() + tipo.slice(1)}`);
+    if (ativo) ativo.classList.add("active-chart-tab");
+    renderizarGrafico(tipo);
+}
+
+// Desenha as barras do gráfico com base no tipo selecionado
+function renderizarGrafico(tipo) {
+    const dados = window._dadosClimaAPI;
+    const barsEl = document.getElementById("chartBars");
+    const labelsEl = document.getElementById("chartLabels");
+
+    if (!dados || !barsEl) return;
+
+    const fatias = dados.list.slice(0, 8);
+
+    const valores = fatias.map(item => {
+        if (tipo === "temp")  return Math.round(item.main.temp);
+        if (tipo === "chuva") return Math.round((item.rain?.["3h"] || 0) * 10) / 10;
+        if (tipo === "vento") return Math.round(item.wind.speed * 3.6);
+        return 0;
+    });
+
+    const unidades = { temp: "°C", chuva: "mm", vento: "km/h" };
+    const cores = {
+        temp:  "bg-orange-400",
+        chuva: "bg-blue-400",
+        vento: "bg-teal-400"
+    };
+
+    const max = Math.max(...valores, 1);
+
+    barsEl.innerHTML = fatias.map((_, i) => {
+        const altura = Math.max(8, Math.round((valores[i] / max) * 120));
+        return `
+            <div class="flex-1 flex flex-col items-center gap-1 group">
+                <span class="text-[9px] text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                    ${valores[i]}${unidades[tipo]}
+                </span>
+                <div class="${cores[tipo]} rounded-t-md w-full transition-all duration-500"
+                     style="height:${altura}px"></div>
+            </div>`;
+    }).join("");
+
+    if (labelsEl) {
+        labelsEl.innerHTML = fatias.map(item => `
+            <div class="flex-1 text-center text-[9px] text-slate-400">
+                ${item.dt_txt.slice(11, 16)}
+            </div>`).join("");
+    }
+}
+
+
 btnBuscar.addEventListener("click", () => {
     const cidade = inputCidade.value.trim();
 

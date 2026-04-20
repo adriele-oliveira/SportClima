@@ -448,3 +448,14 @@ input.form-input:focus {
 body.modal-lock {
     overflow: hidden;
 }
+
+.chart-tab-btn {
+    background: transparent;
+    color: var(--color-slate-500, #64748b);
+    border: 1px solid transparent;
+}
+.active-chart-tab {
+    background-color: var(--color-primary, #f97316);
+    color: white;
+    border-color: transparent;
+}
