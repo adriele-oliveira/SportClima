@@ -41,7 +41,7 @@ const pages = {
             temp: "—",
             vento: "—",
             umidade: "—",
-            uv: "—"
+            sensacao: "—"
         },
         sidebar: {
             melhorHorario: "—",
@@ -58,7 +58,7 @@ const pages = {
             temp: "18°C",
             vento: "5 km/h",
             umidade: "45%",
-            uv: "2"
+            sensacao: "—"
         },
         sidebar: {
             melhorHorario: "06:00 - 09:00",
@@ -75,7 +75,7 @@ const pages = {
             temp: "21°C",
             vento: "12 km/h",
             umidade: "38%",
-            uv: "4"
+            sensacao: "—"
         },
         sidebar: {
             melhorHorario: "07:00 - 10:00",
@@ -92,7 +92,7 @@ const pages = {
             temp: "26°C",
             vento: "9 km/h",
             umidade: "60%",
-            uv: "8"
+            sensacao: "—"
         },
         sidebar: {
             melhorHorario: "05:40 - 08:20",
@@ -162,8 +162,8 @@ function loadPage(sport) {
                 <h4 id="umidade" class="text-2xl font-bold mt-1 dark:text-slate-100">${data.metrics.umidade}</h4>
             </div>
             <div class="metric-card">
-                <p class="text-sm text-slate-500 dark:text-slate-400">Índice UV</p>
-                <h4 id="uv" class="text-2xl font-bold mt-1 dark:text-slate-100">${data.metrics.uv}</h4>
+                <p class="text-sm text-slate-500 dark:text-slate-400">Sensação</p>
+                <h4 id="sensacao" class="text-2xl font-bold mt-1 dark:text-slate-100">${data.metrics.temp}</h4>
             </div>
         </div>
 
@@ -987,7 +987,7 @@ inputCidade.addEventListener("keypress", (e) => {
 
 async function atualizarClimaNaTela(cidade = "Sorocaba") {
     // Mostra estado de carregamento nas métricas enquanto aguarda a API
-    ["temp", "vento", "umidade", "uv"].forEach(id => {
+    ["temp", "vento", "umidade", "sensacao"].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.innerHTML = `<span class="animate-pulse text-slate-300 dark:text-slate-600">···</span>`;
     });
@@ -1021,12 +1021,13 @@ async function atualizarClimaNaTela(cidade = "Sorocaba") {
         const elTemp = document.getElementById("temp");
         const elVento = document.getElementById("vento");
         const elUmidade = document.getElementById("umidade");
-        const elUv = document.getElementById("uv");
 
         if (elTemp) elTemp.textContent = Math.round(atual.main.temp) + "°C";
         if (elVento) elVento.textContent = Math.round(atual.wind.speed * 3.6) + " km/h";
         if (elUmidade) elUmidade.textContent = atual.main.humidity + "%";
-        if (elUv) elUv.textContent = "—";
+
+        const elSensacao = document.getElementById("sensacao");
+        if (elSensacao) elSensacao.textContent = Math.round(atual.main.feels_like) + "°C";
 
         // Renderiza o gráfico padrão de temperatura
         renderizarGrafico("temp");
