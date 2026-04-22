@@ -1194,12 +1194,15 @@ btnBuscar.addEventListener("click", () => {
                 const res = await fetch(url);
                 const dados = await res.json();
                 window._cidadeAtual = dados.city?.name || "Sua localização";
-                // Atualiza o hero com o nome da cidade detectada
-                const heroTitle = document.querySelector('.spa-hero-content h1');
-                if (heroTitle && window._cidadeAtual) {
-                    heroTitle.textContent = `Condições em ${window._cidadeAtual}`;
-                }
                 await atualizarClimaNaTela(window._cidadeAtual);
+
+                // Atualiza o hero APENAS se ainda estiver na página home
+                const sportAtivo = document.querySelector('.sport-btn-sidebar.sidebar-active');
+                const sport = sportAtivo?.getAttribute('data-sport') || 'home';
+                if (sport === 'home') {
+                    const heroTitle = document.querySelector('.spa-hero-content h1');
+                    if (heroTitle) heroTitle.textContent = `Condições em ${window._cidadeAtual}`;
+                }
             } catch (e) {
                 atualizarClimaNaTela("Sorocaba");
             }
