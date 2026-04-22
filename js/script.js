@@ -1195,15 +1195,6 @@ function analisarEsporte(sport) {
     `;
 }
 
-
-btnBuscar.addEventListener("click", () => {
-    const cidade = inputCidade.value.trim();
-
-    if (cidade !== "") {
-        atualizarClimaNaTela(cidade);
-    }
-});
-
 // ─── 14. GEOLOCALIZAÇÃO — Solicita permissão e carrega clima local ────────────
 (function initGeolocation() {
     if (!navigator.geolocation) {
