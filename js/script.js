@@ -301,10 +301,6 @@ function loadPage(sport) {
     atualizarClimaNaTela(cidadeParaCarregar);
     setTimeout(() => analisarEsporte(sport), 1800);
 
-    sportButtons.forEach(btn => btn.classList.remove("active"));
-    sportSidebarButtons.forEach(btn => btn.classList.remove("sidebar-active"));
-    document.querySelector(`[data-sport="${sport}"]`)?.classList.add("sidebar-active");
-
     const sobreBtn = document.getElementById('sobreProjetoBtn');
     if (sobreBtn) sobreBtn.classList.remove('sobre-btn-active');
 }
@@ -594,7 +590,13 @@ if (searchInput) {
     }
 
     items.forEach(item => {
-        item.addEventListener('click', () => applyActiveStyle(item));
+        item.addEventListener('click', () => {
+            const sport = item.getAttribute('data-sport');
+            if (sport) {
+                applyActiveStyle(item);
+                loadPage(sport);
+            }
+        });
     });
 
     if (topSearch) {
