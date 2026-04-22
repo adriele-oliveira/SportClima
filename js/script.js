@@ -201,8 +201,6 @@ function loadPage(sport) {
         </div>
         ` : ""}
         <div class="chart-container mt-6">
-
-        <div class="chart-container mt-6">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="text-lg font-bold dark:text-slate-100">Variação Horária</h3>
                 <div class="flex gap-2">
