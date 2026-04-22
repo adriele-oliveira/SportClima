@@ -252,32 +252,6 @@ setTimeout(() => analisarEsporte(sport), 1800);
 }
 
 loadPage("home");
-// Solicita localização do usuário ao carregar
-(function initGeolocation() {
-    if (!navigator.geolocation) {
-        atualizarClimaNaTela("Sorocaba");
-        return;
-    }
-    navigator.geolocation.getCurrentPosition(
-        async (pos) => {
-            const { latitude, longitude } = pos.coords;
-            const url = `https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&appid=${API_KEY}&units=metric&lang=pt_br`;
-            try {
-                const res = await fetch(url);
-                const dados = await res.json();
-                // Salva o nome da cidade detectada para uso posterior
-                window._cidadeAtual = dados.city?.name || "Sua localização";
-                await atualizarClimaNaTela(window._cidadeAtual);
-            } catch (e) {
-                atualizarClimaNaTela("Sorocaba");
-            }
-        },
-        () => {
-            // Usuário negou permissão — usa fallback
-            atualizarClimaNaTela("Sorocaba");
-        }
-    );
-})();
 
 // ─── 3. NAVEGAÇÃO — Sobre o Projeto e busca por localização ──────────────────
 
@@ -1144,3 +1118,41 @@ btnBuscar.addEventListener("click", () => {
         atualizarClimaNaTela(cidade);
     }
 });
+
+// ─── 14. GEOLOCALIZAÇÃO — Solicita permissão e carrega clima local ────────────
+(function initGeolocation() {
+    if (!navigator.geolocation) {
+        // Navegador não suporta — usa fallback
+        atualizarClimaNaTela("Sorocaba");
+        return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+        async (pos) => {
+            const { latitude, longitude } = pos.coords;
+            const url = `https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&appid=${API_KEY}&units=metric&lang=pt_br`;
+            try {
+                const res = await fetch(url);
+                const dados = await res.json();
+                window._cidadeAtual = dados.city?.name || "Sua localização";
+                // Atualiza o hero com o nome da cidade detectada
+                const heroTitle = document.querySelector('.spa-hero-content h1');
+                if (heroTitle && window._cidadeAtual) {
+                    heroTitle.textContent = `Condições em ${window._cidadeAtual}`;
+                }
+                await atualizarClimaNaTela(window._cidadeAtual);
+            } catch (e) {
+                atualizarClimaNaTela("Sorocaba");
+            }
+        },
+        (err) => {
+            // Usuário negou ou erro — usa fallback silencioso
+            console.warn("Geolocalização negada, usando Sorocaba como padrão.");
+            atualizarClimaNaTela("Sorocaba");
+        },
+        {
+            timeout: 8000,        // desiste após 8s
+            maximumAge: 300000    // reusa posição cacheada por até 5 min
+        }
+    );
+})();
