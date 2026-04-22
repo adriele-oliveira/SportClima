@@ -597,32 +597,6 @@ if (searchInput) {
             }
         });
     });
-
-    if (topSearch) {
-        topSearch.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                const query = topSearch.value.toLowerCase().trim();
-                if (query.length === 0) return;
-
-                const match = Array.from(items).find(i =>
-                    i.getAttribute('data-sport')?.toLowerCase().includes(query) ||
-                    i.textContent.toLowerCase().includes(query)
-                );
-
-                if (match) {
-                    applyActiveStyle(match);
-                    topSearch.value = "";
-                    topSearch.blur();
-                } else {
-                    alert(`Nenhum esporte encontrado para: "${topSearch.value}"`);
-                    topSearch.value = "";
-                    topSearch.blur();
-                    applyActiveStyle(currentActive);
-                }
-            }
-        });
-    }
-
     applyActiveStyle(currentActive);
 })();
 
@@ -980,8 +954,11 @@ btnBuscar.addEventListener("click", async () => {
     setTimeout(() => analisarEsporte(sport), 300);
 });
 
-inputCidade.addEventListener("keypress", (e) => {
-    if (e.key === "Enter") btnBuscar.click();
+inputCidade.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+        e.preventDefault();
+        btnBuscar.click();
+    }
 });
 
 //──────────────────── FUNÇÃO PARA ATUALIZAR O CLIMA NA TELA ────────────────────────────────────────────────
