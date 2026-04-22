@@ -992,8 +992,24 @@ async function atualizarClimaNaTela(cidade = "Sorocaba") {
         const res = await fetch(url);
         const dados = await res.json();
 
-        window._dadosClimaAPI = dados; // salva globalmente para o gráfico
+        // Cidade não encontrada pela API
+        if (dados.cod === "404" || !dados.list) {
+            const elTemp = document.getElementById("temp");
+            if (elTemp) {
+                elTemp.closest('#weatherMetrics')
+                    ?.querySelectorAll('h4')
+                    .forEach(el => el.textContent = "—");
+            }
+            // Mostra aviso no gráfico
+            const barsEl = document.getElementById("chartBars");
+            if (barsEl) barsEl.innerHTML = `
+                <p class="text-xs text-red-400 italic w-full text-center py-4">
+                    Cidade não encontrada. Verifique o nome e tente novamente.
+                </p>`;
+            return;
+        }
 
+        window._dadosClimaAPI = dados;
         const atual = dados.list[0];
 
         const elTemp = document.getElementById("temp");
