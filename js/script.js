@@ -226,21 +226,78 @@ function loadPage(sport) {
 
     `;
 
-    spaSidebarRight.innerHTML = `
-        <div class="spa-sidebar-card">
-            <h3 class="text-primary flex items-center gap-2">
-                <span class="material-symbols-outlined">schedule</span>
-                Análise - ${sport}
-            </h3>
-            <div id="analiseEsporte" class="mt-3 text-xs text-slate-500 dark:text-slate-400">
-                <p class="italic">Carregando análise...</p>
+    // Sidebar diferente para home e para esportes
+    if (sport === "home") {
+        spaSidebarRight.innerHTML = `
+            <div class="spa-sidebar-card">
+                <h3 class="text-primary flex items-center gap-2">
+                    <span class="material-symbols-outlined">wb_sunny</span>
+                    Clima Agora
+                </h3>
+                <div id="analiseEsporte" class="mt-3 text-xs text-slate-500 dark:text-slate-400">
+                    <p class="italic">Carregando dados da sua região...</p>
+                </div>
             </div>
-        </div>
-    `;
+            <div class="spa-sidebar-card mt-4">
+                <h3 class="text-primary flex items-center gap-2">
+                    <span class="material-symbols-outlined">info</span>
+                    Como usar
+                </h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
+                    Escolha um esporte na barra lateral para ver análise climática personalizada com melhor e pior horário para praticar hoje.
+                </p>
+            </div>
+        `;
+    } else {
+        // Sidebar com ícone e dica específica do esporte
+        const dicasEsporte = {
+            corrida: {
+                icone: "directions_run",
+                dica: "Hidrate-se bem antes de sair. Em dias quentes, prefira horários mais frescos e use roupas leves.",
+                alerta: "Evite correr com índice UV acima de 8 ou temperaturas acima de 32°C."
+            },
+            ciclismo: {
+                icone: "directions_bike",
+                dica: "Verifique a previsão de vento. Vento lateral acima de 40 km/h pode ser perigoso em descidas.",
+                alerta: "Chuva deixa a pista escorregadia — evite pedalar durante ou logo após precipitações."
+            },
+            surf: {
+                icone: "surfing",
+                dica: "Acompanhe a direção do vento: offshore (terra→mar) melhora a formação das ondas.",
+                alerta: "Trovoadas e raios são emergências — saia da água imediatamente."
+            }
+        };
 
-// Após carregar os dados da API, atualiza a análise
-setTimeout(() => analisarEsporte(sport), 1800);
+        const info = dicasEsporte[sport] || { icone: "sports", dica: "", alerta: "" };
 
+        spaSidebarRight.innerHTML = `
+            <div class="spa-sidebar-card">
+                <h3 class="text-primary flex items-center gap-2">
+                    <span class="material-symbols-outlined">schedule</span>
+                    Análise para ${sport.charAt(0).toUpperCase() + sport.slice(1)}
+                </h3>
+                <div id="analiseEsporte" class="mt-3 text-xs text-slate-500 dark:text-slate-400">
+                    <p class="italic">Carregando análise...</p>
+                </div>
+            </div>
+
+            <div class="spa-sidebar-card mt-4">
+                <h3 class="text-primary flex items-center gap-2">
+                    <span class="material-symbols-outlined">${info.icone}</span>
+                    Dica de ${sport.charAt(0).toUpperCase() + sport.slice(1)}
+                </h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
+                    ${info.dica}
+                </p>
+                <p class="text-xs text-amber-600 dark:text-amber-400 mt-3 leading-relaxed font-semibold">
+                    ⚠️ ${info.alerta}
+                </p>
+            </div>
+        `;
+    }
+
+    // Dispara análise após dados da API chegarem
+    setTimeout(() => analisarEsporte(sport), 1800);
     atualizarClimaNaTela();
 
     sportButtons.forEach(btn => btn.classList.remove("active"));
