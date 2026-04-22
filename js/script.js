@@ -238,14 +238,14 @@ function loadPage(sport) {
                     <p class="italic">Carregando dados da sua região...</p>
                 </div>
             </div>
-            <div class="spa-sidebar-card mt-4">
+            <div class="spa-sidebar-card mt-4" id="resumoDiarioCard">
                 <h3 class="text-primary flex items-center gap-2">
-                    <span class="material-symbols-outlined">info</span>
-                    Como usar
+                    <span class="material-symbols-outlined">checklist</span>
+                    Resumo do Dia
                 </h3>
-                <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
-                    Escolha um esporte na barra lateral para ver análise climática personalizada com melhor e pior horário para praticar hoje.
-                </p>
+                <div id="resumoDiario" class="mt-3 text-xs text-slate-400 italic">
+                    <p>Carregando resumo...</p>
+                </div>
             </div>
         `;
     } else {
@@ -299,7 +299,10 @@ function loadPage(sport) {
     // Usa a cidade atual (buscada ou detectada), com fallback para Sorocaba
     const cidadeParaCarregar = window._cidadeAtual || "Sorocaba";
     atualizarClimaNaTela(cidadeParaCarregar);
-    setTimeout(() => analisarEsporte(sport), 1800);
+    setTimeout(() => {
+        analisarEsporte(sport);
+        if (sport === 'home') atualizarResumoDiario();
+    }, 1800);
 
     const sobreBtn = document.getElementById('sobreProjetoBtn');
     if (sobreBtn) sobreBtn.classList.remove('sobre-btn-active');
@@ -1115,6 +1118,64 @@ function analisarEsporte(sport) {
     }
     analisarEsporte._tentativas = 0;
 
+    // ─── Resumo diário da home — condições para cada esporte hoje ────────────────
+function atualizarResumoDiario() {
+    const dados = window._dadosClimaAPI;
+    const el = document.getElementById("resumoDiario");
+    if (!dados || !el) return;
+
+    const hoje = dados.list.filter(item => {
+        const diaItem = item.dt_txt.slice(0, 10);
+        const diaHoje = dados.list[0].dt_txt.slice(0, 10);
+        return diaItem === diaHoje;
+    });
+
+    const esportes = [
+        {
+            nome: "Corrida",
+            icone: "🏃",
+            sport: "corrida",
+            ok: (i) => i.main.temp >= 10 && i.main.temp <= 25 && i.wind.speed * 3.6 <= 20 && !(i.rain?.["3h"] > 0)
+        },
+        {
+            nome: "Ciclismo",
+            icone: "🚴",
+            sport: "ciclismo",
+            ok: (i) => i.main.temp >= 12 && i.main.temp <= 28 && i.wind.speed * 3.6 <= 30 && !(i.rain?.["3h"] > 0)
+        },
+        {
+            nome: "Surf",
+            icone: "🏄",
+            sport: "surf",
+            ok: (i) => i.wind.speed * 3.6 >= 10 && i.main.temp >= 18
+        }
+    ];
+
+    el.innerHTML = esportes.map(e => {
+        const horasBoas = hoje.filter(e.ok);
+        const primeiraHoraBoa = horasBoas[0]?.dt_txt.slice(11, 16);
+        const status = horasBoas.length >= 2 ? "✅" : horasBoas.length === 1 ? "⚠️" : "❌";
+        const desc = horasBoas.length >= 2
+            ? `Bom a partir de ${primeiraHoraBoa}`
+            : horasBoas.length === 1
+            ? `Apenas às ${primeiraHoraBoa}`
+            : "Não recomendado hoje";
+
+        return `
+            <div class="flex items-center justify-between py-2 border-b border-slate-100 dark:border-surface-3 last:border-0 cursor-pointer hover:bg-slate-50 dark:hover:bg-surface-3 rounded-lg px-1 transition-colors"
+                 onclick="loadPage('${e.sport}')">
+                <div class="flex items-center gap-2">
+                    <span class="text-base">${e.icone}</span>
+                    <span class="font-semibold text-slate-700 dark:text-slate-200">${e.nome}</span>
+                </div>
+                <div class="text-right">
+                    <span class="text-base">${status}</span>
+                    <p class="text-[10px] text-slate-400 mt-0.5">${desc}</p>
+                </div>
+            </div>`;
+    }).join('');
+}
+
     const fatias = dados.list.slice(0, 16); // próximas 48h em blocos de 3h
 // ── Score de condições atual (0–100) ──────────────────────────────────
     const agora = dados.list[0];
@@ -1303,8 +1364,11 @@ function analisarEsporte(sport) {
                 if (sport === 'home') {
                     const heroTitle = document.querySelector('.spa-hero-content h1');
                     if (heroTitle) heroTitle.textContent = `Condições em ${window._cidadeAtual}`;
-                    // Dispara análise agora que os dados chegaram
-                    setTimeout(() => analisarEsporte('home'), 200);
+                    // Dispara análise e resumo diário
+                    setTimeout(() => {
+                        analisarEsporte('home');
+                        atualizarResumoDiario();
+                    }, 200);
                 }
             } catch (e) {
                 atualizarClimaNaTela("Sorocaba");
