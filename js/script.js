@@ -299,11 +299,7 @@ function loadPage(sport) {
     // Usa a cidade atual (buscada ou detectada), com fallback para Sorocaba
     const cidadeParaCarregar = window._cidadeAtual || "Sorocaba";
     atualizarClimaNaTela(cidadeParaCarregar);
-    setTimeout(() => {
-        analisarEsporte(sport);
-        if (sport === 'home') atualizarResumoDiario();
-    }, 1800);
-
+    setTimeout(() => analisarEsporte(sport), 1800);
     const sobreBtn = document.getElementById('sobreProjetoBtn');
     if (sobreBtn) sobreBtn.classList.remove('sobre-btn-active');
 }
@@ -1037,10 +1033,18 @@ async function atualizarClimaNaTela(cidade = "Sorocaba") {
         // Renderiza o gráfico padrão de temperatura
         renderizarGrafico("temp");
 
+        // Atualiza resumo diário se estiver na home
+        const sportAtivoAgora = document.querySelector('.sport-btn-sidebar.sidebar-active');
+        const sportAtual = sportAtivoAgora?.getAttribute('data-sport') || 'home';
+        if (sportAtual === 'home') {
+            atualizarResumoDiario();
+        }
+
     } catch (erro) {
         console.error("Erro clima:", erro);
     }
 }
+
 
 // Alterna o tipo do gráfico e destaca o botão ativo
 function mudarGrafico(tipo) {
@@ -1365,10 +1369,8 @@ function atualizarResumoDiario() {
                     const heroTitle = document.querySelector('.spa-hero-content h1');
                     if (heroTitle) heroTitle.textContent = `Condições em ${window._cidadeAtual}`;
                     // Dispara análise e resumo diário
-                    setTimeout(() => {
-                        analisarEsporte('home');
-                        atualizarResumoDiario();
-                    }, 200);
+                    // atualizarResumoDiario já é chamado dentro de atualizarClimaNaTela
+                    setTimeout(() => analisarEsporte('home'), 200);
                 }
             } catch (e) {
                 atualizarClimaNaTela("Sorocaba");
