@@ -1030,6 +1030,20 @@ async function atualizarClimaNaTela(cidade = "Sorocaba") {
         const elSensacao = document.getElementById("sensacao");
         if (elSensacao) elSensacao.textContent = Math.round(atual.main.feels_like) + "°C";
 
+        // Atualiza o título do hero com o nome da cidade
+        const heroTitle = document.querySelector('.spa-hero-content h1');
+        if (heroTitle && dados.city?.name) {
+            const sportAtivoBadge = document.querySelector('.spa-hero-content span');
+            const sportNome = sportAtivoBadge?.textContent?.trim()?.toLowerCase() || 'home';
+            const titulosEsporte = {
+                corrida: `Corrida em ${dados.city.name}`,
+                ciclismo: `Ciclismo em ${dados.city.name}`,
+                surf:     `Surf em ${dados.city.name}`,
+                home:     `Condições em ${dados.city.name}`
+            };
+            heroTitle.textContent = titulosEsporte[sportNome] || `Condições climáticas em ${dados.city.name}`;
+        }
+
         // Renderiza o gráfico padrão de temperatura
         renderizarGrafico("temp");
 
