@@ -1197,9 +1197,9 @@ function analisarEsporte(sport) {
 
 // ─── 14. GEOLOCALIZAÇÃO — Solicita permissão e carrega clima local ────────────
 (function initGeolocation() {
+    // Aguarda o DOM estar pronto antes de tentar geolocalização
     if (!navigator.geolocation) {
-        // Navegador não suporta — usa fallback
-        atualizarClimaNaTela("Sorocaba");
+        setTimeout(() => atualizarClimaNaTela("Sorocaba"), 100);
         return;
     }
 
@@ -1213,12 +1213,14 @@ function analisarEsporte(sport) {
                 window._cidadeAtual = dados.city?.name || "Sua localização";
                 await atualizarClimaNaTela(window._cidadeAtual);
 
-                // Atualiza o hero APENAS se ainda estiver na página home
+                // Atualiza hero e análise apenas se ainda na home
                 const sportAtivo = document.querySelector('.sport-btn-sidebar.sidebar-active');
                 const sport = sportAtivo?.getAttribute('data-sport') || 'home';
                 if (sport === 'home') {
                     const heroTitle = document.querySelector('.spa-hero-content h1');
                     if (heroTitle) heroTitle.textContent = `Condições em ${window._cidadeAtual}`;
+                    // Dispara análise agora que os dados chegaram
+                    setTimeout(() => analisarEsporte('home'), 200);
                 }
             } catch (e) {
                 atualizarClimaNaTela("Sorocaba");
