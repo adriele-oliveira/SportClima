@@ -1116,7 +1116,47 @@ function analisarEsporte(sport) {
     analisarEsporte._tentativas = 0;
 
     const fatias = dados.list.slice(0, 16); // próximas 48h em blocos de 3h
+// ── Score de condições atual (0–100) ──────────────────────────────────
+    const agora = dados.list[0];
+    const tempAtual = agora.main.temp;
+    const ventoAtual = agora.wind.speed * 3.6;
+    const chuvaAtual = agora.rain?.["3h"] || 0;
 
+    const calcScore = {
+        corrida: () => {
+            let s = 100;
+            if (tempAtual < 10 || tempAtual > 30) s -= 40;
+            else if (tempAtual > 25) s -= 15;
+            if (ventoAtual > 20) s -= 20;
+            if (chuvaAtual > 0) s -= 35;
+            return Math.max(0, s);
+        },
+        ciclismo: () => {
+            let s = 100;
+            if (tempAtual < 10 || tempAtual > 32) s -= 35;
+            if (ventoAtual > 30) s -= 30;
+            if (chuvaAtual > 0) s -= 35;
+            return Math.max(0, s);
+        },
+        surf: () => {
+            let s = 40; // começa baixo, vento é positivo aqui
+            if (ventoAtual >= 10 && ventoAtual <= 30) s += 35;
+            if (tempAtual >= 20 && tempAtual <= 30) s += 25;
+            return Math.min(100, s);
+        },
+        home: () => {
+            let s = 100;
+            if (chuvaAtual > 0) s -= 30;
+            if (tempAtual > 32 || tempAtual < 8) s -= 30;
+            return Math.max(0, s);
+        }
+    };
+
+    const score = (calcScore[sport] || calcScore.home)();
+    const scoreCor = score >= 75 ? "text-green-500" : score >= 50 ? "text-yellow-500" : score >= 25 ? "text-orange-500" : "text-red-500";
+    const scoreLabel = score >= 75 ? "Excelente" : score >= 50 ? "Bom" : score >= 25 ? "Regular" : "Ruim";
+    const scoreBg = score >= 75 ? "bg-green-500" : score >= 50 ? "bg-yellow-400" : score >= 25 ? "bg-orange-400" : "bg-red-500";
+   
     // Critérios por esporte
     const criterios = {
         corrida: (item) => item.main.temp >= 10 && item.main.temp <= 25
@@ -1166,6 +1206,18 @@ function analisarEsporte(sport) {
 
     el.innerHTML = `
         <div class="flex flex-col gap-3">
+
+            <!-- Score de condições -->
+            <div class="p-3 rounded-xl bg-slate-50 dark:bg-surface-3 border border-slate-100 dark:border-surface-3">
+                <div class="flex items-center justify-between mb-2">
+                    <p class="text-xs font-bold text-slate-600 dark:text-slate-300">Condições agora</p>
+                    <span class="text-lg font-black ${scoreCor}">${score}/100 · ${scoreLabel}</span>
+                </div>
+                <div class="w-full bg-slate-200 dark:bg-surface-2 rounded-full h-2">
+                    <div class="${scoreBg} h-2 rounded-full transition-all duration-700"
+                         style="width: ${score}%"></div>
+                </div>
+            </div>
             <div class="p-3 rounded-xl bg-green-50 dark:bg-green-900/20 border border-green-100 dark:border-green-800">
                 <p class="font-bold text-green-700 dark:text-green-400 flex items-center gap-1">
                     <span class="material-symbols-outlined text-[14px]">check_circle</span>
