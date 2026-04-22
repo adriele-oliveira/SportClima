@@ -1244,6 +1244,38 @@ function analisarEsporte(sport) {
                 </p>
             </div>
         </div>
+           <!-- Próximos 3 dias -->
+            <div class="mt-1">
+                <p class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Próximos dias</p>
+                ${(() => {
+                    // Agrupa previsões por dia
+                    const porDia = {};
+                    dados.list.forEach(item => {
+                        const dia = item.dt_txt.slice(0, 10);
+                        if (!porDia[dia]) porDia[dia] = [];
+                        porDia[dia].push(item);
+                    });
+
+                    return Object.entries(porDia).slice(1, 4).map(([dia, items]) => {
+                        const maxTemp = Math.max(...items.map(i => i.main.temp_max));
+                        const minTemp = Math.min(...items.map(i => i.main.temp_min));
+                        const temChuva = items.some(i => (i.rain?.["3h"] || 0) > 0);
+                        const temVentoForte = items.some(i => i.wind.speed * 3.6 > 30);
+                        const descDia = new Date(dia + 'T12:00:00').toLocaleDateString('pt-BR', { weekday: 'short', day: 'numeric' });
+                        const icone = temChuva ? '🌧' : temVentoForte ? '💨' : '☀️';
+
+                        return `
+                            <div class="flex items-center justify-between py-1.5 border-b border-slate-100 dark:border-surface-3 last:border-0">
+                                <span class="text-xs text-slate-500 dark:text-slate-400 capitalize w-20">${descDia}</span>
+                                <span class="text-base">${icone}</span>
+                                <span class="text-xs font-bold text-slate-700 dark:text-slate-200">
+                                    ${Math.round(maxTemp)}° / <span class="font-normal text-slate-400">${Math.round(minTemp)}°</span>
+                                </span>
+                            </div>`;
+                    }).join('');
+                })()}
+            </div>
+        </div>
     `;
 }
 
