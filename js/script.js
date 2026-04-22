@@ -1,18 +1,25 @@
-// ─────────────────────────────────────────────────────────────────────────────
+// =============================================================================
 // script.js — SportClima Dashboard
-// Organização dos módulos:
-//   1. Tema (aplicação imediata)
-//   2. Dados e páginas SPA (pages, loadPage, loadSobreProjeto)
-//   3. Navegação lateral (initSobreProjeto, busca, initSidebarNav)
-//   4. Notificações (initNotifications)
-//   5. Menu de Perfil (initProfileMenu)
-//   6. Tema Toggle (initThemeToggle)
-//   7. Feedback Modal (initFeedbackModal)
-//   8. Modal de Perfil — Preenchimento e Persistência
-//   9. Funções globais do modal (toggleMenu, abrirModalPerfil, fecharModal)
-//  10. Foto de Perfil (processarNovaFoto)
-//  11. Sessão (initSession)
-// ─────────────────────────────────────────────────────────────────────────────
+// =============================================================================
+// Módulos:
+//   1.  Tema              — aplica dark/light antes do render
+//   2.  SPA Core          — referências DOM, dados das páginas, loadPage
+//   3.  Sobre o Projeto   — renderiza página de criadoras
+//   4.  Navegação         — sidebar, busca por esporte no header
+//   5.  Notificações      — drawer lateral
+//   6.  Menu de Perfil    — dropdown do header
+//   7.  Tema Toggle       — botão claro/escuro
+//   8.  Feedback Modal    — envio via EmailJS
+//   9.  Modal de Perfil   — preenchimento e persistência
+//  10.  Funções do Modal  — toggleMenu, abrirModalPerfil, fecharModal
+//  11.  Foto de Perfil    — upload e exibição imediata
+//  12.  Sessão            — estado de login na interface
+//  13.  API do Clima      — chave, busca, atualização de métricas
+//  14.  Gráfico Horário   — renderização e troca de tipo
+//  15.  Resumo Diário     — painel home com status por esporte
+//  16.  Análise Esporte   — score, melhor/pior horário, próximos dias
+//  17.  Geolocalização    — permissão e fallback
+// =============================================================================
 
 
 // ─── 1. TEMA — Aplicação imediata antes do render ────────────────────────────
@@ -26,12 +33,16 @@
 
 
 // ─── 2. SPA — Referências e dados das páginas ────────────────────────────────
+// Referências persistentes ao container principal e à sidebar direita
 const spaContent = document.getElementById("spaContent");
 const spaSidebarRight = document.getElementById("spaSidebarRight");
 const sportButtons = document.querySelectorAll(".sport-btn");
 const sportSidebarButtons = document.querySelectorAll(".sport-btn-sidebar");
 
-
+// ---------------------------------------------------------------------------
+// Dados estáticos de cada página (hero, descrição, placeholders de métricas).
+// As métricas reais são preenchidas pela API após o render.
+// ---------------------------------------------------------------------------
 const pages = {
     home: {
         heroImg: "https://images.unsplash.com/photo-1607962837359-5e7e89f86776?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
@@ -249,7 +260,10 @@ function loadPage(sport) {
             </div>
         `;
     } else {
-        // Sidebar com ícone e dica específica do esporte
+        
+// ---------------------------------------------------------------------------
+// Dicas e alertas fixos exibidos na sidebar de cada esporte
+// ---------------------------------------------------------------------------
         const dicasEsporte = {
             corrida: {
                 icone: "directions_run",
@@ -1313,7 +1327,7 @@ function analisarEsporte(sport) {
                         porDia[dia].push(item);
                     });
 
-                    return Object.entries(porDia).slice(1, 4).map(([dia, items]) => {
+                    return Object.entries(porDia).slice(0, 3).map(([dia, items]) => {
                         const maxTemp = Math.max(...items.map(i => i.main.temp_max));
                         const minTemp = Math.min(...items.map(i => i.main.temp_min));
                         const temChuva = items.some(i => (i.rain?.["3h"] || 0) > 0);
