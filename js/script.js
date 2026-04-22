@@ -929,13 +929,6 @@ function processarNovaFoto(input) {
 // ─── 12. FUNÇÃO PARA API ───────────────────────────────────────────────────────────────────────────
 
 const API_KEY = "acf0f9a2de62c1192e03cccf429be48d";
-
-document.getElementById("btnBuscarCidade")
-  .addEventListener("click", () => {
-    const cidade = document.getElementById("inputCidade").value;
-    console.log(cidade);
-});
-
 const inputCidade = document.getElementById("inputCidade");
 const btnBuscar = document.getElementById("btnBuscarCidade");
 
