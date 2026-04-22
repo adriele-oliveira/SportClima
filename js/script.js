@@ -986,6 +986,12 @@ inputCidade.addEventListener("keypress", (e) => {
 //──────────────────── FUNÇÃO PARA ATUALIZAR O CLIMA NA TELA ────────────────────────────────────────────────
 
 async function atualizarClimaNaTela(cidade = "Sorocaba") {
+    // Mostra estado de carregamento nas métricas enquanto aguarda a API
+    ["temp", "vento", "umidade", "uv"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = `<span class="animate-pulse text-slate-300 dark:text-slate-600">···</span>`;
+    });
+
     const url = `https://api.openweathermap.org/data/2.5/forecast?q=${cidade}&appid=${API_KEY}&units=metric&lang=pt_br`;
 
     try {
