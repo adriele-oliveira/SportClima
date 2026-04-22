@@ -296,9 +296,10 @@ function loadPage(sport) {
         `;
     }
 
-    // Dispara análise após dados da API chegarem
+    // Usa a cidade atual (buscada ou detectada), com fallback para Sorocaba
+    const cidadeParaCarregar = window._cidadeAtual || "Sorocaba";
+    atualizarClimaNaTela(cidadeParaCarregar);
     setTimeout(() => analisarEsporte(sport), 1800);
-    atualizarClimaNaTela();
 
     sportButtons.forEach(btn => btn.classList.remove("active"));
     sportSidebarButtons.forEach(btn => btn.classList.remove("sidebar-active"));
