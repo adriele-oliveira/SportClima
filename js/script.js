@@ -1104,25 +1104,8 @@ function renderizarGrafico(tipo) {
             </div>`).join("");
     }
 }
-    // ─── 13. ANÁLISE DE ESPORTE COM BASE NA API ──────────────────────────────────
-function analisarEsporte(sport) {
-    const dados = window._dadosClimaAPI;
-    const el = document.getElementById("analiseEsporte");
 
-    // Se os dados ainda não chegaram, tenta novamente em 1s (até 5 tentativas)
-    if (!dados || !el) {
-        analisarEsporte._tentativas = (analisarEsporte._tentativas || 0) + 1;
-        if (analisarEsporte._tentativas < 5) {
-            setTimeout(() => analisarEsporte(sport), 1000);
-        } else {
-            analisarEsporte._tentativas = 0;
-            if (el) el.innerHTML = `<p class="text-red-400 italic">Não foi possível carregar os dados climáticos.</p>`;
-        }
-        return;
-    }
-    analisarEsporte._tentativas = 0;
-
-    // ─── Resumo diário da home — condições para cada esporte hoje ────────────────
+   // ─── Resumo diário da home — condições para cada esporte hoje ────────────────
 function atualizarResumoDiario() {
     const dados = window._dadosClimaAPI;
     const el = document.getElementById("resumoDiario");
@@ -1179,6 +1162,24 @@ function atualizarResumoDiario() {
             </div>`;
     }).join('');
 }
+
+    // ─── 13. ANÁLISE DE ESPORTE COM BASE NA API ──────────────────────────────────
+function analisarEsporte(sport) {
+    const dados = window._dadosClimaAPI;
+    const el = document.getElementById("analiseEsporte");
+
+    // Se os dados ainda não chegaram, tenta novamente em 1s (até 5 tentativas)
+    if (!dados || !el) {
+        analisarEsporte._tentativas = (analisarEsporte._tentativas || 0) + 1;
+        if (analisarEsporte._tentativas < 5) {
+            setTimeout(() => analisarEsporte(sport), 1000);
+        } else {
+            analisarEsporte._tentativas = 0;
+            if (el) el.innerHTML = `<p class="text-red-400 italic">Não foi possível carregar os dados climáticos.</p>`;
+        }
+        return;
+    }
+    analisarEsporte._tentativas = 0;
 
     const fatias = dados.list.slice(0, 16); // próximas 48h em blocos de 3h
 // ── Score de condições atual (0–100) ──────────────────────────────────
