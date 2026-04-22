@@ -963,33 +963,23 @@ const API_KEY = "acf0f9a2de62c1192e03cccf429be48d";
 const inputCidade = document.getElementById("inputCidade");
 const btnBuscar = document.getElementById("btnBuscarCidade");
 
-//──────────────────── FUNÇÃO BUSCA POR CIDADE E CHAMADA DA API ────────────────────────────────────────────────
-async function buscarEMostrarClima(cidade) {
 
-    const url = `https://api.openweathermap.org/data/2.5/forecast?q=${cidade}&appid=${API_KEY}&units=metric&lang=pt_br`;
-
-    try {
-        const resposta = await fetch(url);
-        const dados = await resposta.json();
-
-        console.log(dados); // só pra ver no console
-
-    } catch (erro) {
-        console.error("Erro:", erro);
-    }
-}
-
-btnBuscar.addEventListener("click", () => {
+// Listener único de busca — atualiza clima E análise de esporte
+btnBuscar.addEventListener("click", async () => {
     const cidade = inputCidade.value.trim();
+    if (!cidade) return;
 
-    if (cidade !== "") {
-        buscarEMostrarClima(cidade);
-    }
+    window._cidadeAtual = cidade;
+    await atualizarClimaNaTela(cidade);
+
+    // Reatualiza a análise para o esporte atualmente ativo
+    const sportAtivo = document.querySelector('.sport-btn-sidebar.sidebar-active');
+    const sport = sportAtivo?.getAttribute('data-sport') || 'home';
+    setTimeout(() => analisarEsporte(sport), 300);
 });
+
 inputCidade.addEventListener("keypress", (e) => {
-    if (e.key === "Enter") {
-        btnBuscar.click();
-    }
+    if (e.key === "Enter") btnBuscar.click();
 });
 
 //──────────────────── FUNÇÃO PARA ATUALIZAR O CLIMA NA TELA ────────────────────────────────────────────────
