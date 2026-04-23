@@ -133,6 +133,20 @@ const criadoras = [
     }
 ];
 
+// Mapeamento de cidades próximas para sugestões
+const cidadesProximas = {
+    "Sorocaba": ["São Paulo", "Campinas", "Jundiaí", "Piracicaba", "Itu"],
+    "São Paulo": ["Sorocaba", "Campinas", "Santo André", "Osasco", "Guarulhos"],
+    "Campinas": ["São Paulo", "Sorocaba", "Jundiaí", "Piracicaba", "Limeira"],
+    "Rio de Janeiro": ["Niterói", "São Gonçalo", "Duque de Caxias", "Nova Iguaçu", "Belford Roxo"],
+    "Belo Horizonte": ["Contagem", "Betim", "Nova Lima", "Ribeirão das Neves", "Sabará"],
+    "Salvador": ["Lauro de Freitas", "Camaçari", "Simões Filho", "Vera Cruz", "Dias d'Ávila"],
+    "Brasília": ["Taguatinga", "Ceilândia", "Samambaia", "Planaltina", "Águas Claras"],
+    "Curitiba": ["São José dos Pinhais", "Pinhais", "Colombo", "Araucária", "Almirante Tamandaré"],
+    "Porto Alegre": ["Canoas", "Viamão", "São Leopoldo", "Novo Hamburgo", "Gravataí"],
+    "Recife": ["Jaboatão dos Guararapes", "Olinda", "Paulista", "Camaragibe", "São Lourenço da Mata"]
+};
+
 // ---------------------------------------------------------------------------
 // Dicas e alertas fixos exibidos na sidebar de cada esporte
 // ---------------------------------------------------------------------------
@@ -806,7 +820,13 @@ function preencherModalPerfil() {
     // Exibe o apelido salvo ou gera um baseado no primeiro nome
     if (inputApelido) inputApelido.value = user.apelido || primeiroNome;
     if (inputEmail) inputEmail.value = session.email || '';
-    if (inputData) inputData.value = user.dataNascimento || '';
+    if (inputData) {
+        inputData.value = user.dataNascimento || '';
+        // Define a data máxima para impedir datas de pessoas com menos de 12 anos
+        const today = new Date();
+        const maxDate = new Date(today.getFullYear() - 12, today.getMonth(), today.getDate());
+        inputData.max = maxDate.toISOString().split('T')[0];
+    }
 }
 
 /**
@@ -821,6 +841,21 @@ function salvarAlteracoesPerfil() {
     const sobrenome = document.getElementById('modalSobrenome')?.value.trim() || '';
     const apelido = document.getElementById('modalApelido')?.value.trim() || '';
     const dataNascimento = document.getElementById('modalDataNascimento')?.value || '';
+
+    // Validação da data de nascimento: deve ter pelo menos 12 anos
+    if (dataNascimento) {
+        const birthDate = new Date(dataNascimento);
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        if (age < 12) {
+            alert('A data de nascimento deve corresponder a uma pessoa com pelo menos 12 anos.');
+            return;
+        }
+    }
 
     // Reconstrói o nome completo a partir dos campos separados
     const nomeCompleto = [primeiroNome, sobrenome].filter(Boolean).join(' ');
@@ -1378,13 +1413,42 @@ function analisarEsporte(sport) {
 // Registrados aqui no final, APÓS todas as funções serem declaradas,
 // para garantir que atualizarClimaNaTela e analisarEsporte já existam.
 
-// Clique no botão: salva cidade como atual, busca o clima e reatualiza a análise
-btnBuscar.addEventListener("click", async () => {
-    const cidade = inputCidade.value.trim();
-    if (!cidade) return;
+// Função para detectar se o termo de busca é um esporte e retornar o esporte correspondente
+function detectarEsporte(termo) {
+    const termoLower = termo.toLowerCase().trim();
+    const mapeamentoEsportes = {
+        corrida: ['corrida', 'running', 'correr', 'trail', 'maratona', 'jogging'],
+        ciclismo: ['ciclismo', 'cycling', 'bike', 'bicicleta', 'pedalar', 'mountain bike'],
+        surf: ['surf', 'surfing', 'onda', 'praia', 'surfar', 'prancha'],
+        home: ['home', 'geral', 'visão geral', 'overview']
+    };
 
-    window._cidadeAtual = cidade;
-    await atualizarClimaNaTela(cidade);
+    for (const [esporte, keywords] of Object.entries(mapeamentoEsportes)) {
+        if (keywords.some(keyword => termoLower.includes(keyword))) {
+            return esporte;
+        }
+    }
+    return null;
+}
+
+// Clique no botão: verifica se é esporte ou cidade, e age accordingly
+btnBuscar.addEventListener("click", async () => {
+    const termo = inputCidade.value.trim();
+    if (!termo) return;
+
+    const esporteDetectado = detectarEsporte(termo);
+    if (esporteDetectado) {
+        // Se for esporte, muda para a aba correspondente
+        const sportBtn = document.querySelector(`[data-sport="${esporteDetectado}"]`);
+        if (sportBtn) {
+            sportBtn.click(); // Simula clique no botão do esporte
+        }
+        return;
+    }
+
+    // Se não for esporte, trata como cidade
+    window._cidadeAtual = termo;
+    await atualizarClimaNaTela(termo);
 
     // Dispara análise para o esporte que está ativo no momento da busca
     const sportAtivo = document.querySelector('.sport-btn-sidebar.sidebar-active');
@@ -1400,6 +1464,47 @@ inputCidade.addEventListener("keydown", (e) => {
     }
 });
 
+// Foco no input mostra sugestões de cidades próximas
+inputCidade.addEventListener("focus", () => {
+    mostrarSugestoes();
+});
+
+// Clique fora do input e sugestões oculta as sugestões
+document.addEventListener("click", (e) => {
+    const suggestions = document.getElementById("suggestions");
+    const input = document.getElementById("inputCidade");
+    if (!input.contains(e.target) && !suggestions.contains(e.target)) {
+        suggestions.classList.add("hidden");
+    }
+});
+
+// Função para mostrar sugestões de cidades próximas
+function mostrarSugestoes() {
+    const suggestions = document.getElementById("suggestions");
+    const cidadeAtual = window._cidadeAtual || "Sorocaba";
+    const proximas = cidadesProximas[cidadeAtual] || [];
+
+    if (proximas.length === 0) {
+        suggestions.classList.add("hidden");
+        return;
+    }
+
+    suggestions.innerHTML = proximas.map(cidade => `
+        <div class="px-4 py-2 hover:bg-slate-100 dark:hover:bg-surface-3 cursor-pointer text-sm" onclick="selecionarSugestao('${cidade}')">
+            ${cidade}
+        </div>
+    `).join("");
+
+    suggestions.classList.remove("hidden");
+}
+
+// Função para selecionar uma sugestão
+function selecionarSugestao(cidade) {
+    inputCidade.value = cidade;
+    document.getElementById("suggestions").classList.add("hidden");
+    btnBuscar.click();
+}
+
 
 // ─── 18. GEOLOCALIZAÇÃO — Solicita permissão e carrega clima local ────────────
 // Registrado por último pois chama atualizarClimaNaTela e analisarEsporte.
@@ -1409,6 +1514,7 @@ inputCidade.addEventListener("keydown", (e) => {
     //Aguarda o DOM estar pronto antes de tentar geolocalização
     if (!navigator.geolocation) {
         // Navegador não suporta geolocalização — vai direto para o fallback
+        window._cidadeAtual = "Sorocaba";
         setTimeout(() => atualizarClimaNaTela("Sorocaba"), 100);
         return;
     }
@@ -1435,6 +1541,7 @@ inputCidade.addEventListener("keydown", (e) => {
                 }
             } catch (e) {
                 // Erro na requisição (sem internet, API fora, etc.) — usa fallback
+                window._cidadeAtual = "Sorocaba";
                 atualizarClimaNaTela("Sorocaba");
             }
         },

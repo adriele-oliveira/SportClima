@@ -71,7 +71,7 @@
 
             <div class="flex flex-1 justify-end gap-4 md:gap-6 items-center">
 
-                <label class="hidden sm:flex flex-col min-w-40 !h-10 max-w-64">
+                <label class="hidden sm:flex flex-col min-w-40 !h-10 max-w-64 relative">
                     <div class="flex w-full flex-1 items-stretch rounded-xl h-full">
                         <div
                             class="text-primary flex bg-primary/5 dark:bg-primary/10 items-center justify-center pl-4 rounded-l-xl">
@@ -79,10 +79,13 @@
                         </div>
                         <input
                             class="form-input flex w-full min-w-0 flex-1 rounded-r-xl bg-primary/5 dark:bg-primary/10 dark:text-slate-100 dark:placeholder:text-slate-500 h-full px-4 pl-2 text-sm placeholder:text-slate-400"
-                           id="inputCidade" placeholder="Buscar localização..." />
+                           id="inputCidade" placeholder="Buscar esporte ou localização..." />
                         <button id="btnBuscarCidade" class="px-4 bg-primary text-white text-sm font-bold rounded-r-xl hover:bg-orange-600 transition-colors">
                             Buscar
                          </button>
+                    </div>
+                    <div id="suggestions" class="absolute top-full left-0 right-0 bg-white dark:bg-surface-1 border border-slate-200 dark:border-surface-3 rounded-xl shadow-lg mt-1 hidden z-50 max-h-60 overflow-y-auto">
+                        <!-- Sugestões de cidades próximas aparecerão aqui -->
                     </div>
                 </label>
 
