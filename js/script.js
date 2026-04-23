@@ -1,28 +1,20 @@
 // =============================================================================
 // script.js — SportClima Dashboard
 // =============================================================================
-// Módulos:
-//   1.  Tema              — aplica dark/light antes do render
-//   2.  SPA Core          — referências DOM, dados das páginas, loadPage
-//   3.  Sobre o Projeto   — renderiza página de criadoras
-//   4.  Navegação         — sidebar, busca por esporte no header
-//   5.  Notificações      — drawer lateral
-//   6.  Menu de Perfil    — dropdown do header
-//   7.  Tema Toggle       — botão claro/escuro
-//   8.  Feedback Modal    — envio via EmailJS
-//   9.  Modal de Perfil   — preenchimento e persistência
-//  10.  Funções do Modal  — toggleMenu, abrirModalPerfil, fecharModal
-//  11.  Foto de Perfil    — upload e exibição imediata
-//  12.  Sessão            — estado de login na interface
-//  13.  API do Clima      — chave, busca, atualização de métricas
-//  14.  Gráfico Horário   — renderização e troca de tipo
-//  15.  Resumo Diário     — painel home com status por esporte
-//  16.  Análise Esporte   — score, melhor/pior horário, próximos dias
-//  17.  Geolocalização    — permissão e fallback
+// Fluxo geral de execução:
+//   1. Tema é aplicado imediatamente para evitar flash de tela branca
+//   2. DOM é referenciado e dados das páginas são declarados
+//   3. loadPage("home") renderiza a tela inicial
+//   4. Módulos de UI (notificações, perfil, tema, feedback) são inicializados
+//   5. API_KEY e inputs de busca são declarados
+//   6. Funções de clima, gráfico, resumo e análise são declaradas
+//   7. Listeners de busca são registrados POR ÚLTIMO (dependem das funções acima)
+//   8. Geolocalização é solicitada ao usuário e carrega o clima real
 // =============================================================================
 
-
 // ─── 1. TEMA — Aplicação imediata antes do render ────────────────────────────
+// Roda antes de qualquer render para evitar o "flash" de tema errado.
+// Lê o localStorage e adiciona ou remove a classe "dark" no <html>.
 (function applyThemeOnLoad() {
     if (localStorage.getItem('theme') === 'dark') {
         document.documentElement.classList.add('dark');
@@ -32,17 +24,17 @@
 })();
 
 
-// ─── 2. SPA — Referências e dados das páginas ────────────────────────────────
+// ─── 2. SPA — Referências DOM e dados das páginas ────────────────────────────────
+
 // Referências persistentes ao container principal e à sidebar direita
 const spaContent = document.getElementById("spaContent");
 const spaSidebarRight = document.getElementById("spaSidebarRight");
 const sportButtons = document.querySelectorAll(".sport-btn");
 const sportSidebarButtons = document.querySelectorAll(".sport-btn-sidebar");
 
-// ---------------------------------------------------------------------------
-// Dados estáticos de cada página (hero, descrição, placeholders de métricas).
-// As métricas reais são preenchidas pela API após o render.
-// ---------------------------------------------------------------------------
+// Dados estáticos de cada esporte: imagem hero, título, descrição e
+// placeholders de métricas. Os valores reais são preenchidos pela API
+// assim que atualizarClimaNaTela() termina de rodar.
 const pages = {
     home: {
         heroImg: "https://images.unsplash.com/photo-1607962837359-5e7e89f86776?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
@@ -113,7 +105,7 @@ const pages = {
     }
 };
 
-
+// Dados das criadoras do projeto — usados na página "Sobre o Projeto"
 const criadoras = [
     {
         nome: "Adriele Mesquita de Oliveira",
@@ -141,14 +133,41 @@ const criadoras = [
     }
 ];
 
+// ---------------------------------------------------------------------------
+// Dicas e alertas fixos exibidos na sidebar de cada esporte
+// ---------------------------------------------------------------------------
+        const dicasEsporte = {
+            corrida: {
+                icone: "directions_run",
+                dica: "Hidrate-se bem antes de sair. Em dias quentes, prefira horários mais frescos e use roupas leves.",
+                alerta: "Evite correr com índice UV acima de 8 ou temperaturas acima de 32°C."
+            },
+            ciclismo: {
+                icone: "directions_bike",
+                dica: "Verifique a previsão de vento. Vento lateral acima de 40 km/h pode ser perigoso em descidas.",
+                alerta: "Chuva deixa a pista escorregadia — evite pedalar durante ou logo após precipitações."
+            },
+            surf: {
+                icone: "surfing",
+                dica: "Acompanhe a direção do vento: offshore (terra→mar) melhora a formação das ondas.",
+                alerta: "Trovoadas e raios são emergências — saia da água imediatamente."
+            }
+        };
 
+
+// ─── 3. SPA — Renderização das páginas ───────────────────────────────────────
+
+// Renderiza o conteúdo principal e a sidebar para o esporte recebido.
+// Chamada sempre que o usuário clica em um esporte na sidebar ou nos cards da home.
 // Renderiza a página SPA de acordo com o esporte selecionado
 function loadPage(sport) {
     const data = pages[sport];
 
+    // Garante que a sidebar direita fique visível ao navegar
     spaSidebarRight.classList.remove('hidden');
     spaContent.classList.remove('lg:col-span-full');
 
+    // Injeta o HTML completo da página no container principal
     spaContent.innerHTML = `
         <div class="spa-hero group">
             <div class="spa-hero-bg" style="background-image: linear-gradient(to top,rgba(0,0,0,.8),rgba(0,0,0,.2)), url('${data.heroImg}')"></div>
@@ -159,6 +178,7 @@ function loadPage(sport) {
             </div>
         </div>
 
+        <!-- Métricas climáticas — preenchidas pela API após o render -->
         <div id="weatherMetrics" class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
             <div class="metric-card">
                 <p class="text-sm text-slate-500 dark:text-slate-400">Temperatura</p>
@@ -178,6 +198,7 @@ function loadPage(sport) {
             </div>
         </div>
 
+         <!-- Cards de esportes clicáveis — visíveis apenas na home -->
         ${sport === "home" ? `
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
             <div class="rounded-2xl overflow-hidden relative group cursor-pointer shadow-md"
@@ -211,6 +232,8 @@ function loadPage(sport) {
             </div>
         </div>
         ` : ""}
+
+        <!-- Gráfico de variação horária com botões de alternância de tipo -->
         <div class="chart-container mt-6">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="text-lg font-bold dark:text-slate-100">Variação Horária</h3>
@@ -237,8 +260,10 @@ function loadPage(sport) {
 
     `;
 
-    // Sidebar diferente para home e para esportes
+    // Sidebar direita — conteúdo diferente para home e para cada esporte
     if (sport === "home") {
+
+        // Na home: mostra clima atual e resumo do dia por esporte
         spaSidebarRight.innerHTML = `
             <div class="spa-sidebar-card">
                 <h3 class="text-primary flex items-center gap-2">
@@ -260,28 +285,7 @@ function loadPage(sport) {
             </div>
         `;
     } else {
-        
-// ---------------------------------------------------------------------------
-// Dicas e alertas fixos exibidos na sidebar de cada esporte
-// ---------------------------------------------------------------------------
-        const dicasEsporte = {
-            corrida: {
-                icone: "directions_run",
-                dica: "Hidrate-se bem antes de sair. Em dias quentes, prefira horários mais frescos e use roupas leves.",
-                alerta: "Evite correr com índice UV acima de 8 ou temperaturas acima de 32°C."
-            },
-            ciclismo: {
-                icone: "directions_bike",
-                dica: "Verifique a previsão de vento. Vento lateral acima de 40 km/h pode ser perigoso em descidas.",
-                alerta: "Chuva deixa a pista escorregadia — evite pedalar durante ou logo após precipitações."
-            },
-            surf: {
-                icone: "surfing",
-                dica: "Acompanhe a direção do vento: offshore (terra→mar) melhora a formação das ondas.",
-                alerta: "Trovoadas e raios são emergências — saia da água imediatamente."
-            }
-        };
-
+        // Em cada esporte: mostra análise dinâmica + dica fixa do esporte
         const info = dicasEsporte[sport] || { icone: "sports", dica: "", alerta: "" };
 
         spaSidebarRight.innerHTML = `
@@ -310,19 +314,24 @@ function loadPage(sport) {
         `;
     }
 
-    // Usa a cidade atual (buscada ou detectada), com fallback para Sorocaba
-    const cidadeParaCarregar = window._cidadeAtual || "Sorocaba";
-    atualizarClimaNaTela(cidadeParaCarregar);
-    setTimeout(() => analisarEsporte(sport), 1800);
+    // Remove destaque do botão "Sobre o Projeto" ao navegar para qualquer esporte
     const sobreBtn = document.getElementById('sobreProjetoBtn');
     if (sobreBtn) sobreBtn.classList.remove('sobre-btn-active');
+
+    // Busca dados climáticos reais — usa a cidade salva ou Sorocaba como fallback
+    const cidadeParaCarregar = window._cidadeAtual || "Sorocaba";
+    atualizarClimaNaTela(cidadeParaCarregar);
+
+    // Análise do esporte é disparada com delay para garantir que a API já respondeu
+    setTimeout(() => analisarEsporte(sport), 1800);
 }
 
+// Renderiza a home ao iniciar o app
 loadPage("home");
 
-// ─── 3. NAVEGAÇÃO — Sobre o Projeto e busca por localização ──────────────────
-
-// Renderiza a seção "Sobre o Projeto" com os cards das criadoras
+// ─── 4. SOBRE O PROJETO ──────────────────────────────────────────────────────
+// Renderiza a página de criadoras, ocultando a sidebar direita e
+// expandindo o conteúdo principal para ocupar toda a largura.
 function loadSobreProjeto() {
     spaSidebarRight.innerHTML = "";
     spaSidebarRight.classList.add('hidden');
@@ -400,7 +409,7 @@ function loadSobreProjeto() {
     `;
 }
 
-
+// Inicializa o botão "Sobre o Projeto" — remove destaque dos esportes ao clicar
 (function initSobreProjeto() {
     const sobreBtn = document.getElementById('sobreProjetoBtn');
     if (!sobreBtn) return;
@@ -423,8 +432,10 @@ function loadSobreProjeto() {
     });
 })();
 
+// ─── 5. NAVEGAÇÃO — Busca por esporte no header ───────────────────────────────
 
-// Busca por localização na barra de pesquisa do header
+// Permite navegar por esporte digitando no input do header.
+// Suporta sinônimos como "bike" → ciclismo, "surfe" → surf, etc.
 const searchInput = document.querySelector('input[placeholder="Buscar localização..."]');
 
 if (searchInput) {
@@ -454,7 +465,7 @@ if (searchInput) {
 }
 
 
-// ─── 4. NOTIFICAÇÕES — Drawer lateral ────────────────────────────────────────
+// ─── 6. NOTIFICAÇÕES — Drawer lateral ────────────────────────────────────────
 (function initNotifications() {
     const bellBtn = document.getElementById('notificationBtn');
     const drawer = document.getElementById('notificationDrawer');
@@ -468,6 +479,7 @@ if (searchInput) {
 
     if (!bellBtn || !drawer || !overlay) return;
 
+    // Abre o drawer com animação de slide + fade no overlay
     function openDrawer() {
         overlay.classList.remove('hidden');
         requestAnimationFrame(() => {
@@ -478,6 +490,7 @@ if (searchInput) {
         });
     }
 
+    // Fecha o drawer e aguarda a animação terminar antes de ocultar o overlay
     function closeDrawer() {
         drawer.classList.add('translate-x-[120%]');
         overlay.classList.remove('opacity-100');
@@ -488,6 +501,7 @@ if (searchInput) {
         if (badge) badge.classList.add('hidden');
     }
 
+    // Marca todas as notificações como lidas removendo o destaque laranja
     function applyReadStyle() {
         if (!listArea) return;
         const highlighted = listArea.querySelectorAll('[class*="bg-orange"]');
@@ -501,6 +515,7 @@ if (searchInput) {
         localStorage.setItem('sportclima_notifs_status', 'read');
     }
 
+    // Remove todas as notificações e exibe o estado vazio
     function applyClearState() {
         if (!listArea || !emptyState) return;
         const groups = listArea.querySelectorAll('div:not(#emptyState)');
@@ -511,6 +526,7 @@ if (searchInput) {
         localStorage.setItem('sportclima_notifs_status', 'cleared');
     }
 
+    // Restaura o estado salvo ao recarregar a página
     const savedStatus = localStorage.getItem('sportclima_notifs_status');
     if (savedStatus === 'cleared') setTimeout(applyClearState, 50);
     else if (savedStatus === 'read') setTimeout(applyReadStyle, 50);
@@ -527,13 +543,14 @@ if (searchInput) {
 })();
 
 
-// ─── 5. MENU DE PERFIL — Dropdown do header ───────────────────────────────────
+// ─── 7. MENU DE PERFIL — Dropdown do header ──────────────────────────────────
 (function initProfileMenu() {
     const trigger = document.getElementById('profileTrigger');
     const menu = document.getElementById('profileMenu');
 
     if (!trigger || !menu) return;
 
+    // Abre/fecha o dropdown ao clicar no avatar
     trigger.addEventListener('click', (e) => {
         e.stopPropagation();
         menu.classList.toggle('hidden');
@@ -542,6 +559,7 @@ if (searchInput) {
         }
     });
 
+    // Fecha o menu ao clicar em qualquer lugar fora dele
     document.addEventListener('click', (e) => {
         if (!menu.contains(e.target) && e.target !== trigger) {
             menu.classList.add('hidden');
@@ -550,7 +568,7 @@ if (searchInput) {
 })();
 
 
-// ─── 6. TEMA TOGGLE — Botão claro/escuro do header ───────────────────────────
+// ─── 8. TEMA TOGGLE — Botão claro/escuro do header ───────────────────────────
 (function initThemeToggle() {
     const toggleBtn = document.getElementById('dark-mode-toggle');
     const darkIcon = document.getElementById('dark-icon');
@@ -558,6 +576,7 @@ if (searchInput) {
 
     if (!toggleBtn) return;
 
+    // Sincroniza o ícone com o tema que já foi aplicado no módulo 1
     if (localStorage.getItem('theme') === 'dark' && darkIcon) {
         darkIcon.textContent = 'light_mode';
     }
@@ -575,12 +594,13 @@ if (searchInput) {
 })();
 
 
-// ─── 3b. NAVEGAÇÃO LATERAL — Destaque ativo e busca integrada ────────────────
+// ─── 9. NAVEGAÇÃO LATERAL — Destaque ativo nos botões de esporte ─────────────
 (function initSidebarNav() {
     const items = document.querySelectorAll('.sport-btn-sidebar');
     const topSearch = document.querySelector('header input');
     let currentActive = document.querySelector('[data-sport="home"]') || items[0];
 
+    // Remove o destaque de todos os itens e aplica no elemento recebido
     function applyActiveStyle(element) {
         if (!element) return;
 
@@ -595,6 +615,7 @@ if (searchInput) {
             if (text) text.style.removeProperty('color');
         });
 
+        // Remove também o destaque do botão "Sobre o Projeto"
         const sobreBtn = document.getElementById('sobreProjetoBtn');
         if (sobreBtn) sobreBtn.classList.remove('sobre-btn-active');
 
@@ -602,6 +623,7 @@ if (searchInput) {
         currentActive = element;
     }
 
+    // Cada botão da sidebar aplica o estilo ativo e carrega a página do esporte
     items.forEach(item => {
         item.addEventListener('click', () => {
             const sport = item.getAttribute('data-sport');
@@ -611,11 +633,13 @@ if (searchInput) {
             }
         });
     });
+
+    // Aplica o destaque inicial no botão home ao carregar a página
     applyActiveStyle(currentActive);
 })();
 
 
-// ─── 7. FEEDBACK MODAL — Envio via EmailJS ───────────────────────────────────
+// ─── 10. FEEDBACK MODAL — Envio via EmailJS ──────────────────────────────────
 emailjs.init({
     publicKey: "4VsEjc_Hr6MccvJBz",
 });
@@ -644,6 +668,7 @@ emailjs.init({
         document.body.classList.remove('modal-lock');
     }
 
+    // Limpa todos os campos do formulário após envio ou cancelamento
     function clearForm() {
         const nome = document.getElementById('feedbackNome');
         const email = document.getElementById('feedbackEmail');
@@ -669,6 +694,7 @@ emailjs.init({
         const assunto = assuntoInput?.value.trim();
         const mensagem = mensagemInput?.value.trim();
 
+        // Destaca em vermelho os campos obrigatórios que estão vazios
         if (!nome || !email || !mensagem) {
             [nomeInput, emailInput, mensagemInput].forEach(el => {
                 if (el && !el.value.trim()) {
@@ -679,6 +705,7 @@ emailjs.init({
             return;
         }
 
+        // Desabilita o botão e mostra spinner enquanto aguarda o EmailJS
         if (submitBtn) {
             submitBtn.innerHTML = `
                 <span class="material-symbols-outlined animate-spin text-[18px]">progress_activity</span>
@@ -706,6 +733,7 @@ emailjs.init({
                     submitBtn.classList.remove('bg-primary', 'shadow-primary/20');
                 }
 
+                // Fecha o modal e reseta o botão após 1.6s
                 setTimeout(() => {
                     closeModal();
                     clearForm();
@@ -736,23 +764,23 @@ emailjs.init({
     if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
     if (submitBtn) submitBtn.addEventListener('click', handleSubmit);
 
+    // Fecha ao clicar no backdrop escuro
     modal.addEventListener('click', (e) => {
         if (e.target === modal) closeModal();
     });
-
+    // Fecha com a tecla Escape
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && modal.classList.contains('modal-open')) closeModal();
     });
 })();
 
 
-// ─── 8. MODAL DE PERFIL — Preenchimento dinâmico e persistência ──────────────
+// ─── 11. MODAL DE PERFIL — Preenchimento e persistência ──────────────────────
 
 /**
- * Lê o usuário ativo do localStorage e preenche os campos
- * do modal de perfil com os dados reais. O apelido é gerado
- * automaticamente pelo primeiro nome caso não tenha sido
- * definido pelo usuário anteriormente.
+ * Lê o usuário ativo do localStorage e preenche os campos do modal.
+ * O apelido é gerado automaticamente pelo primeiro nome caso não
+ * tenha sido definido anteriormente.
  */
 function preencherModalPerfil() {
     const session = JSON.parse(localStorage.getItem('sportclima_session') || 'null');
@@ -762,7 +790,7 @@ function preencherModalPerfil() {
     const users = JSON.parse(localStorage.getItem('sportclima_users') || '[]');
     const user = users.find(u => u.email === session.email) || {};
 
-    // Separa o nome completo em primeiro nome e sobrenome
+    // Separa o nome completo em primeiro nome e sobrenome para campos individuais
     const partes = (user.name || session.name || '').trim().split(' ');
     const primeiroNome = partes[0] || '';
     const sobrenome = partes.slice(1).join(' ') || '';
@@ -782,9 +810,8 @@ function preencherModalPerfil() {
 }
 
 /**
- * Lê os valores editados no modal, atualiza o objeto do usuário
- * no array 'sportclima_users' no localStorage e sincroniza
- * a sessão ativa e os elementos visuais do menu de perfil.
+ * Salva as alterações do modal no localStorage e atualiza
+ * o nome exibido no menu de perfil sem recarregar a página.
  */
 function salvarAlteracoesPerfil() {
     const session = JSON.parse(localStorage.getItem('sportclima_session') || 'null');
@@ -821,7 +848,8 @@ function salvarAlteracoesPerfil() {
 }
 
 
-// ─── 9. FUNÇÕES GLOBAIS DO MODAL DE PERFIL ───────────────────────────────────
+// ─── 12. FUNÇÕES GLOBAIS DO MODAL ────────────────────────────────────────────
+// Chamadas diretamente pelo HTML via atributos onclick
 
 // Alterna visibilidade do menu dropdown de perfil
 function toggleMenu() {
@@ -852,12 +880,12 @@ function fecharModal() {
 }
 
 
-// ─── 10. FOTO DE PERFIL — Upload e exibição imediata ─────────────────────────
+// ─── 13. FOTO DE PERFIL — Upload e exibição imediata ─────────────────────────
 
 /**
- * Processa a imagem selecionada pelo usuário, salva em Base64
- * no localStorage vinculado ao e-mail da sessão e atualiza
- * todos os elementos visuais de avatar na interface.
+ * Lê o arquivo selecionado, converte para Base64, salva no localStorage
+ * vinculado ao e-mail da sessão e atualiza todos os avatares na interface
+ * (header, modal grande e modal pequeno) sem precisar recarregar.
  */
 function processarNovaFoto(input) {
     if (input.files && input.files[0]) {
@@ -890,12 +918,12 @@ function processarNovaFoto(input) {
 }
 
 
-// ─── 11. SESSÃO — Inicialização do estado de login na interface ───────────────
+// ─── 14. SESSÃO — Estado de login na interface ───────────────────────────────
 
 /**
- * Verifica se existe uma sessão ativa no localStorage e, caso exista,
- * exibe o nome e e-mail do usuário no menu de perfil, oculta o botão
- * de login, exibe o botão de logout e carrega a foto de perfil salva.
+ * Verifica se existe uma sessão ativa no localStorage.
+ * Se sim: exibe nome/email do usuário, oculta o botão de login,
+ * mostra o botão de logout e restaura a foto de perfil salva.
  */
 (function initSession() {
     const session = JSON.parse(localStorage.getItem('sportclima_session') || 'null');
@@ -921,6 +949,7 @@ function processarNovaFoto(input) {
     if (profileLoginPrompt) profileLoginPrompt.classList.add('hidden');
     if (profileLogoutLink) profileLogoutLink.classList.remove('hidden');
 
+    // Logout: remove a sessão e recarrega para limpar a interface
     if (profileLogoutBtn) {
         profileLogoutBtn.addEventListener('click', () => {
             localStorage.removeItem('sportclima_session');
@@ -947,35 +976,18 @@ function processarNovaFoto(input) {
     }
 })();
 
-// ─── 12. FUNÇÃO PARA API ───────────────────────────────────────────────────────────────────────────
+// ─── 15. API DO CLIMA ─────────────────────────────────────────────────────────
 
 const API_KEY = "acf0f9a2de62c1192e03cccf429be48d";
 const inputCidade = document.getElementById("inputCidade");
 const btnBuscar = document.getElementById("btnBuscarCidade");
 
+// ─── 16. FUNÇÕES DE CLIMA, GRÁFICO, RESUMO E ANÁLISE ─────────────────────────
+// Declaradas ANTES dos listeners de busca para garantir que existam
+// quando o usuário interagir com o input pela primeira vez.
 
-// Listener único de busca — atualiza clima E análise de esporte
-btnBuscar.addEventListener("click", async () => {
-    const cidade = inputCidade.value.trim();
-    if (!cidade) return;
-
-    window._cidadeAtual = cidade;
-    await atualizarClimaNaTela(cidade);
-
-    // Reatualiza a análise para o esporte atualmente ativo
-    const sportAtivo = document.querySelector('.sport-btn-sidebar.sidebar-active');
-    const sport = sportAtivo?.getAttribute('data-sport') || 'home';
-    setTimeout(() => analisarEsporte(sport), 300);
-});
-
-inputCidade.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-        e.preventDefault();
-        btnBuscar.click();
-    }
-});
-
-//──────────────────── FUNÇÃO PARA ATUALIZAR O CLIMA NA TELA ────────────────────────────────────────────────
+// Busca a previsão de 5 dias para a cidade informada via OpenWeatherMap.
+// É a função central de dados — gráfico, resumo e análise dependem dela.
 
 async function atualizarClimaNaTela(cidade = "Sorocaba") {
     // Mostra estado de carregamento nas métricas enquanto aguarda a API
@@ -1007,6 +1019,7 @@ async function atualizarClimaNaTela(cidade = "Sorocaba") {
             return;
         }
 
+        // Salva globalmente — gráfico, resumo e análise leem daqui
         window._dadosClimaAPI = dados;
         const atual = dados.list[0];
 
@@ -1050,8 +1063,7 @@ async function atualizarClimaNaTela(cidade = "Sorocaba") {
     }
 }
 
-
-// Alterna o tipo do gráfico e destaca o botão ativo
+// Troca o tipo de dado exibido no gráfico e marca o botão correspondente como ativo
 function mudarGrafico(tipo) {
     ["temp", "chuva", "vento"].forEach(t => {
         const btn = document.getElementById(`btnGrafico${t.charAt(0).toUpperCase() + t.slice(1)}`);
@@ -1064,7 +1076,8 @@ function mudarGrafico(tipo) {
     renderizarGrafico(tipo);
 }
 
-// Desenha as barras do gráfico com base no tipo selecionado
+// Desenha as barras do gráfico usando os dados salvos em window._dadosClimaAPI.
+// A altura de cada barra é proporcional ao valor máximo do conjunto (escala relativa).
 function renderizarGrafico(tipo) {
     const dados = window._dadosClimaAPI;
     const barsEl = document.getElementById("chartBars");
@@ -1072,7 +1085,7 @@ function renderizarGrafico(tipo) {
 
     if (!dados || !barsEl) return;
 
-    const fatias = dados.list.slice(0, 8);
+    const fatias = dados.list.slice(0, 8); // próximas 8 janelas de 3h = 24h
 
     const valores = fatias.map(item => {
         if (tipo === "temp")  return Math.round(item.main.temp);
@@ -1088,7 +1101,7 @@ function renderizarGrafico(tipo) {
         vento: "bg-teal-400"
     };
 
-    const max = Math.max(...valores, 1);
+    const max = Math.max(...valores, 1); // evita divisão por zero
 
     barsEl.innerHTML = fatias.map((_, i) => {
         const altura = Math.max(8, Math.round((valores[i] / max) * 120));
@@ -1110,18 +1123,22 @@ function renderizarGrafico(tipo) {
     }
 }
 
-   // ─── Resumo diário da home — condições para cada esporte hoje ────────────────
+// Exibe na sidebar da home o status de condições para cada esporte no dia atual.
+// "✅" = 2+ janelas boas | "⚠️" = apenas 1 | "❌" = nenhuma.
+// Chamada automaticamente por atualizarClimaNaTela quando a home está ativa.
 function atualizarResumoDiario() {
     const dados = window._dadosClimaAPI;
     const el = document.getElementById("resumoDiario");
     if (!dados || !el) return;
 
+    // Filtra apenas os blocos de previsão do dia atual
     const hoje = dados.list.filter(item => {
         const diaItem = item.dt_txt.slice(0, 10);
         const diaHoje = dados.list[0].dt_txt.slice(0, 10);
         return diaItem === diaHoje;
     });
 
+    // Critérios de "boa condição" para cada esporte
     const esportes = [
         {
             nome: "Corrida",
@@ -1167,14 +1184,14 @@ function atualizarResumoDiario() {
             </div>`;
     }).join('');
 }
-
-    // ─── 13. ANÁLISE DE ESPORTE COM BASE NA API ──────────────────────────────────
+// Calcula e exibe na sidebar: score 0-100, melhor horário, horário a evitar
+// e previsão dos próximos dias para o esporte selecionado.
 function analisarEsporte(sport) {
     const dados = window._dadosClimaAPI;
     const el = document.getElementById("analiseEsporte");
 
-    // Se os dados ainda não chegaram, tenta novamente em 1s (até 5 tentativas)
-    if (!dados || !el) {
+        // Retry automático: se a API ainda não respondeu, tenta até 5 vezes com 1s de intervalo    if (!dados || !el) {
+        if (!dados || !el) {       
         analisarEsporte._tentativas = (analisarEsporte._tentativas || 0) + 1;
         if (analisarEsporte._tentativas < 5) {
             setTimeout(() => analisarEsporte(sport), 1000);
@@ -1187,12 +1204,15 @@ function analisarEsporte(sport) {
     analisarEsporte._tentativas = 0;
 
     const fatias = dados.list.slice(0, 16); // próximas 48h em blocos de 3h
-// ── Score de condições atual (0–100) ──────────────────────────────────
+    
+    // Lê as condições do momento atual para calcular o score    const agora = dados.list[0];
     const agora = dados.list[0];
     const tempAtual = agora.main.temp;
     const ventoAtual = agora.wind.speed * 3.6;
     const chuvaAtual = agora.rain?.["3h"] || 0;
 
+    // Score de condições (0–100): cada esporte tem pesos diferentes
+    // para temperatura, vento e chuva
     const calcScore = {
         corrida: () => {
             let s = 100;
@@ -1228,7 +1248,7 @@ function analisarEsporte(sport) {
     const scoreLabel = score >= 75 ? "Excelente" : score >= 50 ? "Bom" : score >= 25 ? "Regular" : "Ruim";
     const scoreBg = score >= 75 ? "bg-green-500" : score >= 50 ? "bg-yellow-400" : score >= 25 ? "bg-orange-400" : "bg-red-500";
    
-    // Critérios por esporte
+    // Critérios idênticos ao resumo diário — usados para encontrar melhor e pior janela
     const criterios = {
         corrida: (item) => item.main.temp >= 10 && item.main.temp <= 25
             && item.wind.speed * 3.6 <= 20
@@ -1257,6 +1277,7 @@ function analisarEsporte(sport) {
         return dtTxt ? dtTxt.slice(11, 16) : "—";
     }
 
+    // Gera uma frase explicativa do motivo da escolha de horário
     function gerarMotivo(item, sport, bom) {
         if (!item) return "Dados insuficientes.";
         const temp = Math.round(item.main.temp);
@@ -1278,7 +1299,7 @@ function analisarEsporte(sport) {
     el.innerHTML = `
         <div class="flex flex-col gap-3">
 
-            <!-- Score de condições -->
+            <!-- Score de condições com barra de progresso colorida -->
             <div class="p-3 rounded-xl bg-slate-50 dark:bg-surface-3 border border-slate-100 dark:border-surface-3">
                 <div class="flex items-center justify-between mb-2">
                     <p class="text-xs font-bold text-slate-600 dark:text-slate-300">Condições agora</p>
@@ -1289,6 +1310,8 @@ function analisarEsporte(sport) {
                          style="width: ${score}%"></div>
                 </div>
             </div>
+
+            <!-- Melhor janela de horário para o esporte -->
             <div class="p-3 rounded-xl bg-green-50 dark:bg-green-900/20 border border-green-100 dark:border-green-800">
                 <p class="font-bold text-green-700 dark:text-green-400 flex items-center gap-1">
                     <span class="material-symbols-outlined text-[14px]">check_circle</span>
@@ -1302,6 +1325,7 @@ function analisarEsporte(sport) {
                 </p>
             </div>
 
+            <!-- Janela de horário a evitar -->
             <div class="p-3 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800">
                 <p class="font-bold text-red-600 dark:text-red-400 flex items-center gap-1">
                     <span class="material-symbols-outlined text-[14px]">cancel</span>
@@ -1315,7 +1339,8 @@ function analisarEsporte(sport) {
                 </p>
             </div>
         </div>
-           <!-- Próximos 3 dias -->
+
+           <!-- Previsão resumida dos próximos 3 dias -->
             <div class="mt-1">
                 <p class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Próximos dias</p>
                 ${(() => {
@@ -1349,11 +1374,41 @@ function analisarEsporte(sport) {
         </div>
     `;
 }
+// ─── 17. LISTENERS DE BUSCA POR CIDADE ───────────────────────────────────────
+// Registrados aqui no final, APÓS todas as funções serem declaradas,
+// para garantir que atualizarClimaNaTela e analisarEsporte já existam.
 
-// ─── 14. GEOLOCALIZAÇÃO — Solicita permissão e carrega clima local ────────────
+// Clique no botão: salva cidade como atual, busca o clima e reatualiza a análise
+btnBuscar.addEventListener("click", async () => {
+    const cidade = inputCidade.value.trim();
+    if (!cidade) return;
+
+    window._cidadeAtual = cidade;
+    await atualizarClimaNaTela(cidade);
+
+    // Dispara análise para o esporte que está ativo no momento da busca
+    const sportAtivo = document.querySelector('.sport-btn-sidebar.sidebar-active');
+    const sport = sportAtivo?.getAttribute('data-sport') || 'home';
+    setTimeout(() => analisarEsporte(sport), 300);
+});
+
+// Enter no input aciona o mesmo comportamento do clique no botão
+inputCidade.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+        e.preventDefault();
+        btnBuscar.click();
+    }
+});
+
+
+// ─── 18. GEOLOCALIZAÇÃO — Solicita permissão e carrega clima local ────────────
+// Registrado por último pois chama atualizarClimaNaTela e analisarEsporte.
+// Se o usuário autorizar: detecta a cidade e carrega o clima real.
+// Se negar ou sem suporte: usa "Sorocaba" como fallback silencioso.
 (function initGeolocation() {
-    // Aguarda o DOM estar pronto antes de tentar geolocalização
+    //Aguarda o DOM estar pronto antes de tentar geolocalização
     if (!navigator.geolocation) {
+        // Navegador não suporta geolocalização — vai direto para o fallback
         setTimeout(() => atualizarClimaNaTela("Sorocaba"), 100);
         return;
     }
@@ -1379,11 +1434,12 @@ function analisarEsporte(sport) {
                     setTimeout(() => analisarEsporte('home'), 200);
                 }
             } catch (e) {
+                // Erro na requisição (sem internet, API fora, etc.) — usa fallback
                 atualizarClimaNaTela("Sorocaba");
             }
         },
         (err) => {
-            // Usuário negou ou erro — usa fallback silencioso
+            // Usuário negou ou erro — usa fallback silencioso sem alertas
             console.warn("Geolocalização negada, usando Sorocaba como padrão.");
             atualizarClimaNaTela("Sorocaba");
         },
