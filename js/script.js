@@ -174,7 +174,7 @@ const cidadesProximas = {
 // Renderiza o conteúdo principal e a sidebar para o esporte recebido.
 // Chamada sempre que o usuário clica em um esporte na sidebar ou nos cards da home.
 // Renderiza a página SPA de acordo com o esporte selecionado
-function loadPage(sport) {
+async function loadPage(sport) {
     const data = pages[sport];
 
     // Garante que a sidebar direita fique visível ao navegar
@@ -334,10 +334,8 @@ function loadPage(sport) {
 
     // Busca dados climáticos reais — usa a cidade salva ou Sorocaba como fallback
     const cidadeParaCarregar = window._cidadeAtual || "Sorocaba";
-    atualizarClimaNaTela(cidadeParaCarregar);
-
-    // Análise do esporte é disparada com delay para garantir que a API já respondeu
-    setTimeout(() => analisarEsporte(sport), 1800);
+    await atualizarClimaNaTela(cidadeParaCarregar);
+    analisarEsporte(sport);
 }
 
 // Renderiza a home ao iniciar o app
@@ -515,6 +513,90 @@ if (searchInput) {
         if (badge) badge.classList.add('hidden');
     }
 
+    function getNotificationPreferences() {
+        return JSON.parse(localStorage.getItem('sportclima_notif_prefs') || JSON.stringify({
+            vento: true,
+            corrida: true,
+            surf: true
+        }));
+    }
+
+    function saveNotificationPreferences(prefs) {
+        localStorage.setItem('sportclima_notif_prefs', JSON.stringify(prefs));
+    }
+
+    function updateBadgeCount() {
+        if (!badge || !listArea) return;
+        const visibleNotifications = listArea.querySelectorAll('[data-alert-type]:not(.hidden)');
+        if (visibleNotifications.length === 0) {
+            badge.classList.add('hidden');
+        } else {
+            badge.textContent = visibleNotifications.length;
+            badge.classList.remove('hidden');
+        }
+    }
+
+    function updateEmptyStateVisibility() {
+        if (!listArea || !emptyState) return;
+        const visibleNotifications = listArea.querySelectorAll('[data-alert-type]:not(.hidden)');
+        if (visibleNotifications.length === 0) {
+            emptyState.classList.remove('hidden');
+            emptyState.classList.add('flex');
+        } else {
+            emptyState.classList.add('hidden');
+            emptyState.classList.remove('flex');
+        }
+    }
+
+    function applyNotificationPreferences() {
+        if (!listArea) return;
+        const prefs = getNotificationPreferences();
+        listArea.querySelectorAll('[data-alert-type]').forEach(card => {
+            const alertType = card.getAttribute('data-alert-type');
+            if (alertType && prefs[alertType] === false) {
+                card.classList.add('hidden');
+            } else {
+                card.classList.remove('hidden');
+            }
+        });
+        updateEmptyStateVisibility();
+        updateBadgeCount();
+    }
+
+    function renderNotificationPreferences() {
+        const windCheckbox = document.getElementById('notifPrefWind');
+        const runningCheckbox = document.getElementById('notifPrefRunning');
+        const surfCheckbox = document.getElementById('notifPrefSurf');
+        const prefs = getNotificationPreferences();
+
+        if (windCheckbox) {
+            windCheckbox.checked = prefs.vento;
+            windCheckbox.addEventListener('change', () => {
+                prefs.vento = windCheckbox.checked;
+                saveNotificationPreferences(prefs);
+                applyNotificationPreferences();
+            });
+        }
+
+        if (runningCheckbox) {
+            runningCheckbox.checked = prefs.corrida;
+            runningCheckbox.addEventListener('change', () => {
+                prefs.corrida = runningCheckbox.checked;
+                saveNotificationPreferences(prefs);
+                applyNotificationPreferences();
+            });
+        }
+
+        if (surfCheckbox) {
+            surfCheckbox.checked = prefs.surf;
+            surfCheckbox.addEventListener('change', () => {
+                prefs.surf = surfCheckbox.checked;
+                saveNotificationPreferences(prefs);
+                applyNotificationPreferences();
+            });
+        }
+    }
+
     // Marca todas as notificações como lidas removendo o destaque laranja
     function applyReadStyle() {
         if (!listArea) return;
@@ -537,6 +619,7 @@ if (searchInput) {
         emptyState.classList.remove('hidden');
         emptyState.classList.add('flex');
         hideBadge();
+        updateBadgeCount();
         localStorage.setItem('sportclima_notifs_status', 'cleared');
     }
 
@@ -554,6 +637,10 @@ if (searchInput) {
     overlay.addEventListener('click', (e) => {
         if (e.target === overlay) closeDrawer();
     });
+
+    renderNotificationPreferences();
+    applyNotificationPreferences();
+
 })();
 
 
@@ -1024,39 +1111,49 @@ const btnBuscar = document.getElementById("btnBuscarCidade");
 // Busca a previsão de 5 dias para a cidade informada via OpenWeatherMap.
 // É a função central de dados — gráfico, resumo e análise dependem dela.
 
-async function atualizarClimaNaTela(cidade = "Sorocaba") {
+async function atualizarClimaNaTela(cidade = "Sorocaba", forceReload = false) {
     // Mostra estado de carregamento nas métricas enquanto aguarda a API
     ["temp", "vento", "umidade", "sensacao"].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.innerHTML = `<span class="animate-pulse text-slate-300 dark:text-slate-600">···</span>`;
     });
 
-    const url = `https://api.openweathermap.org/data/2.5/forecast?q=${cidade}&appid=${API_KEY}&units=metric&lang=pt_br`;
+    const cidadeNormalizada = cidade.trim().toLowerCase();
+    const cached = window._dadosClimaAPI?.city?.name?.toLowerCase();
+    let dados;
 
-    try {
-        const res = await fetch(url);
-        const dados = await res.json();
+    if (!forceReload && cached === cidadeNormalizada && window._dadosClimaAPI) {
+        dados = window._dadosClimaAPI;
+    } else {
+        const url = `https://api.openweathermap.org/data/2.5/forecast?q=${cidade}&appid=${API_KEY}&units=metric&lang=pt_br`;
 
-        // Cidade não encontrada pela API
-        if (dados.cod === "404" || !dados.list) {
-            const elTemp = document.getElementById("temp");
-            if (elTemp) {
-                elTemp.closest('#weatherMetrics')
-                    ?.querySelectorAll('h4')
-                    .forEach(el => el.textContent = "—");
-            }
-            // Mostra aviso no gráfico
-            const barsEl = document.getElementById("chartBars");
-            if (barsEl) barsEl.innerHTML = `
-                <p class="text-xs text-red-400 italic w-full text-center py-4">
-                    Cidade não encontrada. Verifique o nome e tente novamente.
-                </p>`;
-            return;
+        try {
+            const res = await fetch(url);
+            dados = await res.json();
+        } catch (erro) {
+            console.error("Erro clima:", erro);
+            dados = null;
         }
+    }
 
-        // Salva globalmente — gráfico, resumo e análise leem daqui
-        window._dadosClimaAPI = dados;
-        const atual = dados.list[0];
+    if (!dados || dados.cod === "404" || !dados.list) {
+        const elTemp = document.getElementById("temp");
+        if (elTemp) {
+            elTemp.closest('#weatherMetrics')
+                ?.querySelectorAll('h4')
+                .forEach(el => el.textContent = "—");
+        }
+        const barsEl = document.getElementById("chartBars");
+        if (barsEl) barsEl.innerHTML = `
+            <p class="text-xs text-red-400 italic w-full text-center py-4">
+                Cidade não encontrada. Verifique o nome e tente novamente.
+            </p>`;
+        return;
+    }
+
+    // Salva globalmente — gráfico, resumo e análise leem daqui
+    window._dadosClimaAPI = dados;
+    const atual = dados.list[0];
 
         const elTemp = document.getElementById("temp");
         const elVento = document.getElementById("vento");
@@ -1092,10 +1189,6 @@ async function atualizarClimaNaTela(cidade = "Sorocaba") {
         if (sportAtual === 'home') {
             atualizarResumoDiario();
         }
-
-    } catch (erro) {
-        console.error("Erro clima:", erro);
-    }
 }
 
 // Troca o tipo de dado exibido no gráfico e marca o botão correspondente como ativo
@@ -1453,7 +1546,7 @@ btnBuscar.addEventListener("click", async () => {
     // Dispara análise para o esporte que está ativo no momento da busca
     const sportAtivo = document.querySelector('.sport-btn-sidebar.sidebar-active');
     const sport = sportAtivo?.getAttribute('data-sport') || 'home';
-    setTimeout(() => analisarEsporte(sport), 300);
+    analisarEsporte(sport);
 });
 
 // Enter no input aciona o mesmo comportamento do clique no botão
