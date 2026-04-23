@@ -104,7 +104,7 @@
                                 class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">person</span>
                             <input
                                 class="w-full pl-12 pr-4 py-4 bg-surface-container-low dark:bg-surface-3 dark:text-white border-none rounded-xl focus:ring-2 focus:ring-primary/20 transition-all"
-                                id="name" placeholder="Como deseja ser chamado?" type="text" required />
+                                id="name" placeholder="Como deseja ser chamado?" type="text" required autofocus />
                         </div>
                     </div>
 
@@ -124,16 +124,31 @@
                         <div class="space-y-2">
                             <label class="block text-sm font-medium dark:text-gray-300 ml-1"
                                 for="password">Senha</label>
-                            <input
-                                class="w-full p-4 bg-surface-container-low dark:bg-surface-3 dark:text-white border-none rounded-xl focus:ring-2 focus:ring-primary/20 transition-all"
-                                id="password" placeholder="••••••••" type="password" required />
+                            <div class="relative">
+                                <input
+                                    class="w-full pr-12 p-4 bg-surface-container-low dark:bg-surface-3 dark:text-white border-none rounded-xl focus:ring-2 focus:ring-primary/20 transition-all"
+                                    id="password" placeholder="••••••••" type="password" required />
+                                <button type="button" id="togglePassword"
+                                    class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-primary transition-colors">
+                                    <span class="material-symbols-outlined">visibility</span>
+                                </button>
+                            </div>
+                            <p id="passwordStrength" class="text-xs text-slate-500 mt-1">Use ao menos 8 caracteres, com número e maiúscula.</p>
+                            <p id="passwordError" class="hidden text-red-500 text-xs mt-1.5 ml-1">A senha deve ter no mínimo 8 caracteres.</p>
                         </div>
                         <div class="space-y-2">
                             <label class="block text-sm font-medium dark:text-gray-300 ml-1"
                                 for="confirm-password">Confirmar</label>
-                            <input
-                                class="w-full p-4 bg-surface-container-low dark:bg-surface-3 dark:text-white border-none rounded-xl focus:ring-2 focus:ring-primary/20 transition-all"
-                                id="confirm-password" placeholder="••••••••" type="password" required />
+                            <div class="relative">
+                                <input
+                                    class="w-full pr-12 p-4 bg-surface-container-low dark:bg-surface-3 dark:text-white border-none rounded-xl focus:ring-2 focus:ring-primary/20 transition-all"
+                                    id="confirm-password" placeholder="••••••••" type="password" required />
+                                <button type="button" id="toggleConfirmPassword"
+                                    class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-primary transition-colors">
+                                    <span class="material-symbols-outlined">visibility</span>
+                                </button>
+                            </div>
+                            <p id="confirmPasswordError" class="hidden text-red-500 text-xs mt-1.5 ml-1">As senhas não coincidem.</p>
                         </div>
                     </div>
 
@@ -142,6 +157,7 @@
                         type="submit">
                         Criar Conta
                     </button>
+                    <p id="formMessage" class="hidden text-center text-sm mt-2"></p>
                 </form>
 
                 <p class="text-center text-on-surface-variant dark:text-gray-400 text-sm">

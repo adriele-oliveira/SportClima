@@ -95,7 +95,7 @@
                         for="email">E-mail</label>
                     <input
                         class="w-full p-4 rounded-xl bg-slate-100 dark:bg-surface-2 dark:text-white border-none outline-none focus:ring-2 focus:ring-[#f27f0d]/20 transition-all mt-1.5"
-                        id="email" type="email" required />
+                        id="email" type="email" required autofocus />
                     <p id="emailError" class="hidden text-red-500 text-xs mt-1.5 ml-1">Insira um e-mail válido.</p>
                 </div>
 
@@ -106,13 +106,23 @@
                         <span
                             class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#f27f0d] transition-colors">lock</span>
                         <input
-                            class="w-full pl-12 pr-4 py-4 rounded-xl border-none bg-slate-100 dark:bg-surface-2 dark:text-white placeholder-slate-400 dark:placeholder-zinc-500 focus:ring-2 focus:ring-[#f27f0d]/20 focus:bg-white dark:focus:bg-surface-3 transition-all outline-none"
+                            class="w-full pl-12 pr-12 py-4 rounded-xl border-none bg-slate-100 dark:bg-surface-2 dark:text-white placeholder-slate-400 dark:placeholder-zinc-500 focus:ring-2 focus:ring-[#f27f0d]/20 focus:bg-white dark:focus:bg-surface-3 transition-all outline-none"
                             id="password" placeholder="••••••••" type="password" required />
+                        <button type="button" id="loginPasswordToggle"
+                            class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#f27f0d] transition-colors">
+                            <span class="material-symbols-outlined">visibility</span>
+                        </button>
                     </div>
-                    <div class="flex justify-end pr-1">
-                        <a class="text-xs font-bold text-[#f27f0d] dark:text-orange-400 hover:underline"
-                            href="#">Esqueceu a senha?</a>
+                    <p id="passwordError" class="hidden text-red-500 text-xs mt-1.5 ml-1">Senha obrigatória.</p>
+                    <div class="flex justify-between items-center gap-3 text-xs text-slate-500 dark:text-zinc-400 mt-1">
+                        <a class="font-bold text-[#f27f0d] dark:text-orange-400 hover:underline" href="#">Esqueceu a senha?</a>
+                        <span>Use 8+ caracteres.</span>
                     </div>
+                </div>
+
+                <div class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
+                    <input id="rememberMe" type="checkbox" class="h-4 w-4 text-primary rounded border-slate-300" />
+                    <label for="rememberMe" class="font-medium">Manter-me conectado</label>
                 </div>
 
                 <div class="flex gap-4 pt-2">

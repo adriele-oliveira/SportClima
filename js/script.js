@@ -1042,12 +1042,26 @@ function processarNovaFoto(input) {
 
 // ─── 14. SESSÃO — Estado de login na interface ───────────────────────────────
 
+function initLoginPromptOverlay() {
+    const overlay = document.getElementById('loginPromptOverlay');
+    const session = JSON.parse(localStorage.getItem('sportclima_session') || 'null');
+    if (!overlay) return;
+
+    if (!session) {
+        overlay.classList.remove('hidden');
+        return;
+    }
+
+    overlay.classList.add('hidden');
+}
+
 /**
  * Verifica se existe uma sessão ativa no localStorage.
  * Se sim: exibe nome/email do usuário, oculta o botão de login,
  * mostra o botão de logout e restaura a foto de perfil salva.
  */
 (function initSession() {
+    initLoginPromptOverlay();
     const session = JSON.parse(localStorage.getItem('sportclima_session') || 'null');
 
     if (!session) return;

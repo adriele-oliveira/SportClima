@@ -54,6 +54,16 @@
 </head>
 
 <body class="bg-background dark:bg-surface-1 text-slate-900 dark:text-slate-100 min-h-screen">
+    <div id="loginPromptOverlay" class="hidden fixed inset-0 z-[150] flex items-center justify-center bg-slate-950/55 backdrop-blur-xl px-4 py-8">
+        <div class="w-full max-w-xl rounded-[32px] border border-white/10 bg-white/90 dark:bg-slate-900/90 p-8 shadow-2xl shadow-slate-950/30 text-center backdrop-brightness-100">
+            <div class="mb-4 inline-flex items-center gap-2 rounded-full bg-primary/10 text-primary px-4 py-2 text-xs uppercase tracking-[0.3em] font-bold">
+                Acesso restrito
+            </div>
+            <h1 class="text-3xl md:text-4xl font-black text-slate-950 dark:text-white mb-4">Cadastre-se para ter acesso a todas as funcionalidades</h1>
+            <p class="text-sm md:text-base text-slate-600 dark:text-slate-300 mb-8 leading-relaxed">Explore previsões, alertas esportivos, análise de clima e recursos personalizados assim que fizer login.</p>
+            <a href="login.html" class="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-8 py-4 text-sm font-bold text-white shadow-lg shadow-orange-500/20 hover:bg-orange-600 transition-all">Começar agora</a>
+        </div>
+    </div>
     <input type="file" id="inputFotoPerfil" accept="image/*" class="hidden" onchange="processarNovaFoto(this)">
     <div class="layout-container flex h-full grow flex-col">
 

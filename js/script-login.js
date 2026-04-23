@@ -26,32 +26,55 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const loginForm = document.getElementById('login-form');
     const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const passwordToggle = document.getElementById('loginPasswordToggle');
+    const rememberMe = document.getElementById('rememberMe');
     const emailError = document.getElementById('emailError');
+    const passwordError = document.getElementById('passwordError');
     const emailRegex = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
 
-    const showEmailError = (msg) => {
-        if (emailError) {
-            emailError.textContent = msg;
-            emailError.classList.remove('hidden');
-        }
-        emailInput?.classList.add('ring-2', 'ring-red-400');
+    const showError = (element, msg) => {
+        if (!element) return;
+        element.textContent = msg;
+        element.classList.remove('hidden');
+        element.previousElementSibling?.classList?.add('ring-2', 'ring-red-400');
     };
 
-    const clearEmailError = () => {
-        if (emailError) emailError.classList.add('hidden');
-        emailInput?.classList.remove('ring-2', 'ring-red-400');
+    const clearError = (element) => {
+        if (!element) return;
+        element.classList.add('hidden');
+        element.previousElementSibling?.classList?.remove('ring-2', 'ring-red-400');
     };
 
-    emailInput?.addEventListener('input', clearEmailError);
+    emailInput?.addEventListener('input', () => clearError(emailError));
+    passwordInput?.addEventListener('input', () => clearError(passwordError));
+
+    passwordToggle?.addEventListener('click', () => {
+        if (!passwordInput) return;
+        const visible = passwordInput.type === 'text';
+        passwordInput.type = visible ? 'password' : 'text';
+        const icon = passwordToggle.querySelector('.material-symbols-outlined');
+        if (icon) icon.textContent = visible ? 'visibility' : 'visibility_off';
+    });
 
     loginForm?.addEventListener('submit', (e) => {
         e.preventDefault();
 
         const email = emailInput.value.trim();
-        const password = document.getElementById('password').value;
+        const password = passwordInput.value;
+
+        clearError(emailError);
+        clearError(passwordError);
 
         if (!emailRegex.test(email)) {
-            showEmailError('Insira um e-mail válido. Ex: nome@dominio.com');
+            showError(emailError, 'Insira um e-mail válido. Ex: nome@dominio.com');
+            emailInput.focus();
+            return;
+        }
+
+        if (!password) {
+            showError(passwordError, 'Senha obrigatória.');
+            passwordInput.focus();
             return;
         }
 
@@ -59,11 +82,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const user = users.find(u => u.email === email && u.password === password);
 
         if (!user) {
-            showEmailError('E-mail ou senha incorretos.');
+            showError(emailError, 'E-mail ou senha incorretos.');
             return;
+        }
+
+        if (rememberMe?.checked) {
+            localStorage.setItem('sportclima_keep_connected', 'true');
+        } else {
+            localStorage.removeItem('sportclima_keep_connected');
         }
 
         localStorage.setItem('sportclima_session', JSON.stringify({ name: user.name, email: user.email }));
         window.location.href = 'index.html';
     });
+
+    emailInput?.focus();
 });
