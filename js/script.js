@@ -212,6 +212,39 @@ async function loadPage(sport) {
             </div>
         </div>
 
+        <!-- Condições Agora — visível apenas em esportes específicos -->
+        ${sport !== "home" ? `
+        <div id="condicoesAgora" class="mt-6 p-6 rounded-2xl bg-gradient-to-r from-primary/5 to-primary/10 dark:from-primary/10 dark:to-primary/15 border border-primary/20 dark:border-primary/30">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-xl font-black text-primary flex items-center gap-2">
+                    <span class="material-symbols-outlined">analytics</span>
+                    Condições Agora
+                </h3>
+                <div id="scoreDisplay" class="text-right">
+                    <div class="text-3xl font-black text-slate-900 dark:text-slate-100" id="scoreValue">--</div>
+                    <div class="text-sm text-slate-500 dark:text-slate-400" id="scoreLabel">Carregando...</div>
+                </div>
+            </div>
+            <div class="w-full bg-slate-200 dark:bg-surface-2 rounded-full h-4 mb-4">
+                <div id="scoreBar" class="bg-primary h-4 rounded-full transition-all duration-1000" style="width: 0%"></div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary">thermostat</span>
+                    <span class="text-slate-600 dark:text-slate-300">Temperatura: <strong id="tempCond">${data.metrics.temp}</strong></span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary">air</span>
+                    <span class="text-slate-600 dark:text-slate-300">Vento: <strong id="ventoCond">${data.metrics.vento}</strong></span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary">water_drop</span>
+                    <span class="text-slate-600 dark:text-slate-300">Chuva: <strong id="chuvaCond">0mm</strong></span>
+                </div>
+            </div>
+        </div>
+        ` : ""}
+
          <!-- Cards de esportes clicáveis — visíveis apenas na home -->
         ${sport === "home" ? `
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
@@ -221,7 +254,7 @@ async function loadPage(sport) {
                     class="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300" alt="Corrida">
                 <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-4">
                     <p class="text-white font-black text-lg">Corrida</p>
-                    <p class="text-white/70 text-xs mt-0.5">Ideal com temperatura entre 10°C e 25°C, vento fraco e sem chuva.</p>
+                    <p class="text-white/70 text-xs mt-0.5">Ideal com temperatura entre 15°C e 22°C, vento até 10 km/h e sem chuva.</p>
                 </div>
             </div>
 
@@ -231,7 +264,7 @@ async function loadPage(sport) {
                     class="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300" alt="Ciclismo">
                 <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-4">
                     <p class="text-white font-black text-lg">Ciclismo</p>
-                    <p class="text-white/70 text-xs mt-0.5">Melhor com vento até 30 km/h, temperatura amena e pista seca.</p>
+                    <p class="text-white/70 text-xs mt-0.5">Melhor com temperatura entre 18°C e 25°C, vento até 15 km/h e pista seca.</p>
                 </div>
             </div>
 
@@ -241,7 +274,7 @@ async function loadPage(sport) {
                     class="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300" alt="Surf">
                 <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-4">
                     <p class="text-white font-black text-lg">Surf</p>
-                    <p class="text-white/70 text-xs mt-0.5">Ventos acima de 10 km/h e temperatura do mar favorável fazem a diferença.</p>
+                    <p class="text-white/70 text-xs mt-0.5">Ventos entre 10-25 km/h e temperatura entre 20°C e 28°C para melhores ondas.</p>
                 </div>
             </div>
         </div>
@@ -1358,30 +1391,45 @@ function analisarEsporte(sport) {
     const calcScore = {
         corrida: () => {
             let s = 100;
-            if (tempAtual < 10 || tempAtual > 30) s -= 40;
-            else if (tempAtual > 25) s -= 15;
-            if (ventoAtual > 20) s -= 20;
-            if (chuvaAtual > 0) s -= 35;
-            return Math.max(0, s);
+            // Temperatura ideal: 15-22°C
+            if (tempAtual < 15) s -= Math.min(50, (15 - tempAtual) * 5);
+            else if (tempAtual > 22) s -= Math.min(50, (tempAtual - 22) * 3);
+            // Vento ideal: <10km/h
+            if (ventoAtual > 10) s -= Math.min(30, (ventoAtual - 10) * 2);
+            // Chuva: qualquer quantidade penaliza
+            if (chuvaAtual > 0) s -= 40;
+            return Math.max(0, Math.round(s));
         },
         ciclismo: () => {
             let s = 100;
-            if (tempAtual < 10 || tempAtual > 32) s -= 35;
-            if (ventoAtual > 30) s -= 30;
-            if (chuvaAtual > 0) s -= 35;
-            return Math.max(0, s);
+            // Temperatura ideal: 18-25°C
+            if (tempAtual < 18) s -= Math.min(40, (18 - tempAtual) * 4);
+            else if (tempAtual > 25) s -= Math.min(40, (tempAtual - 25) * 2);
+            // Vento ideal: <15km/h
+            if (ventoAtual > 15) s -= Math.min(35, (ventoAtual - 15) * 2.5);
+            // Chuva: penaliza fortemente
+            if (chuvaAtual > 0) s -= 45;
+            return Math.max(0, Math.round(s));
         },
         surf: () => {
-            let s = 40; // começa baixo, vento é positivo aqui
-            if (ventoAtual >= 10 && ventoAtual <= 30) s += 35;
-            if (tempAtual >= 20 && tempAtual <= 30) s += 25;
-            return Math.min(100, s);
+            let s = 0;
+            // Vento ideal: 10-25km/h
+            if (ventoAtual >= 10 && ventoAtual <= 25) s += 50;
+            else if (ventoAtual > 25) s += Math.max(0, 50 - (ventoAtual - 25) * 2);
+            // Temperatura ideal: 20-28°C
+            if (tempAtual >= 20 && tempAtual <= 28) s += 40;
+            else if (tempAtual < 20) s += Math.max(0, (tempAtual - 15) * 8);
+            else s += Math.max(0, 40 - (tempAtual - 28) * 5);
+            // Chuva: penaliza
+            if (chuvaAtual > 0) s -= 30;
+            return Math.max(0, Math.min(100, Math.round(s)));
         },
         home: () => {
             let s = 100;
             if (chuvaAtual > 0) s -= 30;
             if (tempAtual > 32 || tempAtual < 8) s -= 30;
-            return Math.max(0, s);
+            if (ventoAtual > 40) s -= 20;
+            return Math.max(0, Math.round(s));
         }
     };
 
@@ -1389,19 +1437,40 @@ function analisarEsporte(sport) {
     const scoreCor = score >= 75 ? "text-green-500" : score >= 50 ? "text-yellow-500" : score >= 25 ? "text-orange-500" : "text-red-500";
     const scoreLabel = score >= 75 ? "Excelente" : score >= 50 ? "Bom" : score >= 25 ? "Regular" : "Ruim";
     const scoreBg = score >= 75 ? "bg-green-500" : score >= 50 ? "bg-yellow-400" : score >= 25 ? "bg-orange-400" : "bg-red-500";
+
+    // Atualizar a seção Condições Agora no conteúdo principal (se existir)
+    const scoreValueEl = document.getElementById("scoreValue");
+    const scoreLabelEl = document.getElementById("scoreLabel");
+    const scoreBarEl = document.getElementById("scoreBar");
+    const tempCondEl = document.getElementById("tempCond");
+    const ventoCondEl = document.getElementById("ventoCond");
+    const chuvaCondEl = document.getElementById("chuvaCond");
+
+    if (scoreValueEl) scoreValueEl.textContent = score;
+    if (scoreLabelEl) {
+        scoreLabelEl.textContent = scoreLabel;
+        scoreLabelEl.className = `text-sm ${scoreCor}`;
+    }
+    if (scoreBarEl) {
+        scoreBarEl.style.width = `${score}%`;
+        scoreBarEl.className = `h-4 rounded-full transition-all duration-1000 ${scoreBg}`;
+    }
+    if (tempCondEl) tempCondEl.textContent = `${Math.round(tempAtual)}°C`;
+    if (ventoCondEl) ventoCondEl.textContent = `${Math.round(ventoAtual)} km/h`;
+    if (chuvaCondEl) chuvaCondEl.textContent = `${chuvaAtual}mm`;
    
     // Critérios idênticos ao resumo diário — usados para encontrar melhor e pior janela
     const criterios = {
-        corrida: (item) => item.main.temp >= 10 && item.main.temp <= 25
-            && item.wind.speed * 3.6 <= 20
+        corrida: (item) => item.main.temp >= 15 && item.main.temp <= 22
+            && item.wind.speed * 3.6 <= 10
             && (item.rain?.["3h"] || 0) === 0,
 
-        ciclismo: (item) => item.main.temp >= 12 && item.main.temp <= 28
-            && item.wind.speed * 3.6 <= 30
+        ciclismo: (item) => item.main.temp >= 18 && item.main.temp <= 25
+            && item.wind.speed * 3.6 <= 15
             && (item.rain?.["3h"] || 0) === 0,
 
-        surf: (item) => item.wind.speed * 3.6 >= 10
-            && item.main.temp >= 18,
+        surf: (item) => item.wind.speed * 3.6 >= 10 && item.wind.speed * 3.6 <= 25
+            && item.main.temp >= 20 && item.main.temp <= 28,
 
         home: (item) => item.main.temp >= 15 && item.main.temp <= 30
             && (item.rain?.["3h"] || 0) === 0
