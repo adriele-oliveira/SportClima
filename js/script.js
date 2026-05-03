@@ -1214,6 +1214,9 @@ if (!forceReload && cached === cidadeNormalizada && window._dadosClimaAPI) {
                 const resultado = temPais
                     ? geoData[0]
                     : (geoData.find(r => r.country === "BR") || geoData[0]);
+                // Salva o nome correto da cidade vindos do geocoding
+                // para sobrescrever depois do forecast (a API às vezes retorna o país)
+                window._nomeCidadeGeo = resultado.local_names?.pt || resultado.local_names?.en || resultado.name;
                 forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${resultado.lat}&lon=${resultado.lon}&appid=${API_KEY}&units=metric&lang=pt_br`;
             } else {
                 // Fallback: busca direta por nome
@@ -1263,17 +1266,20 @@ if (!forceReload && cached === cidadeNormalizada && window._dadosClimaAPI) {
         if (elSensacao) elSensacao.textContent = Math.round(atual.main.feels_like) + "°C";
 
         // Atualiza o título do hero com o nome da cidade
+        // Prefere o nome do geocoding (mais preciso) ao da API de forecast
+        const nomeCidade = window._nomeCidadeGeo || dados.city?.name;
+        window._nomeCidadeGeo = null; // limpa após usar
         const heroTitle = document.querySelector('.spa-hero-content h1');
-        if (heroTitle && dados.city?.name) {
+        if (heroTitle && nomeCidade) {
             const sportAtivoBadge = document.querySelector('.spa-hero-content span');
             const sportNome = sportAtivoBadge?.textContent?.trim()?.toLowerCase() || 'home';
             const titulosEsporte = {
-                corrida: `Corrida em ${dados.city.name}`,
-                ciclismo: `Ciclismo em ${dados.city.name}`,
-                surf:     `Surf em ${dados.city.name}`,
-                home:     `Condições em ${dados.city.name}`
+                corrida: `Corrida em ${nomeCidade}`,
+                ciclismo: `Ciclismo em ${nomeCidade}`,
+                surf:     `Surf em ${nomeCidade}`,
+                home:     `Condições em ${nomeCidade}`
             };
-            heroTitle.textContent = titulosEsporte[sportNome] || `Condições climáticas em ${dados.city.name}`;
+            heroTitle.textContent = titulosEsporte[sportNome] || `Condições climáticas em ${nomeCidade}`;
         }
 
         // Renderiza o gráfico padrão de temperatura
