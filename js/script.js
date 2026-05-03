@@ -255,43 +255,6 @@ async function loadPage(sport) {
         </div>
         ` : ""}
 
-         <!-- Cards de esportes clicáveis — visíveis apenas na home -->
-        ${sport === "home" ? `
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-            <div class="rounded-2xl overflow-hidden relative group cursor-pointer shadow-md"
-                onclick="loadPage('corrida')">
-                <img src="https://images.unsplash.com/photo-1571008887538-b36bb32f4571?w=600&auto=format&fit=crop"
-                    class="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300" alt="Corrida">
-                <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-4">
-                    <p class="text-white font-black text-lg">Corrida</p>
-                    <p class="text-white/70 text-xs mt-0.5">Ideal com temperatura entre 15°C e 22°C, vento até 10 km/h e sem chuva.</p>
-                </div>
-            </div>
-
-            <div class="rounded-2xl overflow-hidden relative group cursor-pointer shadow-md"
-                onclick="loadPage('ciclismo')">
-                <img src="https://plus.unsplash.com/premium_photo-1684820878202-52781d8e0ea9?w=600&auto=format&fit=crop"
-                    class="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300" alt="Ciclismo">
-                <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-4">
-                    <p class="text-white font-black text-lg">Ciclismo</p>
-                    <p class="text-white/70 text-xs mt-0.5">Melhor com temperatura entre 18°C e 25°C, vento até 15 km/h e pista seca.</p>
-                </div>
-            </div>
-
-            ${window._cidadeLitoranea ? `
-            <div class="rounded-2xl overflow-hidden relative group cursor-pointer shadow-md"
-                onclick="loadPage('surf')">
-                <img src="https://images.unsplash.com/photo-1530870110042-98b2cb110834?w=600&auto=format&fit=crop"
-                    class="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300" alt="Surf">
-                <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-4">
-                    <p class="text-white font-black text-lg">Surf</p>
-                    <p class="text-white/70 text-xs mt-0.5">Ventos entre 10-25 km/h e temperatura entre 20°C e 28°C para melhores ondas.</p>
-                </div>
-            </div>
-            ` : ""}
-        </div>
-        ` : ""}
-
         <!-- Gráfico de variação horária com botões de alternância de tipo -->
         <div class="chart-container mt-6">
             <div class="flex items-center justify-between mb-4">
