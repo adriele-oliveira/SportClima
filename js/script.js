@@ -1198,13 +1198,29 @@ async function atualizarClimaNaTela(cidade = "Sorocaba", forceReload = false) {
     const cached = window._dadosClimaAPI?.city?.name?.toLowerCase();
     let dados;
 
-    if (!forceReload && cached === cidadeNormalizada && window._dadosClimaAPI) {
+if (!forceReload && cached === cidadeNormalizada && window._dadosClimaAPI) {
         dados = window._dadosClimaAPI;
     } else {
-        const url = `https://api.openweathermap.org/data/2.5/forecast?q=${cidade}&appid=${API_KEY}&units=metric&lang=pt_br`;
-
         try {
-            const res = await fetch(url);
+            // Etapa 1: resolve o nome para coordenadas, priorizando BR
+            const geoUrl = `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(cidade)}&limit=5&appid=${API_KEY}`;
+            const geoRes = await fetch(geoUrl);
+            const geoData = await geoRes.json();
+
+            let forecastUrl;
+            if (geoData && geoData.length > 0) {
+                // Prioriza Brasil se o usuário não especificou país
+                const temPais = /,\s*[A-Z]{2}$/.test(cidade.trim());
+                const resultado = temPais
+                    ? geoData[0]
+                    : (geoData.find(r => r.country === "BR") || geoData[0]);
+                forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${resultado.lat}&lon=${resultado.lon}&appid=${API_KEY}&units=metric&lang=pt_br`;
+            } else {
+                // Fallback: busca direta por nome
+                forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${encodeURIComponent(cidade)}&appid=${API_KEY}&units=metric&lang=pt_br`;
+            }
+
+            const res = await fetch(forecastUrl);
             dados = await res.json();
         } catch (erro) {
             console.error("Erro clima:", erro);
