@@ -174,6 +174,16 @@ const cidadesProximas = {
 // Renderiza o conteúdo principal e a sidebar para o esporte recebido.
 // Chamada sempre que o usuário clica em um esporte na sidebar ou nos cards da home.
 // Renderiza a página SPA de acordo com o esporte selecionado
+function atualizarVisibilidadeSurf() {
+    const btnSurf = document.querySelector('[data-sport="surf"]');
+    if (!btnSurf) return;
+    if (window._cidadeLitoranea) {
+        btnSurf.classList.remove('hidden');
+    } else {
+        btnSurf.classList.add('hidden');
+    }
+}
+
 async function loadPage(sport) {
     const data = pages[sport];
 
@@ -268,6 +278,7 @@ async function loadPage(sport) {
                 </div>
             </div>
 
+            ${window._cidadeLitoranea ? `
             <div class="rounded-2xl overflow-hidden relative group cursor-pointer shadow-md"
                 onclick="loadPage('surf')">
                 <img src="https://images.unsplash.com/photo-1530870110042-98b2cb110834?w=600&auto=format&fit=crop"
@@ -277,6 +288,7 @@ async function loadPage(sport) {
                     <p class="text-white/70 text-xs mt-0.5">Ventos entre 10-25 km/h e temperatura entre 20°C e 28°C para melhores ondas.</p>
                 </div>
             </div>
+            ` : ""}
         </div>
         ` : ""}
 
@@ -369,6 +381,7 @@ async function loadPage(sport) {
     const cidadeParaCarregar = window._cidadeAtual || "Sorocaba";
     await atualizarClimaNaTela(cidadeParaCarregar);
     analisarEsporte(sport);
+    atualizarVisibilidadeSurf();
 }
 
 // Renderiza a home ao iniciar o app
@@ -481,7 +494,7 @@ function loadSobreProjeto() {
 
 // Permite navegar por esporte digitando no input do header.
 // Suporta sinônimos como "bike" → ciclismo, "surfe" → surf, etc.
-const searchInput = document.querySelector('input[placeholder="Buscar localização..."]');
+const searchInput = document.querySelector('input[placeholder="Buscar esporte ou localização..."]');
 
 if (searchInput) {
     searchInput.addEventListener("keypress", (e) => {
@@ -1153,8 +1166,26 @@ const btnBuscar = document.getElementById("btnBuscarCidade");
 // Declaradas ANTES dos listeners de busca para garantir que existam
 // quando o usuário interagir com o input pela primeira vez.
 
-// Busca a previsão de 5 dias para a cidade informada via OpenWeatherMap.
-// É a função central de dados — gráfico, resumo e análise dependem dela.
+// Consulta a Nominatim (OpenStreetMap) para verificar se há linha costeira
+// num raio de 50km da cidade. Sem chave, sem hardcoding.
+async function verificarCidadeLitoranea(lat, lon) {
+    try {
+        // Open-Meteo Marine API: só retorna wave_height se houver oceano
+        // nas coordenadas. Em cidades do interior retorna erro ou campo vazio.
+        const url = `https://marine-api.open-meteo.com/v1/marine` +
+            `?latitude=${lat}&longitude=${lon}&hourly=wave_height&forecast_days=1`;
+        const res = await fetch(url);
+        const data = await res.json();
+        // Se vier erro da API (ponto não está sobre o oceano) → não é litoral
+        if (data.error || !data.hourly?.wave_height) return false;
+        // Se todos os valores forem null → coordenada fora do mar
+        const temDados = data.hourly.wave_height.some(v => v !== null);
+        return temDados;
+    } catch (e) {
+        console.warn("Não foi possível verificar litoral:", e);
+        return false;
+    }
+}
 
 async function atualizarClimaNaTela(cidade = "Sorocaba", forceReload = false) {
     // Mostra estado de carregamento nas métricas enquanto aguarda a API
@@ -1198,6 +1229,10 @@ async function atualizarClimaNaTela(cidade = "Sorocaba", forceReload = false) {
 
     // Salva globalmente — gráfico, resumo e análise leem daqui
     window._dadosClimaAPI = dados;
+    // Reseta o status litorâneo enquanto a verificação está em andamento,
+    // para evitar que um resultado antigo (de outra cidade) vaze
+    window._cidadeLitoranea = false;
+
     const atual = dados.list[0];
 
         const elTemp = document.getElementById("temp");
@@ -1234,7 +1269,22 @@ async function atualizarClimaNaTela(cidade = "Sorocaba", forceReload = false) {
         if (sportAtual === 'home') {
             atualizarResumoDiario();
         }
+
+        // Verifica litoral em paralelo — não bloqueia o render
+        // Usa um token para ignorar resultados de chamadas antigas (race condition)
+        const tokenAtual = Symbol();
+        atualizarClimaNaTela._tokenLitoral = tokenAtual;
+        const { lat, lon } = dados.city.coord;
+        verificarCidadeLitoranea(lat, lon).then(ehLitoral => {
+            if (atualizarClimaNaTela._tokenLitoral !== tokenAtual) return;
+            window._cidadeLitoranea = ehLitoral;
+            atualizarVisibilidadeSurf();
+            if (sportAtual === 'home') {
+                atualizarResumoDiario();
+            }
+        });
 }
+
 
 // Troca o tipo de dado exibido no gráfico e marca o botão correspondente como ativo
 function mudarGrafico(tipo) {
@@ -1312,6 +1362,8 @@ function atualizarResumoDiario() {
     });
 
     // Critérios de "boa condição" para cada esporte
+     const ehLitoranea = window._cidadeLitoranea ?? false;
+
     const esportes = [
         {
             nome: "Corrida",
@@ -1325,12 +1377,12 @@ function atualizarResumoDiario() {
             sport: "ciclismo",
             ok: (i) => i.main.temp >= 12 && i.main.temp <= 28 && i.wind.speed * 3.6 <= 30 && !(i.rain?.["3h"] > 0)
         },
-        {
+        ...(ehLitoranea ? [{
             nome: "Surf",
             icone: "🏄",
             sport: "surf",
             ok: (i) => i.wind.speed * 3.6 >= 10 && i.main.temp >= 18
-        }
+        }] : [])
     ];
 
     el.innerHTML = esportes.map(e => {
@@ -1700,19 +1752,46 @@ function selecionarSugestao(cidade) {
             try {
                 const res = await fetch(url);
                 const dados = await res.json();
-                window._cidadeAtual = dados.city?.name || "Sua localização";
-                await atualizarClimaNaTela(window._cidadeAtual);
 
-                // Atualiza hero e análise apenas se ainda na home
+                if (!dados || !dados.list) throw new Error("Dados inválidos");
+
+                // Aproveita os dados já buscados por lat/lon — sem segunda chamada à API
+                window._cidadeAtual = dados.city?.name || "Sua localização";
+                window._dadosClimaAPI = dados;
+                window._cidadeLitoranea = false;
+
+                // Dispara verificação de litoral em paralelo com token anti-race
+                const tokenAtual = Symbol();
+                atualizarClimaNaTela._tokenLitoral = tokenAtual;
+                const { lat, lon } = dados.city.coord;
+                verificarCidadeLitoranea(lat, lon).then(ehLitoral => {
+                    if (atualizarClimaNaTela._tokenLitoral !== tokenAtual) return;
+                    window._cidadeLitoranea = ehLitoral;
+                    atualizarVisibilidadeSurf();
+                    atualizarResumoDiario();
+                });
+
+                // Renderiza os dados diretamente sem nova chamada à API
+                const atual = dados.list[0];
+                const elTemp = document.getElementById("temp");
+                const elVento = document.getElementById("vento");
+                const elUmidade = document.getElementById("umidade");
+                const elSensacao = document.getElementById("sensacao");
+                if (elTemp) elTemp.textContent = Math.round(atual.main.temp) + "°C";
+                if (elVento) elVento.textContent = Math.round(atual.wind.speed * 3.6) + " km/h";
+                if (elUmidade) elUmidade.textContent = atual.main.humidity + "%";
+                if (elSensacao) elSensacao.textContent = Math.round(atual.main.feels_like) + "°C";
+
+                const heroTitle = document.querySelector('.spa-hero-content h1');
+                if (heroTitle) heroTitle.textContent = `Condições em ${window._cidadeAtual}`;
+
+                renderizarGrafico("temp");
+                atualizarResumoDiario();
+
                 const sportAtivo = document.querySelector('.sport-btn-sidebar.sidebar-active');
                 const sport = sportAtivo?.getAttribute('data-sport') || 'home';
-                if (sport === 'home') {
-                    const heroTitle = document.querySelector('.spa-hero-content h1');
-                    if (heroTitle) heroTitle.textContent = `Condições em ${window._cidadeAtual}`;
-                    // Dispara análise e resumo diário
-                    // atualizarResumoDiario já é chamado dentro de atualizarClimaNaTela
-                    setTimeout(() => analisarEsporte('home'), 200);
-                }
+                setTimeout(() => analisarEsporte(sport), 200);
+
             } catch (e) {
                 // Erro na requisição (sem internet, API fora, etc.) — usa fallback
                 window._cidadeAtual = "Sorocaba";
