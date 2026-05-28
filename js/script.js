@@ -102,7 +102,30 @@ const pages = {
             descricao: "Ondas longas e vento ideal para manobras.",
             evitar: "11:30 - 15:30"
         }
-    }
+    },
+    tenis: {
+        heroImg: "https://images.unsplash.com/photo-1554068865-24cecd4e34b8?q=80&w=1170&auto=format&fit=crop",
+        titulo: "Condições para o tênis",
+        desc: "Analise temperatura, vento e umidade para uma partida perfeita.",
+        metrics: { temp: "—", vento: "—", umidade: "—", sensacao: "—" },
+        sidebar: {
+            melhorHorario: "—",
+            descricao: "Selecione tênis para ver a análise.",
+            evitar: "—"
+        }
+    },
+    futebol: {
+        heroImg: "https://images.unsplash.com/photo-1641159009736-8a5fd4e52fef?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        titulo: "Condições para o futebol",
+        desc: "Veja temperatura, umidade e previsão de chuva para o campo.",
+        metrics: { temp: "—", vento: "—", umidade: "—", sensacao: "—" },
+        sidebar: {
+            melhorHorario: "—",
+            descricao: "Selecione futebol para ver a análise.",
+            evitar: "—"
+        }
+},
+
 };
 
 // Dados das criadoras do projeto — usados na página "Sobre o Projeto"
@@ -165,7 +188,18 @@ const cidadesProximas = {
                 icone: "surfing",
                 dica: "Acompanhe a direção do vento: offshore (terra→mar) melhora a formação das ondas.",
                 alerta: "Trovoadas e raios são emergências — saia da água imediatamente."
-            }
+            },
+
+            tenis: {
+                icone: "sports_tennis",
+                dica: "Evite jogar com vento acima de 30 km/h — a bola fica imprevisível. Prefira quadras cobertas em dias de calor intenso.",
+                alerta: "Não jogue sob sol direto com temperatura acima de 35°C — risco alto de insolação."
+            },
+            futebol: {
+                icone: "sports_soccer",
+                dica: "Hidrate-se antes, durante e após a partida. Campo molhado aumenta o risco de torções — ajuste sua chuteira.",
+                alerta: "Suspenda a partida imediatamente em caso de raios ou trovoadas."
+            },
         };
 
 
@@ -1459,6 +1493,29 @@ function analisarEsporte(sport) {
             if (chuvaAtual > 0) s -= 30;
             return Math.max(0, Math.min(100, Math.round(s)));
         },
+        tenis: () => {
+            let s = 100;
+            // Ideal: 18–28°C
+            if (tempAtual < 18) s -= Math.min(40, (18 - tempAtual) * 4);
+            else if (tempAtual > 28) s -= Math.min(40, (tempAtual - 28) * 3);
+            // Vento acima de 20 km/h prejudica o jogo
+            if (ventoAtual > 20) s -= Math.min(40, (ventoAtual - 20) * 2);
+            // Chuva inviabiliza quadra descoberta
+            if (chuvaAtual > 0) s -= 50;
+            return Math.max(0, Math.round(s));
+        },
+        futebol: () => {
+            let s = 100;
+            // Ideal: 12–26°C
+            if (tempAtual < 12) s -= Math.min(40, (12 - tempAtual) * 4);
+            else if (tempAtual > 26) s -= Math.min(40, (tempAtual - 26) * 2);
+            // Vento moderado não é crítico, mas acima de 40 km/h atrapalha
+            if (ventoAtual > 40) s -= Math.min(30, (ventoAtual - 40) * 2);
+            // Chuva torna o campo escorregadio
+            if (chuvaAtual > 0) s -= 35;
+            return Math.max(0, Math.round(s));
+        },
+
         home: () => {
             let s = 100;
             if (chuvaAtual > 0) s -= 30;
@@ -1506,6 +1563,13 @@ function analisarEsporte(sport) {
 
         surf: (item) => item.wind.speed * 3.6 >= 10 && item.wind.speed * 3.6 <= 25
             && item.main.temp >= 20 && item.main.temp <= 28,
+
+        tenis: (item) => item.main.temp >= 18 && item.main.temp <= 28
+            && item.wind.speed * 3.6 <= 20
+            && (item.rain?.["3h"] || 0) === 0,
+
+        futebol: (item) => item.main.temp >= 12 && item.main.temp <= 26
+            && (item.rain?.["3h"] || 0) === 0,
 
         home: (item) => item.main.temp >= 15 && item.main.temp <= 30
             && (item.rain?.["3h"] || 0) === 0
@@ -1631,6 +1695,8 @@ function detectarEsporte(termo) {
         corrida: ['corrida', 'running', 'correr', 'trail', 'maratona', 'jogging'],
         ciclismo: ['ciclismo', 'cycling', 'bike', 'bicicleta', 'pedalar', 'mountain bike'],
         surf: ['surf', 'surfing', 'onda', 'praia', 'surfar', 'prancha'],
+        tenis:    ['tênis', 'tenis', 'tennis', 'raquete', 'quadra'],
+        futebol:  ['futebol', 'football', 'soccer', 'campo', 'gol', 'bola'],
         home: ['home', 'geral', 'visão geral', 'overview']
     };
 
