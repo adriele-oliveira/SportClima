@@ -1401,7 +1401,26 @@ function atualizarResumoDiario() {
             icone: "🏄",
             sport: "surf",
             ok: (i) => i.wind.speed * 3.6 >= 10 && i.main.temp >= 18
-        }] : [])
+        }] : []),
+        {
+        nome: "Tênis",
+        icone: "🎾",
+        sport: "tenis",
+        ok: (i) =>
+            i.main.temp >= 18 &&
+            i.main.temp <= 28 &&
+            i.wind.speed * 3.6 <= 20 &&
+            !(i.rain?.["3h"] > 0)
+        },
+        {
+        nome: "Futebol",
+        icone: "⚽",
+        sport: "futebol",
+        ok: (i) =>
+            i.main.temp >= 12 &&
+            i.main.temp <= 30 &&
+            i.wind.speed * 3.6 <= 40
+        }
     ];
 
     el.innerHTML = esportes.map(e => {
