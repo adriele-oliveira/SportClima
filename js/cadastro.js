@@ -128,6 +128,26 @@ document.addEventListener('DOMContentLoaded', () => {
         const email = emailInput.value.trim();
         const password = passwordInput.value;
         const confirmPassword = confirmInput.value;
+        const birthdate = document.getElementById('birthdate').value;
+
+        const hoje = new Date();
+        const nascimento = new Date(birthdate);
+
+        let idade = hoje.getFullYear() - nascimento.getFullYear();
+
+        const mes = hoje.getMonth() - nascimento.getMonth();
+
+        if (
+            mes < 0 ||
+            (mes === 0 && hoje.getDate() < nascimento.getDate())
+        ) {
+            idade--;
+        }
+
+        if (idade < 12) {
+            showFormMessage('É necessário ter pelo menos 12 anos para criar uma conta.');
+            return;
+        }
 
         if (!name) {
             showFormMessage('Informe seu nome completo.');
@@ -155,7 +175,13 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        users.push({ name, email, password });
+        users.push({
+            name,
+            email,
+            password,
+            birthdate
+        });
+        
         localStorage.setItem('sportclima_users', JSON.stringify(users));
 
         if (submitBtn) {
