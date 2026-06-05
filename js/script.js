@@ -1681,7 +1681,7 @@ function analisarEsporte(sport) {
                         porDia[dia].push(item);
                     });
 
-                    return Object.entries(porDia).slice(0, 3).map(([dia, items]) => {
+                    return Object.entries(porDia).slice(1, 4).map(([dia, items]) => {
                         const maxTemp = Math.max(...items.map(i => i.main.temp_max));
                         const minTemp = Math.min(...items.map(i => i.main.temp_min));
                         const temChuva = items.some(i => (i.rain?.["3h"] || 0) > 0);
