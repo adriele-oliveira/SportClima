@@ -217,6 +217,17 @@ function atualizarVisibilidadeSurf() {
         btnSurf.classList.add('hidden');
     }
 }
+function atualizarVisibilidadeOndas() {
+    const card = document.getElementById("cardOndas");
+
+    if (!card) return;
+
+    if (window._cidadeLitoranea) {
+        card.classList.remove("hidden");
+    } else {
+        card.classList.add("hidden");
+    }
+}
 
 async function loadPage(sport) {
     const data = pages[sport];
@@ -237,7 +248,7 @@ async function loadPage(sport) {
         </div>
 
         <!-- Métricas climáticas — preenchidas pela API após o render -->
-        <div id="weatherMetrics" class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+        <div id="weatherMetrics" class="grid grid-cols-2 md:grid-cols-5 gap-4 mt-6">
             <div class="metric-card">
                 <p class="text-sm text-slate-500 dark:text-slate-400">Temperatura</p>
                 <h4 id="temp" class="text-2xl font-bold mt-1 dark:text-slate-100">${data.metrics.temp}</h4>
@@ -253,6 +264,10 @@ async function loadPage(sport) {
             <div class="metric-card">
                 <p class="text-sm text-slate-500 dark:text-slate-400">Sensação</p>
                 <h4 id="sensacao" class="text-2xl font-bold mt-1 dark:text-slate-100">${data.metrics.temp}</h4>
+            </div>
+            <div id="cardOndas" class="metric-card hidden">
+                <p class="text-sm text-slate-500 dark:text-slate-400">Ondas</p>
+                <h4 id="ondas" class="text-2xl font-bold mt-1 dark:text-slate-100">--</h4>
             </div>
         </div>
 
@@ -1183,6 +1198,34 @@ async function verificarCidadeLitoranea(lat, lon) {
         return false;
     }
 }
+async function obterDadosOndas(lat, lon) {
+    try {
+        const url =
+            `https://marine-api.open-meteo.com/v1/marine` +
+            `?latitude=${lat}` +
+            `&longitude=${lon}` +
+            `&hourly=wave_height` +
+            `&forecast_days=1`;
+
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (data.error || !data.hourly?.wave_height) {
+            return null;
+        }
+
+        const alturaAtual =
+            data.hourly.wave_height.find(v => v !== null);
+
+        return {
+            altura: alturaAtual || 0
+        };
+
+    } catch (e) {
+        console.warn("Erro ao obter ondas:", e);
+        return null;
+    }
+}
 
 async function atualizarClimaNaTela(cidade = "Sorocaba", forceReload = false) {
     // Mostra estado de carregamento nas métricas enquanto aguarda a API
@@ -1250,17 +1293,23 @@ if (!forceReload && cached === cidadeNormalizada && window._dadosClimaAPI) {
     window._cidadeLitoranea = false;
 
     const atual = dados.list[0];
-
-        const elTemp = document.getElementById("temp");
-        const elVento = document.getElementById("vento");
-        const elUmidade = document.getElementById("umidade");
+    const elTemp = document.getElementById("temp");
+    const elVento = document.getElementById("vento");
+    const elUmidade = document.getElementById("umidade");
+    const elSensacao = document.getElementById("sensacao");
+    const elOndas = document.getElementById("ondas");
 
         if (elTemp) elTemp.textContent = Math.round(atual.main.temp) + "°C";
         if (elVento) elVento.textContent = Math.round(atual.wind.speed * 3.6) + " km/h";
         if (elUmidade) elUmidade.textContent = atual.main.humidity + "%";
-
-        const elSensacao = document.getElementById("sensacao");
         if (elSensacao) elSensacao.textContent = Math.round(atual.main.feels_like) + "°C";
+        if (elOndas) {
+        const altura = window._dadosOndas?.altura;
+             elOndas.textContent =
+            altura && altura > 0
+            ? altura.toFixed(1) + " m"
+            : "--";
+        }
 
         // Atualiza o título do hero com o nome da cidade
         // Prefere o nome do geocoding (mais preciso) ao da API de forecast
@@ -1294,14 +1343,21 @@ if (!forceReload && cached === cidadeNormalizada && window._dadosClimaAPI) {
         const tokenAtual = Symbol();
         atualizarClimaNaTela._tokenLitoral = tokenAtual;
         const { lat, lon } = dados.city.coord;
+        const dadosOndas = await obterDadosOndas(lat, lon);
+        window._dadosOndas = dadosOndas;
+        console.log("Dados das ondas:", dadosOndas);
         verificarCidadeLitoranea(lat, lon).then(ehLitoral => {
             if (atualizarClimaNaTela._tokenLitoral !== tokenAtual) return;
-            window._cidadeLitoranea = ehLitoral;
+            
+        window._cidadeLitoranea = ehLitoral;
+
+        atualizarVisibilidadeSurf();
+        atualizarVisibilidadeOndas();
             atualizarVisibilidadeSurf();
             if (sportAtual === 'home') {
                 atualizarResumoDiario();
             }
-        });
+    }   );
 }
 
 
@@ -1473,6 +1529,7 @@ function analisarEsporte(sport) {
     const tempAtual = agora.main.temp;
     const ventoAtual = agora.wind.speed * 3.6;
     const chuvaAtual = agora.rain?.["3h"] || 0;
+    const alturaOnda = window._dadosOndas?.altura || 0; 
 
     // Score de condições (0–100): cada esporte tem pesos diferentes
     // para temperatura, vento e chuva
@@ -1501,17 +1558,34 @@ function analisarEsporte(sport) {
         },
         surf: () => {
             let s = 0;
-            // Vento ideal: 10-25km/h
-            if (ventoAtual >= 10 && ventoAtual <= 25) s += 50;
-            else if (ventoAtual > 25) s += Math.max(0, 50 - (ventoAtual - 25) * 2);
-            // Temperatura ideal: 20-28°C
-            if (tempAtual >= 20 && tempAtual <= 28) s += 40;
-            else if (tempAtual < 20) s += Math.max(0, (tempAtual - 15) * 8);
-            else s += Math.max(0, 40 - (tempAtual - 28) * 5);
-            // Chuva: penaliza
-            if (chuvaAtual > 0) s -= 30;
+
+            // Ondas (peso principal)
+            if (alturaOnda >= 1 && alturaOnda <= 2) {
+                s += 50;
+            } else if (alturaOnda >= 0.5) {
+                s += 30;
+            } else {
+                s += 5;
+            }
+            // Vento
+            if (ventoAtual >= 10 && ventoAtual <= 25) {
+                s += 25;
+            } else if (ventoAtual < 35) {
+                s += 15;
+            }
+            // Temperatura
+            if (tempAtual >= 20 && tempAtual <= 28) {
+                s += 20;
+            } else if (tempAtual >= 16 && tempAtual <= 32) {
+                s += 10;
+            }
+            // Chuva
+            if (chuvaAtual > 0) {
+                s -= 20;
+            }
             return Math.max(0, Math.min(100, Math.round(s)));
         },
+
         tenis: () => {
             let s = 100;
             // Ideal: 18–28°C
@@ -1847,10 +1921,18 @@ function selecionarSugestao(cidade) {
                 const elVento = document.getElementById("vento");
                 const elUmidade = document.getElementById("umidade");
                 const elSensacao = document.getElementById("sensacao");
+                const elOndas = document.getElementById("ondas");
                 if (elTemp) elTemp.textContent = Math.round(atual.main.temp) + "°C";
                 if (elVento) elVento.textContent = Math.round(atual.wind.speed * 3.6) + " km/h";
                 if (elUmidade) elUmidade.textContent = atual.main.humidity + "%";
                 if (elSensacao) elSensacao.textContent = Math.round(atual.main.feels_like) + "°C";
+                if (elOndas) {
+                    const altura = window._dadosOndas?.altura;
+                    elOndas.textContent =
+                        altura && altura > 0
+                            ? altura.toFixed(1) + " m"
+                            : "--";
+                }
 
                 const heroTitle = document.querySelector('.spa-hero-content h1');
                 if (heroTitle) heroTitle.textContent = `Condições em ${window._cidadeAtual}`;
