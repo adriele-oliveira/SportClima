@@ -248,7 +248,7 @@ async function loadPage(sport) {
         </div>
 
         <!-- Métricas climáticas — preenchidas pela API após o render -->
-        <div id="weatherMetrics" class="grid grid-cols-2 md:grid-cols-5 gap-4 mt-6">
+            <div id="weatherMetrics" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mt-6">
             <div class="metric-card">
                 <p class="text-sm text-slate-500 dark:text-slate-400">Temperatura</p>
                 <h4 id="temp" class="text-2xl font-bold mt-1 dark:text-slate-100">${data.metrics.temp}</h4>
@@ -268,6 +268,11 @@ async function loadPage(sport) {
             <div id="cardOndas" class="metric-card hidden">
                 <p class="text-sm text-slate-500 dark:text-slate-400">Ondas</p>
                 <h4 id="ondas" class="text-2xl font-bold mt-1 dark:text-slate-100">--</h4>
+            </div>
+            <div class="metric-card">
+                <p class="text-sm text-slate-500 dark:text-slate-400">Fase da Lua</p>
+                <h4 id="faseLuaEmoji" class="text-2xl font-bold mt-1 dark:text-slate-100">${window._faseLua?.emoji || '🌑'}</h4>
+                <p id="faseLuaNome" class="text-xs text-slate-400 mt-0.5">${window._faseLua?.nome || '—'}</p>
             </div>
         </div>
 
@@ -1169,6 +1174,41 @@ function initLoginPromptOverlay() {
         });
     }
 })();
+
+// ─── 14B. FASE DA LUA ────────────────────────────────────────────────────────
+
+function calcularFaseLua(data = new Date()) {
+    // Algoritmo de Conway simplificado — preciso o suficiente para uso esportivo
+    const ano = data.getFullYear();
+    const mes = data.getMonth() + 1;
+    const dia = data.getDate();
+
+    let r = ano % 100;
+    r %= 19;
+    if (r > 9) r -= 19;
+    r = (r * 11) % 30;
+    r += mes + dia;
+    if (mes < 3) r += 2;
+    r -= (ano < 2000) ? 4 : 8.3;
+    r = Math.floor(r + 0.5) % 30;
+    if (r < 0) r += 30;
+
+    // r = idade aproximada da lua em dias (0 = lua nova, ~15 = lua cheia)
+    const fases = [
+        { nome: "Lua Nova",        emoji: "🌑", icone: "dark_mode",     r_max: 1.5,  surf: 0  },
+        { nome: "Quarto Crescente",emoji: "🌓", icone: "contrast",      r_max: 8.5,  surf: 15 },
+        { nome: "Lua Cheia",       emoji: "🌕", icone: "wb_sunny",      r_max: 16.5, surf: 30 },
+        { nome: "Quarto Minguante",emoji: "🌗", icone: "contrast",      r_max: 23.5, surf: 15 },
+        { nome: "Lua Nova",        emoji: "🌑", icone: "dark_mode",     r_max: 30,   surf: 0  },
+    ];
+
+    const fase = fases.find(f => r <= f.r_max) || fases[fases.length - 1];
+    return { ...fase, dias: r };
+}
+
+// Guarda a fase calculada globalmente para uso no score de surf
+window._faseLua = calcularFaseLua();
+
 
 // ─── 15. API DO CLIMA ─────────────────────────────────────────────────────────
 const inputCidade = document.getElementById("inputCidade");
