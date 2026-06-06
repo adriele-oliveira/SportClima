@@ -1517,9 +1517,8 @@ function atualizarResumoDiario() {
 function analisarEsporte(sport) {
     const dados = window._dadosClimaAPI;
     const el = document.getElementById("analiseEsporte");
-
-        // Retry automático: se a API ainda não respondeu, tenta até 5 vezes com 1s de intervalo    if (!dados || !el) {
-        if (!dados || !el) {       
+ // Retry automático: se a API ainda não respondeu, tenta até 5 vezes com 1s de intervalo
+    if (!dados || !el) {
         analisarEsporte._tentativas = (analisarEsporte._tentativas || 0) + 1;
         if (analisarEsporte._tentativas < 5) {
             setTimeout(() => analisarEsporte(sport), 1000);
@@ -1529,6 +1528,7 @@ function analisarEsporte(sport) {
         }
         return;
     }
+    // Zera sempre que os dados chegaram, independente do esporte anterior
     analisarEsporte._tentativas = 0;
 
     const fatias = dados.list.slice(0, 16); // próximas 48h em blocos de 3h
