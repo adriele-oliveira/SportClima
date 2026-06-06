@@ -1871,11 +1871,297 @@ function analisarEsporte(sport) {
         }
     }
 
+// ── Bloco de insights específicos por esporte ──────────────────────────
+    // Cada esporte gera um painel extra com métricas relevantes para aquela modalidade.
+    // Os valores são calculados a partir dos dados reais da API já disponíveis em `agora`.
+
+    const umidadeAtual = agora.main.humidity;
+    const pressaoAtual = agora.main.pressure;
+    const tempMax = Math.round(Math.max(...dados.list.slice(0, 8).map(i => i.main.temp_max)));
+    const tempMin = Math.round(Math.min(...dados.list.slice(0, 8).map(i => i.main.temp_min)));
+    const ventoMax = Math.round(Math.max(...dados.list.slice(0, 8).map(i => i.wind.speed * 3.6)));
+
+    function barraMetrica(valor, min, ideal1, ideal2, max, unidade) {
+        // Retorna uma mini barra colorida indicando se o valor está abaixo, dentro ou acima do ideal
+        const pct = Math.min(100, Math.max(0, ((valor - min) / (max - min)) * 100));
+        const noIdeal = valor >= ideal1 && valor <= ideal2;
+        const cor = noIdeal ? 'bg-green-400' : valor < ideal1 ? 'bg-blue-400' : 'bg-orange-400';
+        const label = noIdeal ? 'Ideal' : valor < ideal1 ? 'Abaixo do ideal' : 'Acima do ideal';
+        return `
+            <div class="flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 mb-0.5">
+                <span>${valor}${unidade}</span><span class="${noIdeal ? 'text-green-500' : 'text-orange-400'} font-bold">${label}</span>
+            </div>
+            <div class="w-full bg-slate-200 dark:bg-surface-2 rounded-full h-1.5 mb-2">
+                <div class="${cor} h-1.5 rounded-full" style="width:${pct}%"></div>
+            </div>`;
+    }
+
+    const insightsPorEsporte = {
+        corrida: `
+            <div class="p-3 rounded-xl bg-slate-50 dark:bg-surface-3 border border-slate-100 dark:border-surface-3 mt-1">
+                <p class="text-xs font-bold text-slate-600 dark:text-slate-300 mb-3 flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[14px] text-primary">monitor_heart</span>
+                    Impacto nas condições de corrida
+                </p>
+
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Temperatura</p>
+                ${barraMetrica(Math.round(tempAtual), 0, 10, 22, 40, '°C')}
+
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Vento</p>
+                ${barraMetrica(Math.round(ventoAtual), 0, 0, 15, 60, ' km/h')}
+
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Umidade</p>
+                ${barraMetrica(umidadeAtual, 0, 40, 65, 100, '%')}
+
+                <div class="mt-2 pt-2 border-t border-slate-200 dark:border-surface-2 space-y-1.5">
+                    <div class="flex items-start gap-2 text-[11px] text-slate-500 dark:text-slate-400">
+                        <span class="material-symbols-outlined text-[13px] text-primary mt-0.5">thermostat</span>
+                        <span>Amplitude de <strong class="text-slate-700 dark:text-slate-200">${tempMin}°C – ${tempMax}°C</strong> nas próximas 24h
+                            ${tempMax > 28 ? '— pico de calor no período, prefira manhã cedo.' : '— amplitude confortável para longas distâncias.'}</span>
+                    </div>
+                    <div class="flex items-start gap-2 text-[11px] text-slate-500 dark:text-slate-400">
+                        <span class="material-symbols-outlined text-[13px] text-primary mt-0.5">air</span>
+                        <span>${ventoMax > 25
+                            ? `Rajadas de até <strong class="text-slate-700 dark:text-slate-200">${ventoMax} km/h</strong> — em trechos a favor aumenta o pace, contra aumenta o esforço cardíaco.`
+                            : `Vento máximo de <strong class="text-slate-700 dark:text-slate-200">${ventoMax} km/h</strong> — sem impacto significativo no desempenho.`}
+                        </span>
+                    </div>
+                    <div class="flex items-start gap-2 text-[11px] text-slate-500 dark:text-slate-400">
+                        <span class="material-symbols-outlined text-[13px] text-primary mt-0.5">water_drop</span>
+                        <span>${umidadeAtual > 70
+                            ? `Umidade de <strong class="text-slate-700 dark:text-slate-200">${umidadeAtual}%</strong> — sudorese reduzida dificulta o resfriamento corporal. Reduza o ritmo.`
+                            : umidadeAtual < 35
+                            ? `Umidade de <strong class="text-slate-700 dark:text-slate-200">${umidadeAtual}%</strong> — ar muito seco acelera a desidratação. Aumente a ingestão de água.`
+                            : `Umidade de <strong class="text-slate-700 dark:text-slate-200">${umidadeAtual}%</strong> — faixa confortável, sem impacto na termorregulação.`}
+                        </span>
+                    </div>
+                </div>
+            </div>`,
+
+        ciclismo: `
+            <div class="p-3 rounded-xl bg-slate-50 dark:bg-surface-3 border border-slate-100 dark:border-surface-3 mt-1">
+                <p class="text-xs font-bold text-slate-600 dark:text-slate-300 mb-3 flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[14px] text-primary">speed</span>
+                    Impacto nas condições de ciclismo
+                </p>
+
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Temperatura</p>
+                ${barraMetrica(Math.round(tempAtual), 0, 15, 26, 42, '°C')}
+
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Vento</p>
+                ${barraMetrica(Math.round(ventoAtual), 0, 0, 20, 70, ' km/h')}
+
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Pressão atmosférica</p>
+                ${barraMetrica(pressaoAtual, 980, 1005, 1025, 1040, ' hPa')}
+
+                <div class="mt-2 pt-2 border-t border-slate-200 dark:border-surface-2 space-y-1.5">
+                    <div class="flex items-start gap-2 text-[11px] text-slate-500 dark:text-slate-400">
+                        <span class="material-symbols-outlined text-[13px] text-primary mt-0.5">air</span>
+                        <span>${ventoAtual > 30
+                            ? `Vento de <strong class="text-slate-700 dark:text-slate-200">${Math.round(ventoAtual)} km/h</strong> — vento lateral acima de 40 km/h é crítico em descidas. Reduza a velocidade em curvas.`
+                            : ventoAtual > 15
+                            ? `Vento de <strong class="text-slate-700 dark:text-slate-200">${Math.round(ventoAtual)} km/h</strong> — resistência aerodinâmica perceptível. Espere gastar ~10% mais energia que o usual.`
+                            : `Vento de <strong class="text-slate-700 dark:text-slate-200">${Math.round(ventoAtual)} km/h</strong> — condições favoráveis, sem perda aerodinâmica relevante.`}
+                        </span>
+                    </div>
+                    <div class="flex items-start gap-2 text-[11px] text-slate-500 dark:text-slate-400">
+                        <span class="material-symbols-outlined text-[13px] text-primary mt-0.5">thermostat</span>
+                        <span>Amplitude de <strong class="text-slate-700 dark:text-slate-200">${tempMin}°C – ${tempMax}°C</strong> hoje
+                            — ${tempMax - tempMin > 10 ? 'grande variação, leve uma camada extra para descidas longas.' : 'variação pequena, conforto térmico estável durante o pedal.'}</span>
+                    </div>
+                    <div class="flex items-start gap-2 text-[11px] text-slate-500 dark:text-slate-400">
+                        <span class="material-symbols-outlined text-[13px] text-primary mt-0.5">compress</span>
+                        <span>${pressaoAtual < 1005
+                            ? `Pressão baixa (<strong class="text-slate-700 dark:text-slate-200">${pressaoAtual} hPa</strong>) — sinal de frente fria ou chuva se aproximando. Fique atento às próximas horas.`
+                            : `Pressão estável (<strong class="text-slate-700 dark:text-slate-200">${pressaoAtual} hPa</strong>) — tempo tende a se manter sem grandes mudanças.`}
+                        </span>
+                    </div>
+                </div>
+            </div>`,
+
+        tenis: `
+            <div class="p-3 rounded-xl bg-slate-50 dark:bg-surface-3 border border-slate-100 dark:border-surface-3 mt-1">
+                <p class="text-xs font-bold text-slate-600 dark:text-slate-300 mb-3 flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[14px] text-primary">sports_tennis</span>
+                    Impacto nas condições de tênis
+                </p>
+
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Temperatura</p>
+                ${barraMetrica(Math.round(tempAtual), 0, 18, 28, 42, '°C')}
+
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Vento</p>
+                ${barraMetrica(Math.round(ventoAtual), 0, 0, 15, 50, ' km/h')}
+
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Umidade</p>
+                ${barraMetrica(umidadeAtual, 0, 35, 65, 100, '%')}
+
+                <div class="mt-2 pt-2 border-t border-slate-200 dark:border-surface-2 space-y-1.5">
+                    <div class="flex items-start gap-2 text-[11px] text-slate-500 dark:text-slate-400">
+                        <span class="material-symbols-outlined text-[13px] text-primary mt-0.5">air</span>
+                        <span>${ventoAtual > 20
+                            ? `Vento de <strong class="text-slate-700 dark:text-slate-200">${Math.round(ventoAtual)} km/h</strong> — saques e lobos ficam imprevisíveis. A bola pode desviar até ${Math.round(ventoAtual * 0.3)}cm da trajetória em voos longos.`
+                            : ventoAtual > 10
+                            ? `Vento de <strong class="text-slate-700 dark:text-slate-200">${Math.round(ventoAtual)} km/h</strong> — impacto moderado. Ajuste a força no saque e antecipe a posição na devolução.`
+                            : `Vento de <strong class="text-slate-700 dark:text-slate-200">${Math.round(ventoAtual)} km/h</strong> — condições ideais, bola com trajetória previsível.`}
+                        </span>
+                    </div>
+                    <div class="flex items-start gap-2 text-[11px] text-slate-500 dark:text-slate-400">
+                        <span class="material-symbols-outlined text-[13px] text-primary mt-0.5">water_drop</span>
+                        <span>${umidadeAtual > 70
+                            ? `Umidade alta (${umidadeAtual}%) — a bola fica mais pesada e quica diferente em quadras de saibro. Espere rallies mais longos.`
+                            : umidadeAtual < 35
+                            ? `Ar seco (${umidadeAtual}%) — a bola viaja mais rápido e pode ressaltar mais alto. Adapte o posicionamento.`
+                            : `Umidade de ${umidadeAtual}% — comportamento da bola estável e previsível.`}
+                        </span>
+                    </div>
+                    <div class="flex items-start gap-2 text-[11px] text-slate-500 dark:text-slate-400">
+                        <span class="material-symbols-outlined text-[13px] text-primary mt-0.5">thermostat</span>
+                        <span>${tempAtual > 30
+                            ? `Calor de <strong class="text-slate-700 dark:text-slate-200">${Math.round(tempAtual)}°C</strong> — faça pausas a cada 2 games, priorize sombra nas trocas de lado.`
+                            : `Temperatura de <strong class="text-slate-700 dark:text-slate-200">${Math.round(tempAtual)}°C</strong> — confortável para sets longos sem sobrecarga térmica.`}
+                        </span>
+                    </div>
+                </div>
+            </div>`,
+
+        futebol: `
+            <div class="p-3 rounded-xl bg-slate-50 dark:bg-surface-3 border border-slate-100 dark:border-surface-3 mt-1">
+                <p class="text-xs font-bold text-slate-600 dark:text-slate-300 mb-3 flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[14px] text-primary">sports_soccer</span>
+                    Impacto nas condições de futebol
+                </p>
+
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Temperatura</p>
+                ${barraMetrica(Math.round(tempAtual), 0, 12, 26, 42, '°C')}
+
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Vento</p>
+                ${barraMetrica(Math.round(ventoAtual), 0, 0, 30, 70, ' km/h')}
+
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Umidade</p>
+                ${barraMetrica(umidadeAtual, 0, 40, 70, 100, '%')}
+
+                <div class="mt-2 pt-2 border-t border-slate-200 dark:border-surface-2 space-y-1.5">
+                    <div class="flex items-start gap-2 text-[11px] text-slate-500 dark:text-slate-400">
+                        <span class="material-symbols-outlined text-[13px] text-primary mt-0.5">air</span>
+                        <span>${ventoAtual > 40
+                            ? `Vento de <strong class="text-slate-700 dark:text-slate-200">${Math.round(ventoAtual)} km/h</strong> — cruzamentos e cobranças de falta ficam muito imprecisos. Evite bolas aéreas longas.`
+                            : ventoAtual > 20
+                            ? `Vento de <strong class="text-slate-700 dark:text-slate-200">${Math.round(ventoAtual)} km/h</strong> — afeta chutes de longa distância e escanteios. Prefira jogo rasteiro.`
+                            : `Vento de <strong class="text-slate-700 dark:text-slate-200">${Math.round(ventoAtual)} km/h</strong> — sem influência relevante no jogo aéreo.`}
+                        </span>
+                    </div>
+                    <div class="flex items-start gap-2 text-[11px] text-slate-500 dark:text-slate-400">
+                        <span class="material-symbols-outlined text-[13px] text-primary mt-0.5">thermostat</span>
+                        <span>${tempAtual > 30
+                            ? `Calor de <strong class="text-slate-700 dark:text-slate-200">${Math.round(tempAtual)}°C</strong> — rendimento cai ~5% a cada grau acima de 28°C. Hidratação obrigatória no intervalo.`
+                            : tempAtual < 10
+                            ? `Frio de <strong class="text-slate-700 dark:text-slate-200">${Math.round(tempAtual)}°C</strong> — aqueça bem antes. Músculos frios aumentam risco de distensões.`
+                            : `Temperatura de <strong class="text-slate-700 dark:text-slate-200">${Math.round(tempAtual)}°C</strong> — faixa favorável para 90 minutos de alta intensidade.`}
+                        </span>
+                    </div>
+                    <div class="flex items-start gap-2 text-[11px] text-slate-500 dark:text-slate-400">
+                        <span class="material-symbols-outlined text-[13px] text-primary mt-0.5">water_drop</span>
+                        <span>${chuvaAtual > 0
+                            ? `Chuva de <strong class="text-slate-700 dark:text-slate-200">${chuvaAtual}mm</strong> — campo molhado altera a velocidade da bola e aumenta risco de torções. Priorize chuteiras com travas menores.`
+                            : `Sem precipitação — gramado em condições normais, sem impacto no rolamento da bola.`}
+                        </span>
+                    </div>
+                </div>
+            </div>`,
+
+        basquete: `
+            <div class="p-3 rounded-xl bg-slate-50 dark:bg-surface-3 border border-slate-100 dark:border-surface-3 mt-1">
+                <p class="text-xs font-bold text-slate-600 dark:text-slate-300 mb-3 flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[14px] text-primary">sports_basketball</span>
+                    Impacto nas condições de basquete
+                </p>
+
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Temperatura</p>
+                ${barraMetrica(Math.round(tempAtual), 0, 18, 24, 42, '°C')}
+
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Vento</p>
+                ${barraMetrica(Math.round(ventoAtual), 0, 0, 10, 50, ' km/h')}
+
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Umidade</p>
+                ${barraMetrica(umidadeAtual, 0, 40, 60, 100, '%')}
+
+                <div class="mt-2 pt-2 border-t border-slate-200 dark:border-surface-2 space-y-1.5">
+                    <div class="flex items-start gap-2 text-[11px] text-slate-500 dark:text-slate-400">
+                        <span class="material-symbols-outlined text-[13px] text-primary mt-0.5">air</span>
+                        <span>${ventoAtual > 15
+                            ? `Vento de <strong class="text-slate-700 dark:text-slate-200">${Math.round(ventoAtual)} km/h</strong> — arremessos de média e longa distância perdem precisão. A bola pode desviar em lançamentos acima de 3m de altura.`
+                            : ventoAtual > 8
+                            ? `Vento de <strong class="text-slate-700 dark:text-slate-200">${Math.round(ventoAtual)} km/h</strong> — impacto pequeno, mas fique atento em arremessos de três pontos contra o vento.`
+                            : `Vento de <strong class="text-slate-700 dark:text-slate-200">${Math.round(ventoAtual)} km/h</strong> — sem influência nos arremessos.`}
+                        </span>
+                    </div>
+                    <div class="flex items-start gap-2 text-[11px] text-slate-500 dark:text-slate-400">
+                        <span class="material-symbols-outlined text-[13px] text-primary mt-0.5">water_drop</span>
+                        <span>${umidadeAtual > 65
+                            ? `Umidade de <strong class="text-slate-700 dark:text-slate-200">${umidadeAtual}%</strong> — quadra pode ficar úmida e escorregadia. Verifique o piso antes de começar.`
+                            : umidadeAtual < 35
+                            ? `Umidade de <strong class="text-slate-700 dark:text-slate-200">${umidadeAtual}%</strong> — ar muito seco resseca as mãos, afetando o grip na bola. Use resina se disponível.`
+                            : `Umidade de <strong class="text-slate-700 dark:text-slate-200">${umidadeAtual}%</strong> — faixa ideal para grip e tração na quadra.`}
+                        </span>
+                    </div>
+                    <div class="flex items-start gap-2 text-[11px] text-slate-500 dark:text-slate-400">
+                        <span class="material-symbols-outlined text-[13px] text-primary mt-0.5">wb_sunny</span>
+                        <span>${tempAtual > 28
+                            ? `Calor de <strong class="text-slate-700 dark:text-slate-200">${Math.round(tempAtual)}°C</strong> — sol direto na quadra dificulta a visão da cesta. Prefira horários com sol baixo ou quadras sombreadas.`
+                            : `Temperatura de <strong class="text-slate-700 dark:text-slate-200">${Math.round(tempAtual)}°C</strong> — confortável para games longos sem risco de insolação.`}
+                        </span>
+                    </div>
+                </div>
+            </div>`,
+
+        volei: `
+            <div class="p-3 rounded-xl bg-slate-50 dark:bg-surface-3 border border-slate-100 dark:border-surface-3 mt-1">
+                <p class="text-xs font-bold text-slate-600 dark:text-slate-300 mb-3 flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[14px] text-primary">sports_volleyball</span>
+                    Impacto nas condições de vôlei
+                </p>
+
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Temperatura</p>
+                ${barraMetrica(Math.round(tempAtual), 0, 20, 28, 42, '°C')}
+
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Vento — fator crítico</p>
+                ${barraMetrica(Math.round(ventoAtual), 0, 0, 8, 40, ' km/h')}
+
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Umidade</p>
+                ${barraMetrica(umidadeAtual, 0, 40, 70, 100, '%')}
+
+                <div class="mt-2 pt-2 border-t border-slate-200 dark:border-surface-2 space-y-1.5">
+                    <div class="flex items-start gap-2 text-[11px] text-slate-500 dark:text-slate-400">
+                        <span class="material-symbols-outlined text-[13px] text-primary mt-0.5">air</span>
+                        <span>${ventoAtual > 15
+                            ? `Vento de <strong class="text-slate-700 dark:text-slate-200">${Math.round(ventoAtual)} km/h</strong> — levantamentos e saques ficam altamente imprevisíveis. Reduzir a força no saque ajuda a manter a bola na quadra.`
+                            : ventoAtual > 8
+                            ? `Vento de <strong class="text-slate-700 dark:text-slate-200">${Math.round(ventoAtual)} km/h</strong> — o saque e o levantamento exigem compensação. Bolas mais curtas e controladam são mais seguras.`
+                            : `Vento de <strong class="text-slate-700 dark:text-slate-200">${Math.round(ventoAtual)} km/h</strong> — condição ideal, trajetória da bola totalmente previsível.`}
+                        </span>
+                    </div>
+                    <div class="flex items-start gap-2 text-[11px] text-slate-500 dark:text-slate-400">
+                        <span class="material-symbols-outlined text-[13px] text-primary mt-0.5">thermostat</span>
+                        <span>Amplitude de <strong class="text-slate-700 dark:text-slate-200">${tempMin}°C – ${tempMax}°C</strong> hoje
+                            — ${tempMax > 30 ? 'pico de calor no período, priorize sets no início da manhã ou após as 17h.' : 'temperatura agradável ao longo do dia, sem restrição de horário.'}</span>
+                    </div>
+                    <div class="flex items-start gap-2 text-[11px] text-slate-500 dark:text-slate-400">
+                        <span class="material-symbols-outlined text-[13px] text-primary mt-0.5">water_drop</span>
+                        <span>${chuvaAtual > 0
+                            ? `Chuva de <strong class="text-slate-700 dark:text-slate-200">${chuvaAtual}mm</strong> — mesmo garoa compromete o controle da bola e escorregamento na quadra. Aguarde a quadra secar completamente.`
+                            : `Sem chuva — quadra seca garante tração ideal para deslocamentos laterais rápidos.`}
+                        </span>
+                    </div>
+                </div>
+            </div>`,
+    };
+
+    const insightHtml = insightsPorEsporte[sport] || '';
+
     el.innerHTML = `
         <div class="flex flex-col gap-3">
 
             ${sport === 'surf' && window._faseLua ? `
-            <!-- Fase da lua — fator relevante para marés e surf -->
             <div class="p-3 rounded-xl bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 flex items-center gap-3">
                 <span class="text-3xl">${window._faseLua.emoji}</span>
                 <div>
@@ -1892,7 +2178,6 @@ function analisarEsporte(sport) {
             </div>
             ` : ''}
 
-            <!-- Score de condições com barra de progresso colorida -->
             <div class="p-3 rounded-xl bg-slate-50 dark:bg-surface-3 border border-slate-100 dark:border-surface-3">
                 <div class="flex items-center justify-between mb-2">
                     <p class="text-xs font-bold text-slate-600 dark:text-slate-300">Condições agora</p>
@@ -1904,7 +2189,6 @@ function analisarEsporte(sport) {
                 </div>
             </div>
 
-            <!-- Melhor janela de horário para o esporte -->
             <div class="p-3 rounded-xl bg-green-50 dark:bg-green-900/20 border border-green-100 dark:border-green-800">
                 <p class="font-bold text-green-700 dark:text-green-400 flex items-center gap-1">
                     <span class="material-symbols-outlined text-[14px]">check_circle</span>
@@ -1918,7 +2202,6 @@ function analisarEsporte(sport) {
                 </p>
             </div>
 
-            <!-- Janela de horário a evitar -->
             <div class="p-3 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800">
                 <p class="font-bold text-red-600 dark:text-red-400 flex items-center gap-1">
                     <span class="material-symbols-outlined text-[14px]">cancel</span>
@@ -1931,39 +2214,40 @@ function analisarEsporte(sport) {
                     ${gerarMotivo(pior, sport, false)}
                 </p>
             </div>
+
+            ${insightHtml}
+
         </div>
 
-           <!-- Previsão resumida dos próximos 3 dias -->
-            <div class="mt-1">
-                <p class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Próximos dias</p>
-                ${(() => {
-                    // Agrupa previsões por dia
-                    const porDia = {};
-                    dados.list.forEach(item => {
-                        const dia = item.dt_txt.slice(0, 10);
-                        if (!porDia[dia]) porDia[dia] = [];
-                        porDia[dia].push(item);
-                    });
+        <div class="mt-1">
+            <p class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Próximos dias</p>
+            ${(() => {
+                const porDia = {};
+                dados.list.forEach(item => {
+                    const dia = item.dt_txt.slice(0, 10);
+                    if (!porDia[dia]) porDia[dia] = [];
+                    porDia[dia].push(item);
+                });
 
-                    return Object.entries(porDia).slice(1, 4).map(([dia, items]) => {
-                        const maxTemp = Math.max(...items.map(i => i.main.temp_max));
-                        const minTemp = Math.min(...items.map(i => i.main.temp_min));
-                        const temChuva = items.some(i => (i.rain?.["3h"] || 0) > 0);
-                        const temVentoForte = items.some(i => i.wind.speed * 3.6 > 30);
-                        const descDia = new Date(dia + 'T12:00:00').toLocaleDateString('pt-BR', { weekday: 'short', day: 'numeric' });
-                        const icone = temChuva ? '🌧' : temVentoForte ? '💨' : '☀️';
+                return Object.entries(porDia).slice(1, 4).map(([dia, items]) => {
+                    const maxTemp = Math.max(...items.map(i => i.main.temp_max));
+                    const minTemp = Math.min(...items.map(i => i.main.temp_min));
+                    const temChuva = items.some(i => (i.rain?.["3h"] || 0) > 0);
+                    const temVentoForte = items.some(i => i.wind.speed * 3.6 > 30);
+                    const descDia = new Date(dia + 'T12:00:00').toLocaleDateString('pt-BR', { weekday: 'short', day: 'numeric' });
+                    const icone = temChuva ? '🌧' : temVentoForte ? '💨' : '☀️';
 
-                        return `
-                            <div class="flex items-center justify-between py-1.5 border-b border-slate-100 dark:border-surface-3 last:border-0">
-                                <span class="text-xs text-slate-500 dark:text-slate-400 capitalize w-20">${descDia}</span>
-                                <span class="text-base">${icone}</span>
-                                <span class="text-xs font-bold text-slate-700 dark:text-slate-200">
-                                    ${Math.round(maxTemp)}° / <span class="font-normal text-slate-400">${Math.round(minTemp)}°</span>
-                                </span>
-                            </div>`;
-                    }).join('');
-                })()}
-            </div>
+                    return `
+                        <div class="flex items-center justify-between py-1.5 border-b border-slate-100 dark:border-surface-3 last:border-0">
+                            <span class="text-xs text-slate-500 dark:text-slate-400 capitalize w-20">${descDia}</span>
+                            <span class="text-base">${icone}</span>
+                            <span class="text-xs font-bold text-slate-700 dark:text-slate-200">
+                                ${Math.round(maxTemp)}° / <span class="font-normal text-slate-400">${Math.round(minTemp)}°</span>
+                            </span>
+                        </div>`;
+                }).join('');
+            })()}
+        </div>
         </div>
     `;
 }
