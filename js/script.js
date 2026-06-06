@@ -1783,8 +1783,19 @@ function analisarEsporte(sport) {
 
     const score = (calcScore[sport] || calcScore.home)();
     const scoreCor = score >= 75 ? "text-green-500" : score >= 50 ? "text-yellow-500" : score >= 25 ? "text-orange-500" : "text-red-500";
-    const scoreLabel = score >= 75 ? "Excelente" : score >= 50 ? "Bom" : score >= 25 ? "Regular" : "Ruim";
-    const scoreBg = score >= 75 ? "bg-green-500" : score >= 50 ? "bg-yellow-400" : score >= 25 ? "bg-orange-400" : "bg-red-500";
+    const scoreBg  = score >= 75 ? "bg-green-500"   : score >= 50 ? "bg-yellow-400"   : score >= 25 ? "bg-orange-400"   : "bg-red-500";
+
+    const scoreLabels = {
+        corrida:  score >= 75 ? "Ótimo para correr"      : score >= 50 ? "Dá para correr"         : score >= 25 ? "Corra com cautela"      : "Evite correr hoje",
+        ciclismo: score >= 75 ? "Dia ideal para pedalar"  : score >= 50 ? "Ciclismo possível"       : score >= 25 ? "Pedal com atenção"      : "Não recomendado",
+        surf:     score >= 75 ? "Ondas excelentes"        : score >= 50 ? "Surf razoável"           : score >= 25 ? "Surf difícil"           : "Fora d'água hoje",
+        tenis:    score >= 75 ? "Quadra perfeita"         : score >= 50 ? "Jogo possível"           : score >= 25 ? "Condições irregulares"  : "Não jogue hoje",
+        futebol:  score >= 75 ? "Campo em ótimas condições" : score >= 50 ? "Jogo tranquilo"        : score >= 25 ? "Campo comprometido"     : "Partida arriscada",
+        basquete: score >= 75 ? "Quadra ideal"            : score >= 50 ? "Jogo possível"           : score >= 25 ? "Condições medianas"     : "Evite a quadra hoje",
+        volei:    score >= 75 ? "Condições perfeitas"     : score >= 50 ? "Vôlei jogável"           : score >= 25 ? "Vento ou calor alto"    : "Não recomendado",
+        home:     score >= 75 ? "Excelente"               : score >= 50 ? "Bom"                     : score >= 25 ? "Regular"                : "Ruim",
+    };
+    const scoreLabel = scoreLabels[sport] || scoreLabels.home;
 
     // Atualizar a seção Condições Agora no conteúdo principal (se existir)
     const scoreValueEl = document.getElementById("scoreValue");
