@@ -26,6 +26,31 @@
 
 // ─── 2. SPA — Referências DOM e dados das páginas ────────────────────────────────
 
+// Fase da lua calculada antes de qualquer render para evitar undefined no template
+window._faseLua = (function() {
+    const data = new Date();
+    const ano = data.getFullYear();
+    const mes = data.getMonth() + 1;
+    const dia = data.getDate();
+    let r = ano % 100;
+    r %= 19;
+    if (r > 9) r -= 19;
+    r = (r * 11) % 30;
+    r += mes + dia;
+    if (mes < 3) r += 2;
+    r -= (ano < 2000) ? 4 : 8.3;
+    r = Math.floor(r + 0.5) % 30;
+    if (r < 0) r += 30;
+    const fases = [
+        { nome: "Lua Nova",         emoji: "🌑", icone: "dark_mode",  r_max: 1.5,  surf: 0  },
+        { nome: "Quarto Crescente", emoji: "🌓", icone: "contrast",   r_max: 8.5,  surf: 15 },
+        { nome: "Lua Cheia",        emoji: "🌕", icone: "wb_sunny",   r_max: 16.5, surf: 30 },
+        { nome: "Quarto Minguante", emoji: "🌗", icone: "contrast",   r_max: 23.5, surf: 15 },
+        { nome: "Lua Nova",         emoji: "🌑", icone: "dark_mode",  r_max: 30,   surf: 0  },
+    ];
+    return { ...(fases.find(f => r <= f.r_max) || fases[fases.length - 1]), dias: r };
+})();
+
 // Referências persistentes ao container principal e à sidebar direita
 const spaContent = document.getElementById("spaContent");
 const spaSidebarRight = document.getElementById("spaSidebarRight");
@@ -1206,8 +1231,6 @@ function calcularFaseLua(data = new Date()) {
     return { ...fase, dias: r };
 }
 
-// Guarda a fase calculada globalmente para uso no score de surf
-window._faseLua = calcularFaseLua();
 
 
 // ─── 15. API DO CLIMA ─────────────────────────────────────────────────────────
