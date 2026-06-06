@@ -2167,6 +2167,59 @@ function analisarEsporte(sport) {
             </div>`,
     };
 
+    insightsPorEsporte.surf = `
+        <div class="p-3 rounded-xl bg-slate-50 dark:bg-surface-3 border border-slate-100 dark:border-surface-3 mt-1">
+            <p class="text-xs font-bold text-slate-600 dark:text-slate-300 mb-3 flex items-center gap-1">
+                <span class="material-symbols-outlined text-[14px] text-primary">surfing</span>
+                Impacto nas condições de surf
+            </p>
+
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Temperatura</p>
+            ${barraMetrica(Math.round(tempAtual), 0, 18, 28, 42, '°C')}
+
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Vento — offshore ideal</p>
+            ${barraMetrica(Math.round(ventoAtual), 0, 8, 25, 60, ' km/h')}
+
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Altura das ondas</p>
+            ${barraMetrica(parseFloat((window._dadosOndas?.altura || 0).toFixed(1)), 0, 0.5, 2.5, 6, ' m')}
+
+            <div class="mt-2 pt-2 border-t border-slate-200 dark:border-surface-2 space-y-1.5">
+                <div class="flex items-start gap-2 text-[11px] text-slate-500 dark:text-slate-400">
+                    <span class="material-symbols-outlined text-[13px] text-primary mt-0.5">air</span>
+                    <span>${ventoAtual > 35
+                        ? `Vento de <strong class="text-slate-700 dark:text-slate-200">${Math.round(ventoAtual)} km/h</strong> — onshore forte destrói a formação das ondas. Condições impróprias para surf.`
+                        : ventoAtual >= 8 && ventoAtual <= 25
+                        ? `Vento de <strong class="text-slate-700 dark:text-slate-200">${Math.round(ventoAtual)} km/h</strong> — faixa offshore favorável, ondas com boa parede e tubo definido.`
+                        : `Vento de <strong class="text-slate-700 dark:text-slate-200">${Math.round(ventoAtual)} km/h</strong> — fraco demais para definir bem as ondas, mas sem atrapalhar as remadas.`}
+                    </span>
+                </div>
+                <div class="flex items-start gap-2 text-[11px] text-slate-500 dark:text-slate-400">
+                    <span class="material-symbols-outlined text-[13px] text-primary mt-0.5">water</span>
+                    <span>${(() => {
+                        const h = window._dadosOndas?.altura || 0;
+                        if (h >= 1 && h <= 2) return `Ondas de <strong class="text-slate-700 dark:text-slate-200">${h.toFixed(1)}m</strong> — altura ideal para manobras e progressão de nível.`;
+                        if (h > 2 && h <= 4) return `Ondas de <strong class="text-slate-700 dark:text-slate-200">${h.toFixed(1)}m</strong> — swell grande, recomendado para surfistas experientes.`;
+                        if (h > 4) return `Ondas de <strong class="text-slate-700 dark:text-slate-200">${h.toFixed(1)}m</strong> — swell extremo, apenas experts e big wave surfers.`;
+                        if (h >= 0.3) return `Ondas de <strong class="text-slate-700 dark:text-slate-200">${h.toFixed(1)}m</strong> — swell pequeno, bom para iniciantes e longboards.`;
+                        return `Ondas praticamente inexistentes — mar plano, sem condições de surf.`;
+                    })()}
+                    </span>
+                </div>
+                <div class="flex items-start gap-2 text-[11px] text-slate-500 dark:text-slate-400">
+                    <span class="material-symbols-outlined text-[13px] text-primary mt-0.5">dark_mode</span>
+                    <span>${window._faseLua
+                        ? `${window._faseLua.emoji} <strong class="text-slate-700 dark:text-slate-200">${window._faseLua.nome}</strong> — ${
+                            window._faseLua.surf >= 25
+                                ? 'marés de sizígia intensificam o swell. Melhor janela de maré para tubos.'
+                                : window._faseLua.surf >= 10
+                                ? 'marés moderadas, ondas com energia intermediária.'
+                                : 'marés de quadratura enfraquecem o swell. Ondas menores que o habitual.'}`
+                        : 'Dados de fase lunar indisponíveis.'}
+                    </span>
+                </div>
+            </div>
+        </div>`;
+
     const insightHtml = insightsPorEsporte[sport] || '';
 
     el.innerHTML = `
