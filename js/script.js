@@ -1338,26 +1338,35 @@ if (!forceReload && cached === cidadeNormalizada && window._dadosClimaAPI) {
             atualizarResumoDiario();
         }
 
-        // Verifica litoral em paralelo — não bloqueia o render
-        // Usa um token para ignorar resultados de chamadas antigas (race condition)
         const tokenAtual = Symbol();
         atualizarClimaNaTela._tokenLitoral = tokenAtual;
         const { lat, lon } = dados.city.coord;
-        const dadosOndas = await obterDadosOndas(lat, lon);
+
+        // Roda ondas e litoral em paralelo, aguarda os dois
+        const [dadosOndas, ehLitoral] = await Promise.all([
+            obterDadosOndas(lat, lon),
+            verificarCidadeLitoranea(lat, lon)
+        ]);
+
+        if (atualizarClimaNaTela._tokenLitoral !== tokenAtual) return;
+
         window._dadosOndas = dadosOndas;
-        console.log("Dados das ondas:", dadosOndas);
-        verificarCidadeLitoranea(lat, lon).then(ehLitoral => {
-            if (atualizarClimaNaTela._tokenLitoral !== tokenAtual) return;
-            
         window._cidadeLitoranea = ehLitoral;
+
+        // Atualiza o elemento de ondas agora que os dados chegaram
+        const elOndasAtualizado = document.getElementById("ondas");
+        if (elOndasAtualizado) {
+            const altura = dadosOndas?.altura;
+            elOndasAtualizado.textContent = (altura && altura > 0)
+                ? altura.toFixed(1) + " m"
+                : "--";
+        }
 
         atualizarVisibilidadeSurf();
         atualizarVisibilidadeOndas();
-            atualizarVisibilidadeSurf();
-            if (sportAtual === 'home') {
-                atualizarResumoDiario();
-            }
-    }   );
+        if (sportAtual === 'home') {
+            atualizarResumoDiario();
+        }
 }
 
 
