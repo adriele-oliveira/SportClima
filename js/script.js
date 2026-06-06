@@ -149,7 +149,31 @@ const pages = {
             descricao: "Selecione futebol para ver a análise.",
             evitar: "—"
         }
-},
+    },
+
+    basquete: {
+        heroImg: "https://images.unsplash.com/photo-1546519638-68e109498ffc?q=80&w=1190&auto=format&fit=crop",
+        titulo: "Condições para o basquete ao ar livre",
+        desc: "Temperatura, vento e umidade para uma partida perfeita na quadra.",
+        metrics: { temp: "—", vento: "—", umidade: "—", sensacao: "—" },
+        sidebar: {
+            melhorHorario: "—",
+            descricao: "Selecione basquete para ver a análise.",
+            evitar: "—"
+        }
+    },
+
+    volei: {
+        heroImg: "https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?q=80&w=1207&auto=format&fit=crop",
+        titulo: "Condições para o vôlei ao ar livre",
+        desc: "Vento, temperatura e umidade são decisivos para o vôlei outdoor.",
+        metrics: { temp: "—", vento: "—", umidade: "—", sensacao: "—" },
+        sidebar: {
+            melhorHorario: "—",
+            descricao: "Selecione vôlei para ver a análise.",
+            evitar: "—"
+        }
+    },
 
 };
 
@@ -224,6 +248,16 @@ const cidadesProximas = {
                 icone: "sports_soccer",
                 dica: "Hidrate-se antes, durante e após a partida. Campo molhado aumenta o risco de torções — ajuste sua chuteira.",
                 alerta: "Suspenda a partida imediatamente em caso de raios ou trovoadas."
+            },
+            basquete: {
+                icone: "sports_basketball",
+                dica: "Prefira jogar antes das 10h ou após as 16h para evitar o pico de UV. Hidratação constante é essencial em temperaturas acima de 25°C.",
+                alerta: "Quadra molhada é extremamente escorregadia — não jogue durante ou logo após chuva."
+            },
+            volei: {
+                icone: "sports_volleyball",
+                dica: "Vento acima de 8 km/h já compromete saques e levantamentos. Prefira horários com sol baixo para evitar ofuscamento na recepção.",
+                alerta: "Não jogue com vento acima de 15 km/h — a trajetória da bola fica imprevisível e os rallies ficam incontroláveis."
             },
         };
 
@@ -1548,6 +1582,27 @@ function atualizarResumoDiario() {
             i.main.temp >= 12 &&
             i.main.temp <= 30 &&
             i.wind.speed * 3.6 <= 40
+        },
+        {
+        nome: "Basquete",
+        icone: "🏀",
+        sport: "basquete",
+        ok: (i) =>
+            i.main.temp >= 18 &&
+            i.main.temp <= 24 &&
+            i.wind.speed * 3.6 <= 10 &&
+            !(i.rain?.["3h"] > 0) &&
+            i.main.humidity >= 40 && i.main.humidity <= 60
+        },
+        {
+        nome: "Vôlei",
+        icone: "🏐",
+        sport: "volei",
+        ok: (i) =>
+            i.main.temp >= 20 &&
+            i.main.temp <= 28 &&
+            i.wind.speed * 3.6 <= 8 &&
+            !(i.rain?.["3h"] > 0)
         }
     ];
 
@@ -1686,6 +1741,37 @@ function analisarEsporte(sport) {
             return Math.max(0, Math.round(s));
         },
 
+        basquete: () => {
+            let s = 100;
+            // Temperatura ideal: 18–24°C
+            if (tempAtual < 18) s -= Math.min(45, (18 - tempAtual) * 5);
+            else if (tempAtual > 24) s -= Math.min(45, (tempAtual - 24) * 4);
+            // Vento ideal: < 10 km/h
+            if (ventoAtual > 10) s -= Math.min(30, (ventoAtual - 10) * 2);
+            // Chuva: penalização máxima
+            if (chuvaAtual > 0) s -= 50;
+            // Umidade: ideal 40–60%
+            const umidade = agora.main.humidity;
+            if (umidade < 40) s -= 10;
+            else if (umidade > 60) s -= Math.min(20, (umidade - 60) * 0.5);
+            return Math.max(0, Math.round(s));
+        },
+        volei: () => {
+            let s = 100;
+            // Temperatura ideal: 20–28°C
+            if (tempAtual < 20) s -= Math.min(40, (20 - tempAtual) * 4);
+            else if (tempAtual > 28) s -= Math.min(40, (tempAtual - 28) * 3);
+            // Vento: muito mais crítico que outros esportes
+            if (ventoAtual > 8 && ventoAtual <= 15) s -= Math.round((ventoAtual - 8) * 4);
+            else if (ventoAtual > 15) s -= Math.min(50, 28 + (ventoAtual - 15) * 3);
+            // Chuva: inviabiliza completamente
+            if (chuvaAtual > 0) s -= 55;
+            // Umidade: ideal 40–70%
+            const umidade = agora.main.humidity;
+            if (umidade < 40) s -= 10;
+            else if (umidade > 70) s -= Math.min(15, (umidade - 70) * 0.5);
+            return Math.max(0, Math.round(s));
+        },
         home: () => {
             let s = 100;
             if (chuvaAtual > 0) s -= 30;
@@ -1739,6 +1825,15 @@ function analisarEsporte(sport) {
             && (item.rain?.["3h"] || 0) === 0,
 
         futebol: (item) => item.main.temp >= 12 && item.main.temp <= 26
+            && (item.rain?.["3h"] || 0) === 0,
+
+        basquete: (item) => item.main.temp >= 18 && item.main.temp <= 24
+            && item.wind.speed * 3.6 <= 10
+            && (item.rain?.["3h"] || 0) === 0
+            && item.main.humidity >= 40 && item.main.humidity <= 60,
+
+        volei: (item) => item.main.temp >= 20 && item.main.temp <= 28
+            && item.wind.speed * 3.6 <= 8
             && (item.rain?.["3h"] || 0) === 0,
 
         home: (item) => item.main.temp >= 15 && item.main.temp <= 30
@@ -1885,6 +1980,8 @@ function detectarEsporte(termo) {
         surf: ['surf', 'surfing', 'onda', 'praia', 'surfar', 'prancha'],
         tenis:    ['tênis', 'tenis', 'tennis', 'raquete', 'quadra'],
         futebol:  ['futebol', 'football', 'soccer', 'campo', 'gol', 'bola'],
+        basquete: ['basquete', 'basketball', 'cesta', 'aro'],
+        volei:    ['vôlei', 'volei', 'volleyball', 'vôlei de praia', 'beach volley', 'rede'],
         home: ['home', 'geral', 'visão geral', 'overview']
     };
 
