@@ -1610,27 +1610,32 @@ function analisarEsporte(sport) {
 
             // Ondas (peso principal)
             if (alturaOnda >= 1 && alturaOnda <= 2) {
-                s += 50;
+                s += 45;
             } else if (alturaOnda >= 0.5) {
-                s += 30;
+                s += 25;
             } else {
                 s += 5;
             }
             // Vento
             if (ventoAtual >= 10 && ventoAtual <= 25) {
-                s += 25;
+                s += 20;
             } else if (ventoAtual < 35) {
-                s += 15;
+                s += 10;
             }
             // Temperatura
             if (tempAtual >= 20 && tempAtual <= 28) {
-                s += 20;
+                s += 15;
             } else if (tempAtual >= 16 && tempAtual <= 32) {
-                s += 10;
+                s += 8;
             }
             // Chuva
             if (chuvaAtual > 0) {
-                s -= 20;
+                s -= 15;
+            }
+            // Fase da lua: lua cheia/nova gera marés mais fortes → melhor surf
+            const lua = window._faseLua;
+            if (lua) {
+                s += lua.surf; // 0 a 30 pontos conforme a fase
             }
             return Math.max(0, Math.min(100, Math.round(s)));
         },
@@ -1750,6 +1755,24 @@ function analisarEsporte(sport) {
 
     el.innerHTML = `
         <div class="flex flex-col gap-3">
+
+            ${sport === 'surf' && window._faseLua ? `
+            <!-- Fase da lua — fator relevante para marés e surf -->
+            <div class="p-3 rounded-xl bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 flex items-center gap-3">
+                <span class="text-3xl">${window._faseLua.emoji}</span>
+                <div>
+                    <p class="font-bold text-blue-700 dark:text-blue-300 text-xs">Fase da Lua</p>
+                    <p class="font-semibold text-slate-700 dark:text-slate-200 text-sm">${window._faseLua.nome}</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                        ${window._faseLua.surf >= 25
+                            ? 'Marés fortes — ondas com mais energia 🏄'
+                            : window._faseLua.surf >= 10
+                            ? 'Marés moderadas — condições intermediárias'
+                            : 'Marés fracas — ondas com menos impulso'}
+                    </p>
+                </div>
+            </div>
+            ` : ''}
 
             <!-- Score de condições com barra de progresso colorida -->
             <div class="p-3 rounded-xl bg-slate-50 dark:bg-surface-3 border border-slate-100 dark:border-surface-3">
