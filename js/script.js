@@ -29,26 +29,22 @@
 // Fase da lua calculada antes de qualquer render para evitar undefined no template
 window._faseLua = (function() {
     const data = new Date();
-    const ano = data.getFullYear();
-    const mes = data.getMonth() + 1;
-    const dia = data.getDate();
-    let r = ano % 100;
-    r %= 19;
-    if (r > 9) r -= 19;
-    r = (r * 11) % 30;
-    r += mes + dia;
-    if (mes < 3) r += 2;
-    r -= (ano < 2000) ? 4 : 8.3;
-    r = Math.floor(r + 0.5) % 30;
-    if (r < 0) r += 30;
+    // Algoritmo baseado em ciclo sinódico (29.53059 dias)
+    // Referência: lua nova conhecida em 6 Jan 2000 (JD 2451549.5)
+    const JD = Date.UTC(data.getFullYear(), data.getMonth(), data.getDate()) / 86400000 + 2440587.5;
+    const luaNova2000 = 2451549.5;
+    const ciclo = 29.53059;
+    let idade = ((JD - luaNova2000) % ciclo + ciclo) % ciclo;
+    idade = Math.round(idade * 10) / 10;
+
     const fases = [
-        { nome: "Lua Nova",         emoji: "🌑", icone: "dark_mode",  r_max: 1.5,  surf: 0  },
-        { nome: "Quarto Crescente", emoji: "🌓", icone: "contrast",   r_max: 8.5,  surf: 15 },
-        { nome: "Lua Cheia",        emoji: "🌕", icone: "wb_sunny",   r_max: 16.5, surf: 30 },
-        { nome: "Quarto Minguante", emoji: "🌗", icone: "contrast",   r_max: 23.5, surf: 15 },
-        { nome: "Lua Nova",         emoji: "🌑", icone: "dark_mode",  r_max: 30,   surf: 0  },
+        { nome: "Lua Nova",         emoji: "🌑", icone: "dark_mode", r_max: 1.85,  surf: 0  },
+        { nome: "Quarto Crescente", emoji: "🌓", icone: "contrast",  r_max: 13.77, surf: 15 },
+        { nome: "Lua Cheia",        emoji: "🌕", icone: "wb_sunny",  r_max: 15.54, surf: 30 },
+        { nome: "Quarto Minguante", emoji: "🌗", icone: "contrast",  r_max: 27.46, surf: 15 },
+        { nome: "Lua Nova",         emoji: "🌑", icone: "dark_mode", r_max: 29.53, surf: 0  },
     ];
-    return { ...(fases.find(f => r <= f.r_max) || fases[fases.length - 1]), dias: r };
+    return { ...(fases.find(f => idade <= f.r_max) || fases[fases.length - 1]), dias: idade };
 })();
 
 // Referências persistentes ao container principal e à sidebar direita
@@ -1239,32 +1235,23 @@ function initLoginPromptOverlay() {
 // ─── 14B. FASE DA LUA ────────────────────────────────────────────────────────
 
 function calcularFaseLua(data = new Date()) {
-    // Algoritmo de Conway simplificado — preciso o suficiente para uso esportivo
-    const ano = data.getFullYear();
-    const mes = data.getMonth() + 1;
-    const dia = data.getDate();
+    // Baseado em ciclo sinódico (29.53059 dias) — mais preciso que o algoritmo de Conway
+    const JD = Date.UTC(data.getFullYear(), data.getMonth(), data.getDate()) / 86400000 + 2440587.5;
+    const luaNova2000 = 2451549.5;
+    const ciclo = 29.53059;
+    let idade = ((JD - luaNova2000) % ciclo + ciclo) % ciclo;
+    idade = Math.round(idade * 10) / 10;
 
-    let r = ano % 100;
-    r %= 19;
-    if (r > 9) r -= 19;
-    r = (r * 11) % 30;
-    r += mes + dia;
-    if (mes < 3) r += 2;
-    r -= (ano < 2000) ? 4 : 8.3;
-    r = Math.floor(r + 0.5) % 30;
-    if (r < 0) r += 30;
-
-    // r = idade aproximada da lua em dias (0 = lua nova, ~15 = lua cheia)
     const fases = [
-        { nome: "Lua Nova",        emoji: "🌑", icone: "dark_mode",     r_max: 1.5,  surf: 0  },
-        { nome: "Quarto Crescente",emoji: "🌓", icone: "contrast",      r_max: 8.5,  surf: 15 },
-        { nome: "Lua Cheia",       emoji: "🌕", icone: "wb_sunny",      r_max: 16.5, surf: 30 },
-        { nome: "Quarto Minguante",emoji: "🌗", icone: "contrast",      r_max: 23.5, surf: 15 },
-        { nome: "Lua Nova",        emoji: "🌑", icone: "dark_mode",     r_max: 30,   surf: 0  },
+        { nome: "Lua Nova",         emoji: "🌑", icone: "dark_mode", r_max: 1.85,  surf: 0  },
+        { nome: "Quarto Crescente", emoji: "🌓", icone: "contrast",  r_max: 13.77, surf: 15 },
+        { nome: "Lua Cheia",        emoji: "🌕", icone: "wb_sunny",  r_max: 15.54, surf: 30 },
+        { nome: "Quarto Minguante", emoji: "🌗", icone: "contrast",  r_max: 27.46, surf: 15 },
+        { nome: "Lua Nova",         emoji: "🌑", icone: "dark_mode", r_max: 29.53, surf: 0  },
     ];
 
-    const fase = fases.find(f => r <= f.r_max) || fases[fases.length - 1];
-    return { ...fase, dias: r };
+    const fase = fases.find(f => idade <= f.r_max) || fases[fases.length - 1];
+    return { ...fase, dias: idade };
 }
 
 
