@@ -278,10 +278,12 @@ function atualizarVisibilidadeSurf() {
 }
 function atualizarVisibilidadeOndas() {
     const card = document.getElementById("cardOndas");
-
     if (!card) return;
 
-    if (window._cidadeLitoranea) {
+    const sportAtivo = document.querySelector('.sport-btn-sidebar.sidebar-active');
+    const sport = sportAtivo?.getAttribute('data-sport') || 'home';
+
+    if (window._cidadeLitoranea && sport === 'surf') {
         card.classList.remove("hidden");
     } else {
         card.classList.add("hidden");
