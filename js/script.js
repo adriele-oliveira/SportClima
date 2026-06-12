@@ -2,14 +2,25 @@
 // script.js — SportClima Dashboard
 // =============================================================================
 // Fluxo geral de execução:
-//   1. Tema é aplicado imediatamente para evitar flash de tela branca
-//   2. DOM é referenciado e dados das páginas são declarados
-//   3. loadPage("home") renderiza a tela inicial
-//   4. Módulos de UI (notificações, perfil, tema, feedback) são inicializados
-//   5. API_KEY e inputs de busca são declarados
-//   6. Funções de clima, gráfico, resumo e análise são declaradas
-//   7. Listeners de busca são registrados POR ÚLTIMO (dependem das funções acima)
-//   8. Geolocalização é solicitada ao usuário e carrega o clima real
+//    1. Tema            — aplicado imediatamente para evitar flash de tela branca
+//    2. SPA             — referências DOM e dados estáticos das páginas
+//    3. Render inicial  — loadPage("home") renderiza a tela de visão geral
+//    4. Sobre o Projeto — página de criadoras (sem sidebar)
+//    5. Navegação       — busca por esporte no input do header
+//    6. Notificações    — drawer lateral com preferências e persistência
+//    7. Menu de Perfil  — dropdown do header
+//    8. Tema Toggle     — botão claro/escuro
+//    9. Sidebar Nav     — destaque ativo nos botões de esporte
+//   10. Feedback Modal  — envio via EmailJS
+//   11. Modal de Perfil — preenchimento e persistência dos dados do usuário
+//   12. Funções globais — abrirModalPerfil, fecharModal, toggleMenu
+//   13. Foto de Perfil  — upload, conversão Base64 e exibição imediata
+//   14. Sessão          — estado de login na interface
+//   14B. Fase da Lua   — calcularFaseLua(), usada por analisarEsporte
+//   15. API do Clima   — inputs de busca por cidade
+//   16. Clima & Gráfico — atualizarClimaNaTela, renderizarGrafico, resumo e análise
+//   17. Listeners       — busca por cidade (registrados após as funções do passo 16)
+//   18. Geolocalização  — solicita permissão e carrega o clima local
 // =============================================================================
 
 // ─── 1. TEMA — Aplicação imediata antes do render ────────────────────────────
@@ -263,6 +274,8 @@ const cidadesProximas = {
 // Renderiza o conteúdo principal e a sidebar para o esporte recebido.
 // Chamada sempre que o usuário clica em um esporte na sidebar ou nos cards da home.
 // Renderiza a página SPA de acordo com o esporte selecionado
+// Mostra ou oculta o botão "Surf" na sidebar conforme a cidade ser litorânea.
+// Chamada após cada busca de cidade e após a verificação de litoral terminar.
 function atualizarVisibilidadeSurf() {
     const btnSurf = document.querySelector('[data-sport="surf"]');
     if (!btnSurf) return;
@@ -272,6 +285,8 @@ function atualizarVisibilidadeSurf() {
         btnSurf.classList.add('hidden');
     }
 }
+
+// Mostra o card de ondas apenas quando a cidade é litorânea E o esporte ativo é surf.
 function atualizarVisibilidadeOndas() {
     const card = document.getElementById("cardOndas");
     if (!card) return;
@@ -458,7 +473,8 @@ async function loadPage(sport) {
     atualizarVisibilidadeSurf();
 }
 
-// Renderiza a home ao iniciar o app
+// Renderiza a home ao iniciar o app — chamada única no boot; navegações
+// subsequentes passam sempre por um clique na sidebar ou por loadPage() direta.
 loadPage("home");
 
 // ─── 4. SOBRE O PROJETO ──────────────────────────────────────────────────────
@@ -1232,7 +1248,7 @@ function initLoginPromptOverlay() {
     }
 })();
 
-// ─── 14B. FASE DA LUA ────────────────────────────────────────────────────────
+// ─── 14B. FASE DA LUA — calcularFaseLua() usada por analisarEsporte ─────────
 
 function calcularFaseLua(data = new Date()) {
     // Baseado em ciclo sinódico (29.53059 dias) — mais preciso que o algoritmo de Conway
@@ -1640,7 +1656,7 @@ function analisarEsporte(sport) {
 
     const fatias = dados.list.slice(0, 16); // próximas 48h em blocos de 3h
     
-    // Lê as condições do momento atual para calcular o score    const agora = dados.list[0];
+    // Lê as condições do momento atual para calcular o score
     const agora = dados.list[0];
     const tempAtual = agora.main.temp;
     const ventoAtual = agora.wind.speed * 3.6;
